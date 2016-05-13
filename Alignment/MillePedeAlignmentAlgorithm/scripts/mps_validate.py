@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 from ROOT import TTree, TFile, TH1F, TCanvas
+import logging
 
 class GeometryGetter:
     """ Getting human readable names of detector parts
@@ -9,13 +11,27 @@ class GeometryGetter:
     def __init__(self):
         pass
         
-    def get_name_by_obj_id(self, id):
+    def name_by_objid(self, id):
         return self.obj_id_names[id]
 
 
 def main():
+    # config logging module
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s",
+                       datefmt="%d.%m.%Y %H:%M:%S")
+    
+    
     geometrygetter = GeometryGetter()
-    print "Test: {0}".format(geometrygetter.get_name_by_obj_id(3))
+    
+    treeFile = TFile("./jobData/jobm/treeFile_merge.root")
+    MillePedeUser1 = treeFile.Get("MillePedeUser_1")
+    
+    try:
+        for element in MillePedeUser1:
+            print "Id: {0} ({1})".format(element.Id, geometrygetter.name_by_objid(element.ObjId))
+    except Exception as e:
+        logging.critical("Error: {}".format(e))
+        raise
 
     
 if __name__ == "__main__":
