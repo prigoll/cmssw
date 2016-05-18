@@ -70,7 +70,7 @@ def main():
     for line in MillePedeUser:
         if (line.ObjId != 1):
             for i in range(3):
-                if (line.Par[i] != 999999):
+                if (abs(line.Par[i]) != 999999):
                     big.numberOfBins[i] += 1
                     if (abs(line.Par[i]) > big.maxShift[i]):
                         big.maxShift[i] = abs(line.Par[i])
@@ -102,7 +102,7 @@ def main():
     for line in MillePedeUser:
         if (line.ObjId != 1):
             for i in range(3):
-                if (line.Par[i] != 999999):
+                if (abs(line.Par[i]) != 999999):
                     hBigAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
                     hBig[i].SetBinContent(big.binPosition[i], line.Par[i])
                     big.binPosition[i] += 1
@@ -137,7 +137,7 @@ def main():
     for line in MillePedeUser:
         if (line.ObjId == 1):
             for i in range(3):
-                if (line.Par[i] != 999999 and abs(line.Par[i]) > mod.maxShift[i]):
+                if (abs(line.Par[i]) != 999999 and abs(line.Par[i]) > mod.maxShift[i]):
                     mod.maxShift[i] = line.Par[i]
     
     # round max shift
@@ -171,7 +171,8 @@ def main():
     for line in MillePedeUser:
         if (line.ObjId == 1):
             for i in range(3):
-                hMod[i].Fill(line.Par[i])
+                if (abs(line.Par[i]) != 999999): 
+                    hMod[i].Fill(line.Par[i])
             
     
     cMod.cd(1)
