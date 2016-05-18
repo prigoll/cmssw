@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel
+from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText
 import argparse
 import logging
 
@@ -53,12 +53,13 @@ def main():
     cBigXYZ.Divide(2,2)
     
     # TODO dynamic range, error
+    # count number of needed bins
     numberOfBins = 0
     for line in MillePedeUser:
         if (line.ObjId != 1):
             numberOfBins += 1
     
-    
+    # initate histograms
     hBigX = TH1F("Big Structure X", "Parameter X", numberOfBins, 0, numberOfBins)
     hBigY = TH1F("Big Structure Y", "Parameter Y", numberOfBins, 0, numberOfBins)
     hBigZ = TH1F("Big Structure Z", "Parameter Z", numberOfBins, 0, numberOfBins)
@@ -72,11 +73,14 @@ def main():
     axisBigY = hBigY.GetXaxis()
     axisBigZ = hBigZ.GetXaxis()
     
-    title = TPaveLabel(0.1,0.8,0.9,0.9, "Big Structures")
+    # add labels
+    title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures")
+    text = TPaveText(0.05, 0.1, 0.95, 0.75)
+    text.SetTextAlign(13)
+    text.SetTextSizePixels(22)
     
-    
+    # fill histograms with value and name
     binPosition = 1
-    
     for line in MillePedeUser:
         if (line.ObjId != 1):
             axisBigX.SetBinLabel(binPosition, geometryGetter.name_by_objid(line.ObjId))
@@ -87,8 +91,23 @@ def main():
             hBigZ.SetBinContent(binPosition, line.Par[2])
             binPosition += 1
     
+    # find maximum shift
+    maximumX = max([ abs(hBigX.GetMaximum()), abs(hBigX.GetMinimum()) ])
+    maximumY = max([ abs(hBigY.GetMaximum()), abs(hBigY.GetMinimum()) ])
+    maximumZ = max([ abs(hBigZ.GetMaximum()), abs(hBigZ.GetMinimum()) ])
+    text.AddText("max. shift X: {0:.2}".format(maximumX))
+    text.AddText("max. shift Y: {0:.2}".format(maximumY))
+    text.AddText("max. shift Z: {0:.2}".format(maximumZ))
+    
+    # TODO chose good limit
+    # error if shift is bigger than limit
+    limit = 0.02
+    if (max([maximumX, maximumY,maximumZ]) > limit):
+        text.AddText("! shift bigger than {0} !".format(limit))
+    
     cBigXYZ.cd(1)
     title.Draw()
+    text.Draw()
     cBigXYZ.cd(2)
     hBigX.Draw()
     cBigXYZ.cd(3)
@@ -97,20 +116,55 @@ def main():
     hBigZ.Draw()
     cBigXYZ.Update()
     
+    # export as png
     imageBig = TImage.Create()
     imageBig.FromPad(cBigXYZ)
     imageBig.WriteImage("BigXYZ.png")
     
-    input("wait...")
     
-    """
-    try:
-        for element in MillePedeUser1:
-            print "Id: {0} ({1})".format(element.Id, geometrygetter.name_by_objid(element.ObjId))
-    except Exception as e:
-        logging.critical("Error: {}".format(e))
-        raise
-    """    
+    # modules
+    
+    cMod = TCanvas("canvasModules", "Parameter", 300, 0, 800, 600)
+    cMod.Divide(2,2)
+    
+    # TODO what modules should be counted
+    # find maximum shift
+    maximum = 0
+    for line in MillePedeUser:
+        if (line.ObjId == 1 and abs(line.Par[0]) != 999999 and abs(line.Par[1]) != 999999 and abs(line.Par[2]) != 999999):
+            linemax = max([abs(line.Par[0]), abs(line.Par[1]), abs(line.Par[2])])
+            if (linemax > maximum):
+                maximum = linemax
+    print "Maximum: {0}".format(maximum)
+    maximum = round(maximum, 3) + 0.01
+    print "Maximum: {0}".format(maximum)
+    
+    
+    hModX = TH1F("Module X", "Parameter X", 100, -maximum, maximum)
+    hModY = TH1F("Module Y", "Parameter Y", 100, -maximum, maximum)
+    hModZ = TH1F("Module Z", "Parameter Z", 100, -0.005, 0.005)
+    hModX.SetXTitle("[cm]")
+    hModY.SetXTitle("[cm]")
+    hModZ.SetXTitle("[cm]")
+    axisModX = hModX.GetXaxis()
+    axisModY = hModY.GetXaxis()
+    axisModZ = hModZ.GetXaxis()
+    
+    for line in MillePedeUser:
+        if (line.ObjId == 1):
+            hModX.Fill(line.Par[0])
+            hModY.Fill(line.Par[0])
+            hModZ.Fill(line.Par[0])
+            
+    cMod.cd(2)
+    hModX.Draw()
+    cMod.cd(3)
+    hModY.Draw()
+    cMod.cd(4)
+    hModZ.Draw()
+    cMod.Update()
+    
+    input("wait...")
     
 
     
