@@ -21,7 +21,7 @@ def main():
                        datefmt="%d.%m.%Y %H:%M:%S")
     
     
-    geometrygetter = GeometryGetter()
+    geometryGetter = GeometryGetter()
     
     # TODO get latest Alignment directory
     alignmentNumber = 3
@@ -45,20 +45,39 @@ def main():
     cBigXYZ.Divide(2,2)
     
     # TODO dynamic range, error
-    hBigX = TH1F("Big Structure X", "Parameter X", 100, -0.005, 0.005)
-    hBigY = TH1F("Big Structure Y", "Parameter Y", 100, -0.005, 0.005)
-    hBigZ = TH1F("Big Structure Z", "Parameter Z", 100, -0.005, 0.005)
-    hBigX.SetXTitle("[cm]")
-    hBigY.SetXTitle("[cm]")
-    hBigZ.SetXTitle("[cm]")
+    numberOfBins = 0
+    for line in MillePedeUser:
+        if (line.ObjId != 1):
+            numberOfBins += 1
     
-    title = TPaveLabel(0.1,0.2,0.3,0.4, "Big Structures")
+    
+    hBigX = TH1F("Big Structure X", "Parameter X", numberOfBins, 0, numberOfBins)
+    hBigY = TH1F("Big Structure Y", "Parameter Y", numberOfBins, 0, numberOfBins)
+    hBigZ = TH1F("Big Structure Z", "Parameter Z", numberOfBins, 0, numberOfBins)
+    hBigX.SetYTitle("[cm]")
+    hBigY.SetYTitle("[cm]")
+    hBigZ.SetYTitle("[cm]")
+    hBigX.SetStats(0)
+    hBigY.SetStats(0)
+    hBigZ.SetStats(0)
+    axisBigX = hBigX.GetXaxis()
+    axisBigY = hBigY.GetXaxis()
+    axisBigZ = hBigZ.GetXaxis()
+    
+    title = TPaveLabel(0.1,0.8,0.9,0.9, "Big Structures")
+    
+    
+    binPosition = 1
     
     for line in MillePedeUser:
         if (line.ObjId != 1):
-            hBigX.Fill(line.Par[0])
-            hBigY.Fill(line.Par[1])
-            hBigZ.Fill(line.Par[2])
+            axisBigX.SetBinLabel(binPosition, geometryGetter.name_by_objid(line.ObjId))
+            axisBigY.SetBinLabel(binPosition, geometryGetter.name_by_objid(line.ObjId))
+            axisBigZ.SetBinLabel(binPosition, geometryGetter.name_by_objid(line.ObjId))
+            hBigX.SetBinContent(binPosition, line.Par[0])
+            hBigY.SetBinContent(binPosition, line.Par[1])
+            hBigZ.SetBinContent(binPosition, line.Par[2])
+            binPosition += 1
     
     cBigXYZ.cd(1)
     title.Draw()
