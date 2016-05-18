@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel
+import argparse
 import logging
 
 class GeometryGetter:
@@ -23,11 +24,18 @@ def main():
     
     geometryGetter = GeometryGetter()
     
+    # ArgumentParser
+    parser = argparse.ArgumentParser(description="Validate your Aligment.")
+    parser.add_argument("-j", "--job", help="chose jobmX directory (default: 0)", default=0, type=int)
+    parser.add_argument("-t", "--time", help="chose MillePedeUser_X Tree (default: 1)", default=1, type=int)
+    args = parser.parse_args()
+    
     # TODO get latest Alignment directory
+    #alignmentNumber = args.job
     alignmentNumber = 3
     
     # TODO which time MillePedeUser_X
-    alignmentTime = 1
+    alignmentTime = args.time
     
     
     # TODO check of there is a file and a TTree
