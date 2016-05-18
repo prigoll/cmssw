@@ -14,6 +14,18 @@ class GeometryGetter:
         
     def name_by_objid(self, id):
         return self.obj_id_names[id]
+    
+class TreeData:
+    """ Hold information about XYZ
+    """
+    
+    xyz = {0: "X", 1: "Y", 2: "Z"}
+    
+    def __init__(self):
+        self.numberOfBins = [0, 0, 0]
+        self.maxShift = [0, 0, 0]
+        self.binPosition = [1, 1, 1]
+                        
 
 
 def main():
@@ -26,13 +38,13 @@ def main():
     
     # ArgumentParser
     parser = argparse.ArgumentParser(description="Validate your Aligment.")
-    parser.add_argument("-j", "--job", help="chose jobmX directory (default: 0)", default=0, type=int)
+    # TODO set default -> 0
+    parser.add_argument("-j", "--job", help="chose jobmX directory (default: 0)", default=3, type=int)
     parser.add_argument("-t", "--time", help="chose MillePedeUser_X Tree (default: 1)", default=1, type=int)
     args = parser.parse_args()
     
     # TODO get latest Alignment directory
-    #alignmentNumber = args.job
-    alignmentNumber = 3
+    alignmentNumber = args.job
     
     # TODO which time MillePedeUser_X
     alignmentTime = args.time
@@ -49,29 +61,28 @@ def main():
     
     # big structures
     
-    cBigXYZ = TCanvas("canvasBigStrucutres", "Parameter", 300, 0, 800, 600)
-    cBigXYZ.Divide(2,2)
+    cBig = TCanvas("canvasBigStrucutres", "Parameter", 300, 0, 800, 600)
+    cBig.Divide(2,2)
     
-    # TODO dynamic range, error
-    # count number of needed bins
-    numberOfBins = 0
+    big = TreeData()
+    
+    # count number of needed bins and max shift
     for line in MillePedeUser:
         if (line.ObjId != 1):
-            numberOfBins += 1
+            for i in range(3):
+                if (line.Par[i] != 999999):
+                    big.numberOfBins[i] += 1
+                    if (abs(line.Par[i]) > big.maxShift[i]):
+                        big.maxShift[i] = abs(line.Par[i])
     
     # initate histograms
-    hBigX = TH1F("Big Structure X", "Parameter X", numberOfBins, 0, numberOfBins)
-    hBigY = TH1F("Big Structure Y", "Parameter Y", numberOfBins, 0, numberOfBins)
-    hBigZ = TH1F("Big Structure Z", "Parameter Z", numberOfBins, 0, numberOfBins)
-    hBigX.SetYTitle("[cm]")
-    hBigY.SetYTitle("[cm]")
-    hBigZ.SetYTitle("[cm]")
-    hBigX.SetStats(0)
-    hBigY.SetStats(0)
-    hBigZ.SetStats(0)
-    axisBigX = hBigX.GetXaxis()
-    axisBigY = hBigY.GetXaxis()
-    axisBigZ = hBigZ.GetXaxis()
+    hBig = []
+    hBigAxis = []
+    for i in range(3):
+        hBig.append(TH1F("Big Structure {0}".format(big.xyz[i]), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
+        hBig[i].SetYTitle("[cm]")
+        hBig[i].SetStats(0)
+        hBigAxis.append(hBig[i].GetXaxis())
     
     # add labels
     title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures")
@@ -79,47 +90,39 @@ def main():
     text.SetTextAlign(13)
     text.SetTextSizePixels(22)
     
-    # fill histograms with value and name
-    binPosition = 1
-    for line in MillePedeUser:
-        if (line.ObjId != 1):
-            axisBigX.SetBinLabel(binPosition, geometryGetter.name_by_objid(line.ObjId))
-            axisBigY.SetBinLabel(binPosition, geometryGetter.name_by_objid(line.ObjId))
-            axisBigZ.SetBinLabel(binPosition, geometryGetter.name_by_objid(line.ObjId))
-            hBigX.SetBinContent(binPosition, line.Par[0])
-            hBigY.SetBinContent(binPosition, line.Par[1])
-            hBigZ.SetBinContent(binPosition, line.Par[2])
-            binPosition += 1
-    
-    # find maximum shift
-    maximumX = max([ abs(hBigX.GetMaximum()), abs(hBigX.GetMinimum()) ])
-    maximumY = max([ abs(hBigY.GetMaximum()), abs(hBigY.GetMinimum()) ])
-    maximumZ = max([ abs(hBigZ.GetMaximum()), abs(hBigZ.GetMinimum()) ])
-    text.AddText("max. shift X: {0:.2}".format(maximumX))
-    text.AddText("max. shift Y: {0:.2}".format(maximumY))
-    text.AddText("max. shift Z: {0:.2}".format(maximumZ))
-    
     # TODO chose good limit
     # error if shift is bigger than limit
     limit = 0.02
-    if (max([maximumX, maximumY,maximumZ]) > limit):
-        text.AddText("! shift bigger than {0} !".format(limit))
+    for i in range(3):
+        text.AddText("max. shift {0}: {1:.2}".format(big.xyz[i], big.maxShift[i]))
+        if (big.maxShift[i] > limit):
+            text.AddText("! {0} shift bigger than {1} !".format(big.xyz[i], limit))
     
-    cBigXYZ.cd(1)
+    # fill histograms with value and name
+    for line in MillePedeUser:
+        if (line.ObjId != 1):
+            for i in range(3):
+                if (line.Par[i] != 999999):
+                    hBigAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
+                    hBig[i].SetBinContent(big.binPosition[i], line.Par[i])
+                    big.binPosition[i] += 1
+    
+    
+    cBig.cd(1)
     title.Draw()
     text.Draw()
-    cBigXYZ.cd(2)
-    hBigX.Draw()
-    cBigXYZ.cd(3)
-    hBigY.Draw()
-    cBigXYZ.cd(4)
-    hBigZ.Draw()
-    cBigXYZ.Update()
+    cBig.cd(2)
+    hBig[0].Draw()
+    cBig.cd(3)
+    hBig[1].Draw()
+    cBig.cd(4)
+    hBig[2].Draw()
+    cBig.Update()
     
     # export as png
-    imageBig = TImage.Create()
-    imageBig.FromPad(cBigXYZ)
-    imageBig.WriteImage("BigXYZ.png")
+    image = TImage.Create()
+    image.FromPad(cBig)
+    image.WriteImage("Big.png")
     
     
     # modules
@@ -127,42 +130,64 @@ def main():
     cMod = TCanvas("canvasModules", "Parameter", 300, 0, 800, 600)
     cMod.Divide(2,2)
     
-    # TODO what modules should be counted
-    # find maximum shift
-    maximum = 0
-    for line in MillePedeUser:
-        if (line.ObjId == 1 and abs(line.Par[0]) != 999999 and abs(line.Par[1]) != 999999 and abs(line.Par[2]) != 999999):
-            linemax = max([abs(line.Par[0]), abs(line.Par[1]), abs(line.Par[2])])
-            if (linemax > maximum):
-                maximum = linemax
-    print "Maximum: {0}".format(maximum)
-    maximum = round(maximum, 3) + 0.01
-    print "Maximum: {0}".format(maximum)
+    mod = TreeData()
     
     
-    hModX = TH1F("Module X", "Parameter X", 100, -maximum, maximum)
-    hModY = TH1F("Module Y", "Parameter Y", 100, -maximum, maximum)
-    hModZ = TH1F("Module Z", "Parameter Z", 100, -0.005, 0.005)
-    hModX.SetXTitle("[cm]")
-    hModY.SetXTitle("[cm]")
-    hModZ.SetXTitle("[cm]")
-    axisModX = hModX.GetXaxis()
-    axisModY = hModY.GetXaxis()
-    axisModZ = hModZ.GetXaxis()
-    
+    # get max shift
     for line in MillePedeUser:
         if (line.ObjId == 1):
-            hModX.Fill(line.Par[0])
-            hModY.Fill(line.Par[0])
-            hModZ.Fill(line.Par[0])
+            for i in range(3):
+                if (line.Par[i] != 999999 and abs(line.Par[i]) > mod.maxShift[i]):
+                    mod.maxShift[i] = line.Par[i]
+    
+    # round max shift
+    for i in range(3):
+        mod.maxShift[i] = round(mod.maxShift[i],3) + 0.001
+    
+    # TODO remove
+    mod.maxShift[2] = 0.05
+                    
+    # initate histograms
+    hMod = []
+    for i in range(3):
+        hMod.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -mod.maxShift[i], mod.maxShift[i]))
+        hMod[i].SetXTitle("[cm]")                    
+    
+    # add labels
+    title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Modules")
+    text = TPaveText(0.05, 0.1, 0.95, 0.75)
+    text.SetTextAlign(13)
+    text.SetTextSizePixels(20)
+    
+    # TODO chose good limit
+    # error if shift is bigger than limit
+    limit = 0.02
+    for i in range(3):
+        text.AddText("max. shift {0}: {1:.2}".format(mod.xyz[i], mod.maxShift[i]))
+        if (mod.maxShift[i] > limit):
+            text.AddText("! {0} shift bigger than {1} !".format(mod.xyz[i], limit))
+    
+
+    for line in MillePedeUser:
+        if (line.ObjId == 1):
+            for i in range(3):
+                hMod[i].Fill(line.Par[i])
             
+    
+    cMod.cd(1)
+    title.Draw()
+    text.Draw()
     cMod.cd(2)
-    hModX.Draw()
+    hMod[0].Draw()
     cMod.cd(3)
-    hModY.Draw()
+    hMod[1].Draw()
     cMod.cd(4)
-    hModZ.Draw()
+    hMod[2].Draw()
     cMod.Update()
+    
+    # export as png
+    image.FromPad(cMod)
+    image.WriteImage("Mod.png")
     
     input("wait...")
     
