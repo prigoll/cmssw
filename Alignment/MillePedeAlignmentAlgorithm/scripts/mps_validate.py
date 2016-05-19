@@ -25,6 +25,8 @@ class TreeData:
         self.numberOfBins = [0, 0, 0]
         self.maxShift = [0, 0, 0]
         self.binPosition = [1, 1, 1]
+        self.histo = []
+        self.histoAxis = []
                         
 
 
@@ -76,13 +78,11 @@ def main():
                         big.maxShift[i] = abs(line.Par[i])
     
     # initate histograms
-    hBig = []
-    hBigAxis = []
     for i in range(3):
-        hBig.append(TH1F("Big Structure {0}".format(big.xyz[i]), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
-        hBig[i].SetYTitle("[cm]")
-        hBig[i].SetStats(0)
-        hBigAxis.append(hBig[i].GetXaxis())
+        big.histo.append(TH1F("Big Structure {0}".format(big.xyz[i]), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
+        big.histo[i].SetYTitle("[cm]")
+        big.histo[i].SetStats(0)
+        big.histoAxis.append(big.histo[i].GetXaxis())
     
     # add labels
     title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures")
@@ -103,20 +103,23 @@ def main():
         if (line.ObjId != 1):
             for i in range(3):
                 if (abs(line.Par[i]) != 999999):
-                    hBigAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
-                    hBig[i].SetBinContent(big.binPosition[i], line.Par[i])
+                    big.histoAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
+                    big.histo[i].SetBinContent(big.binPosition[i], line.Par[i])
                     big.binPosition[i] += 1
     
+    # rotate labels
+    for i in range(3):
+        big.histoAxis[i].LabelsOption("v")
     
     cBig.cd(1)
     title.Draw()
     text.Draw()
     cBig.cd(2)
-    hBig[0].Draw()
+    big.histo[0].Draw()
     cBig.cd(3)
-    hBig[1].Draw()
+    big.histo[1].Draw()
     cBig.cd(4)
-    hBig[2].Draw()
+    big.histo[2].Draw()
     cBig.Update()
     
     # export as png
@@ -143,15 +146,11 @@ def main():
     # round max shift
     for i in range(3):
         mod.maxShift[i] = round(mod.maxShift[i],3) + 0.001
-    
-    # TODO remove
-    mod.maxShift[2] = 0.05
                     
     # initate histograms
-    hMod = []
     for i in range(3):
-        hMod.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -mod.maxShift[i], mod.maxShift[i]))
-        hMod[i].SetXTitle("[cm]")                    
+        mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -mod.maxShift[i], mod.maxShift[i]))
+        mod.histo[i].SetXTitle("[cm]")                    
     
     # add labels
     title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Modules")
@@ -172,18 +171,18 @@ def main():
         if (line.ObjId == 1):
             for i in range(3):
                 if (abs(line.Par[i]) != 999999): 
-                    hMod[i].Fill(line.Par[i])
+                    mod.histo[i].Fill(line.Par[i])
             
     
     cMod.cd(1)
     title.Draw()
     text.Draw()
     cMod.cd(2)
-    hMod[0].Draw()
+    mod.histo[0].Draw()
     cMod.cd(3)
-    hMod[1].Draw()
+    mod.histo[1].Draw()
     cMod.cd(4)
-    hMod[2].Draw()
+    mod.histo[2].Draw()
     cMod.Update()
     
     # export as png
