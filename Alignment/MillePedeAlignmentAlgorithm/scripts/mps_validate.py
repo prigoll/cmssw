@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText
+from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gStyle
 
 import argparse
 import gzip
@@ -11,7 +11,7 @@ class GeometryGetter:
     """ Getting human readable names of detector parts
     """
     
-    objid_names = {-1: "notfound", 0: "invalid", 1: "AlignableDetUnit", 2: "AlignableDet", 3: "TPBModule", 4: "TPBLadder", 5: "TPBLayer", 6: "TPBHalfBarrel", 7: "TPBBarrel", 8: "TPEModule", 9: "TPEPanel", 10: "TPEBlade", 11: "TPEHalfDisk", 12: "TPEHalfCylinder", 13: "TPEEndcap", 14: "TIBModule", 15: "TIBString", 16: "TIBSurface", 17: "TIBHalfShell", 18: "TIBLayer", 19: "TIBHalfBarrel", 20: "TIBBarrel", 21: "TIDModule", 22: "TIDSide", 23: "TIDRing", 24: "TIDDisk", 25: "TIDEndcap", 26: "TOBModule", 27: "TOBRod", 28: "TOBLayer", 29: "TOBHalfBarrel", 30: "TOBBarrel", 31: "TECModule", 32: "TECRing", 33: "TECPetal", 34: "TECSide", 35: "TECDisk", 36: "TECEndcap", 37: "Pixel", 38: "Strip", 39: "Tracker", 100: "AlignableDTBarrel", 101: "AlignableDTWheel", 102: "AlignableDTStation", 103: "AlignableDTChamber", 104: "AlignableDTSuperLayer", 105: "AlignableDTLayer", 106: "AlignableCSCEndcap", 107: "AlignableCSCStation", 108: "AlignableCSCRing", 109: "AlignableCSCChamber", 110: "AlignableCSCLayer", 111: "AlignableMuon", 112: "Detector", 1000: "Extras", 1001: "BeamSpot"}
+    objid_names = {-1: "notfound", 0: "invalid", 1: "AlignableDetUnit", 2: "AlignableDet", 3: "TPBModule", 4: "TPBLadder", 5: "TPBLayer", 6: "TPBHalfBarrel", 7: "TPBBarrel", 8: "TPEModule", 9: "TPEPanel", 10: "TPEBlade", 11: "TPEHalfDisk", 12: "TPEHalfCylind", 13: "TPEEndcap", 14: "TIBModule", 15: "TIBString", 16: "TIBSurface", 17: "TIBHalfShell", 18: "TIBLayer", 19: "TIBHalfBarrel", 20: "TIBBarrel", 21: "TIDModule", 22: "TIDSide", 23: "TIDRing", 24: "TIDDisk", 25: "TIDEndcap", 26: "TOBModule", 27: "TOBRod", 28: "TOBLayer", 29: "TOBHalfBarrel", 30: "TOBBarrel", 31: "TECModule", 32: "TECRing", 33: "TECPetal", 34: "TECSide", 35: "TECDisk", 36: "TECEndcap", 37: "Pixel", 38: "Strip", 39: "Tracker", 100: "AlignableDTBarrel", 101: "AlignableDTWheel", 102: "AlignableDTStation", 103: "AlignableDTChamber", 104: "AlignableDTSuperLayer", 105: "AlignableDTLayer", 106: "AlignableCSCEndcap", 107: "AlignableCSCStation", 108: "AlignableCSCRing", 109: "AlignableCSCChamber", 110: "AlignableCSCLayer", 111: "AlignableMuon", 112: "Detector", 1000: "Extras", 1001: "BeamSpot"}
     
     boundaries_bStruct = [61, 17541, 37021, 121061, 144401, 284201, 700000]
     name_bStruct = ["TrackerTPBHalfBarrel", "TrackerTPEHalfDisk", "TrackerTIBHalfBarrel", "TrackerTIDEndcap", "TrackerTOBHalfBarrel", "TrackerTECEndcap", "newIOV"]
@@ -116,9 +116,7 @@ def main():
             while ("Warning" not in dumpFile[j]): 
                 print dumpFile[j]
                 j += 1
-        
-    
-    raw_input("wait...")
+
     
     
     
@@ -129,6 +127,10 @@ def main():
     
     
     # big structures
+    
+        
+    # more space for labels
+    gStyle.SetPadBottomMargin(0.25)
     
     cBig = TCanvas("canvasBigStrucutres", "Parameter", 300, 0, 800, 600)
     cBig.Divide(2,2)
@@ -149,10 +151,12 @@ def main():
         big.histo.append(TH1F("Big Structure {0}".format(big.xyz[i]), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
         big.histo[i].SetYTitle("[cm]")
         big.histo[i].SetStats(0)
+        big.histo[i].SetMarkerStyle(2)
         big.histoAxis.append(big.histo[i].GetXaxis())
-        # TODO label outside of plot
-        big.histoAxis[i].SetLabelSize(0.05)
+        # bigger labels for the text
+        big.histoAxis[i].SetLabelSize(0.06)
         big.histo[i].GetYaxis().SetTitleOffset(1.6)
+        
     
     # add labels
     title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures")
@@ -185,20 +189,23 @@ def main():
     title.Draw()
     text.Draw()
     cBig.cd(2)
-#    print cBig.GetBottomMargin()
-#    cBig.SetBottomMargin(0.3)
-#    print cBig.GetBottomMargin()
-    big.histo[0].Draw()
+    # option "p" to use marker
+    big.histo[0].Draw("p")
     cBig.cd(3)
-    big.histo[1].Draw()
+    big.histo[1].Draw("p")
     cBig.cd(4)
-    big.histo[2].Draw()
+    big.histo[2].Draw("p")
     cBig.Update()
     
     # export as png
     image = TImage.Create()
     image.FromPad(cBig)
     image.WriteImage("{0}/plots/Big.png".format(outputPath))
+    
+    # reset BottomMargin
+    gStyle.SetPadBottomMargin(0.1)
+    raw_input("wait...")
+    
     
     # modules
     
