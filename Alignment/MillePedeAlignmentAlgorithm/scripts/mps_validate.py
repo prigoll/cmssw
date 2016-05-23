@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText
+
 import argparse
 import logging
+import os
 
 class GeometryGetter:
     """ Getting human readable names of detector parts
@@ -18,6 +20,7 @@ class GeometryGetter:
     def name_by_objid(self, objid):
         return self.objid_names[objid]
     
+    # check if label is in the range of the structlabels specified by number_bStruct
     def label_in_bStruct(self, label, number_bStruct):
         # check if it is the last structure
         if (number_bStruct < len(self.boundaries_bStruct)):
@@ -66,8 +69,13 @@ def main():
     # TODO which time MillePedeUser_X
     alignmentTime = args.time
     
+    # create output directories
+    outputPath = "validate"
+    if not os.path.exists("{0}/plots".format(outputPath)):
+        os.makedirs("{0}/plots".format(outputPath))
     
-    # TODO check of there is a file and a TTree
+    
+    # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
     if (alignmentNumber == 0):
         treeFile = TFile("./jobData/jobm/treeFile_merge.root")
@@ -98,6 +106,9 @@ def main():
         big.histo[i].SetYTitle("[cm]")
         big.histo[i].SetStats(0)
         big.histoAxis.append(big.histo[i].GetXaxis())
+        # TODO label outside of plot
+        big.histoAxis[i].SetLabelSize(0.05)
+        big.histo[i].GetYaxis().SetTitleOffset(1.6)
     
     # add labels
     title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures")
@@ -130,6 +141,9 @@ def main():
     title.Draw()
     text.Draw()
     cBig.cd(2)
+    print cBig.GetBottomMargin()
+#    cBig.SetBottomMargin(0.3)
+    print cBig.GetBottomMargin()
     big.histo[0].Draw()
     cBig.cd(3)
     big.histo[1].Draw()
@@ -140,8 +154,7 @@ def main():
     # export as png
     image = TImage.Create()
     image.FromPad(cBig)
-    image.WriteImage("Big.png")
-    
+    image.WriteImage("{0}/plots/Big.png".format(outputPath))
     
     # modules
     
@@ -205,9 +218,9 @@ def main():
         
         # export as png
         image.FromPad(cMod[number_bStruct])
-        image.WriteImage("Mod_{0}.png".format(name_bStruct))
+        image.WriteImage("{0}/plots/Mod_{1}.png".format(outputPath, name_bStruct))
     
-    input("wait...")
+    raw_input("wait...")
     
 
     
