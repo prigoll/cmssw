@@ -9,20 +9,29 @@ class GeometryGetter:
     
     objid_names = {-1: "notfound", 0: "invalid", 1: "AlignableDetUnit", 2: "AlignableDet", 3: "TPBModule", 4: "TPBLadder", 5: "TPBLayer", 6: "TPBHalfBarrel", 7: "TPBBarrel", 8: "TPEModule", 9: "TPEPanel", 10: "TPEBlade", 11: "TPEHalfDisk", 12: "TPEHalfCylinder", 13: "TPEEndcap", 14: "TIBModule", 15: "TIBString", 16: "TIBSurface", 17: "TIBHalfShell", 18: "TIBLayer", 19: "TIBHalfBarrel", 20: "TIBBarrel", 21: "TIDModule", 22: "TIDSide", 23: "TIDRing", 24: "TIDDisk", 25: "TIDEndcap", 26: "TOBModule", 27: "TOBRod", 28: "TOBLayer", 29: "TOBHalfBarrel", 30: "TOBBarrel", 31: "TECModule", 32: "TECRing", 33: "TECPetal", 34: "TECSide", 35: "TECDisk", 36: "TECEndcap", 37: "Pixel", 38: "Strip", 39: "Tracker", 100: "AlignableDTBarrel", 101: "AlignableDTWheel", 102: "AlignableDTStation", 103: "AlignableDTChamber", 104: "AlignableDTSuperLayer", 105: "AlignableDTLayer", 106: "AlignableCSCEndcap", 107: "AlignableCSCStation", 108: "AlignableCSCRing", 109: "AlignableCSCChamber", 110: "AlignableCSCLayer", 111: "AlignableMuon", 112: "Detector", 1000: "Extras", 1001: "BeamSpot"}
     
-    # TODO new IOV not reached
-    label_boundaries = [61, 17541, 37021, 121061, 144401, 284201, 700000]
-    name_boundaries = ["TrackerTPBHalfBarrel", "TrackerTPEHalfDisk", "TrackerTIBHalfBarrel", "TrackerTIDEndcap", "TrackerTOBHalfBarrel", "TrackerTECEndcap", "new IOV"]
+    boundaries_bStruct = [61, 17541, 37021, 121061, 144401, 284201, 700000]
+    name_bStruct = ["TrackerTPBHalfBarrel", "TrackerTPEHalfDisk", "TrackerTIBHalfBarrel", "TrackerTIDEndcap", "TrackerTOBHalfBarrel", "TrackerTECEndcap", "new IOV"]
     
     def __init__(self):
         pass
         
-    def name_by_objid(self, id):
-        return self.objid_names[id]
+    def name_by_objid(self, objid):
+        return self.objid_names[objid]
+    
+    def label_in_bStruct(self, label, number_bStruct):
+        # check if it is the last structure
+        if (number_bStruct < len(self.boundaries_bStruct)):
+            # check if label is between boundaries
+            if (label > self.boundaries_bStruct[number_bStruct] and label < self.boundaries_bStruct[number_bStruct+1]):
+                return True
+        elif (label > self.boundaries_bStruct[number_bStruct]):
+            return True
+            
     
     def name_by_label(self, label):
         for i, boundary_label in enumerate(self.label_boundaries):
             if (label - boundary_label < 0 and i-1 >= 0):
-                return self.name_boundaries[i-1]
+                return self.name_of_big_structs[i-1]
         return None
     
     
@@ -90,7 +99,7 @@ def main():
                     if (abs(line.Par[i]) > big.maxShift[i]):
                         big.maxShift[i] = abs(line.Par[i])
     
-    # initate histograms
+    # initialize histograms
     for i in range(3):
         big.histo.append(TH1F("Big Structure {0}".format(big.xyz[i]), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
         big.histo[i].SetYTitle("[cm]")
@@ -143,64 +152,67 @@ def main():
     
     # modules
     
-    cMod = TCanvas("canvasModules", "Parameter", 300, 0, 800, 600)
-    cMod.Divide(2,2)
+    cMod = []
     
-    mod = TreeData()
-    
-    
-    # get max shift
-    for line in MillePedeUser:
-        if (line.ObjId == 1):
-            for i in range(3):
-                if (abs(line.Par[i]) != 999999 and abs(line.Par[i]) > mod.maxShift[i]):
-                    mod.maxShift[i] = line.Par[i]
-    
-    # round max shift
-    for i in range(3):
-        mod.maxShift[i] = round(mod.maxShift[i],3) + 0.001
-                    
-    # initate histograms
-    for i in range(3):
-        mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -mod.maxShift[i], mod.maxShift[i]))
-        mod.histo[i].SetXTitle("[cm]")                    
-    
-    # add labels
-    title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Modules")
-    text = TPaveText(0.05, 0.1, 0.95, 0.75)
-    text.SetTextAlign(13)
-    text.SetTextSizePixels(20)
-    
-    # TODO chose good limit
-    # error if shift is bigger than limit
-    limit = 0.02
-    for i in range(3):
-        text.AddText("max. shift {0}: {1:.2}".format(mod.xyz[i], mod.maxShift[i]))
-        if (mod.maxShift[i] > limit):
-            text.AddText("! {0} shift bigger than {1} !".format(mod.xyz[i], limit))
-    
+    # loop over all structures
+    for number_bStruct, name_bStruct in enumerate(geometryGetter.name_bStruct):
+        cMod.append(TCanvas("canvasModules{0}".format(name_bStruct), "Parameter", 300, 0, 800, 600))
+        cMod[number_bStruct].Divide(2,2)
+        
+        mod = TreeData()
+        
+        # get max shift
+        for line in MillePedeUser:
+            if (line.ObjId == 1 and geometryGetter.label_in_bStruct(line.Label, number_bStruct)):
+                for i in range(3):
+                    if (abs(line.Par[i]) != 999999 and abs(line.Par[i]) > mod.maxShift[i]):
+                        mod.maxShift[i] = line.Par[i]
+        
+        # round max shift
+        for i in range(3):
+            mod.maxShift[i] = round(mod.maxShift[i],3) + 0.001
+                        
+        # initialize histograms
+        for i in range(3):
+            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -mod.maxShift[i], mod.maxShift[i]))
+            mod.histo[i].SetXTitle("[cm]")                    
+        
+        # add labels
+        title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(name_bStruct))
+        text = TPaveText(0.05, 0.1, 0.95, 0.75)
+        text.SetTextAlign(13)
+        text.SetTextSizePixels(20)
+        
+        # TODO chose good limit
+        # error if shift is bigger than limit
+        limit = 0.02
+        for i in range(3):
+            text.AddText("max. shift {0}: {1:.2}".format(mod.xyz[i], mod.maxShift[i]))
+            if (mod.maxShift[i] > limit):
+                text.AddText("! {0} shift bigger than {1} !".format(mod.xyz[i], limit))
+        
 
-    for line in MillePedeUser:
-        if (line.ObjId == 1):
-            for i in range(3):
-                if (abs(line.Par[i]) != 999999): 
-                    mod.histo[i].Fill(line.Par[i])
-            
-    
-    cMod.cd(1)
-    title.Draw()
-    text.Draw()
-    cMod.cd(2)
-    mod.histo[0].Draw()
-    cMod.cd(3)
-    mod.histo[1].Draw()
-    cMod.cd(4)
-    mod.histo[2].Draw()
-    cMod.Update()
-    
-    # export as png
-    image.FromPad(cMod)
-    image.WriteImage("Mod.png")
+        for line in MillePedeUser:
+            if (line.ObjId == 1 and geometryGetter.label_in_bStruct(line.Label, number_bStruct)):
+                for i in range(3):
+                    if (abs(line.Par[i]) != 999999): 
+                        mod.histo[i].Fill(line.Par[i])
+                
+        
+        cMod[number_bStruct].cd(1)
+        title.Draw()
+        text.Draw()
+        cMod[number_bStruct].cd(2)
+        mod.histo[0].Draw()
+        cMod[number_bStruct].cd(3)
+        mod.histo[1].Draw()
+        cMod[number_bStruct].cd(4)
+        mod.histo[2].Draw()
+        cMod[number_bStruct].Update()
+        
+        # export as png
+        image.FromPad(cMod[number_bStruct])
+        image.WriteImage("Mod_{0}.png".format(name_bStruct))
     
     input("wait...")
     
