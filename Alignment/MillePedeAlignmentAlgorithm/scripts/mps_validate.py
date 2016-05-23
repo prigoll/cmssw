@@ -2,8 +2,10 @@
 from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText
 
 import argparse
+import gzip
 import logging
 import os
+import re
 
 class GeometryGetter:
     """ Getting human readable names of detector parts
@@ -69,18 +71,60 @@ def main():
     # TODO which time MillePedeUser_X
     alignmentTime = args.time
     
+    # jobData path
+    if (alignmentNumber == 0):
+        jobDataPath = "./jobData/jobm"
+    else:
+        jobDataPath = "./jobData/jobm{0}".format(alignmentNumber)
+    
     # create output directories
     outputPath = "validate"
     if not os.path.exists("{0}/plots".format(outputPath)):
         os.makedirs("{0}/plots".format(outputPath))
     
     
+    # parse pede.dump.gz
+    
+    # only recognize warning the first time
+    warningBool = False
+    
+    # save lines in list
+    with gzip.open("{0}/pede.dump.gz".format(jobDataPath)) as gzipFile:
+        dumpFile = gzipFile.readlines()
+    
+    for i, line in enumerate(dumpFile):
+        # Sum(Chi^2)/Sum(Ndf)
+        if ("Sum(Chi^2)/Sum(Ndf) =" in line):
+            number = map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i+2]))
+            print "Sum(Chi^2)/Sum(Ndf): {0}".format(number[0])
+        if ("with correction for down-weighting" in line):
+            number = map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i]))
+            print "with correction for down-weighting: {0}".format(number[0])
+        # Peak dynamic memory allocation
+        if ("Peak dynamic memory allocation:" in line):
+            number = map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i]))
+            print "Peak dynamic memory allocation: {0} GB".format(number[0])
+        # total time
+        if ("Iteration-end" in line):
+            number = map(int, re.findall(r"\d+", dumpFile[i+1]))
+            print "Total time: {0} h {1} m {2} s".format(number[0],number[1],number[2])
+        # warings
+        if ("WarningWarningWarningWarning" in line and warningBool == False):
+            warningBool = True
+            j = i+8
+            print "WARNING:"
+            while ("Warning" not in dumpFile[j]): 
+                print dumpFile[j]
+                j += 1
+        
+    
+    raw_input("wait...")
+    
+    
+    
     # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
-    if (alignmentNumber == 0):
-        treeFile = TFile("./jobData/jobm/treeFile_merge.root")
-    else:
-        treeFile = TFile("./jobData/jobm{0}/treeFile_merge.root".format(alignmentNumber))
+    treeFile = TFile("{0}/treeFile_merge.root".format(jobDataPath))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(alignmentTime))
     
     
@@ -141,9 +185,9 @@ def main():
     title.Draw()
     text.Draw()
     cBig.cd(2)
-    print cBig.GetBottomMargin()
+#    print cBig.GetBottomMargin()
 #    cBig.SetBottomMargin(0.3)
-    print cBig.GetBottomMargin()
+#    print cBig.GetBottomMargin()
     big.histo[0].Draw()
     cBig.cd(3)
     big.histo[1].Draw()
