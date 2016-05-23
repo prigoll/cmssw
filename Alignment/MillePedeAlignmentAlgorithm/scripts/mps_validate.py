@@ -46,6 +46,40 @@ class TreeData:
         self.binPosition = [1, 1, 1]
         self.histo = []
         self.histoAxis = []
+        
+class LogData:
+    """ information out of the pede.dump.gz file
+    """
+    
+    def __init__(self):
+        self.sumValue = 0
+        self.sumWValue = 0
+        self.sumSteps = ""
+        self.correction = 0
+        self.memory = 0
+        self.time = []
+        self.warning = []
+        # number of records
+        self.nrec = 0
+        # total numer of parameters
+        self.ntgb = 0
+        # number of variable parameters
+        self.nvgb = 0
+        
+    def print_log(self):
+        if (self.sumValue != 0):
+            print "Sum(Chi^2)/Sum(Ndf) = {0} = {1}".format(self.sumSteps, self.sumValue)
+        else:
+            print "Sum(W*Chi^2)/Sum(Ndf)/<W> = {0} = {1}".format(self.sumSteps, self.sumWValue)
+        print "with correction for down-weighting: {0}".format(self.correction)
+        print "Peak dynamic memory allocation: {0} GB".format(self.memory)
+        print "Total time: {0} h {1} m {2} s".format(self.time[0], self.time[1], self.time[2])
+        print "Number of records: {0}".format(self.nrec)
+        print "Total number of parameters: {0}".format(self.ntgb)
+        print "Number of variable parameters: {0}".format(self.nvgb)
+        print "Warning:"
+        for line in self.warning:
+            print line
                         
 
 
@@ -85,6 +119,8 @@ def main():
     
     # parse pede.dump.gz
     
+    logData = LogData()
+    
     # only recognize warning the first time
     warningBool = False
     
@@ -95,27 +131,63 @@ def main():
     for i, line in enumerate(dumpFile):
         # Sum(Chi^2)/Sum(Ndf)
         if ("Sum(Chi^2)/Sum(Ndf) =" in line):
-            number = map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i+2]))
-            print "Sum(Chi^2)/Sum(Ndf): {0}".format(number[0])
+            number = []
+            number.append(map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i])))
+            number.append(map(int, re.findall(r"[-+]?\d+", dumpFile[i+1])))
+            number.append(map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i+2])))
+            logData.sumSteps = "{0} / ( {1} - {2} )".format(number[0][0], number[1][0], number[1][1])
+            logData.sumValue = number[2][0]
+            
+        # Sum(W*Chi^2)/Sum(Ndf)/<W>
+        if ("Sum(W*Chi^2)/Sum(Ndf)/<W> =" in line):
+            number = []
+            number.append(map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i])))
+            number.append(map(int, re.findall(r"[-+]?\d+", dumpFile[i+1])))
+            number.append(map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i+2])))
+            number.append(map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i+3])))
+            logData.sumSteps = "{0} / ( {1} - {2} ) / {3}".format(number[0][0], number[1][0], number[1][1], number[2][0])
+            logData.sumWValue = number[3][0]
+        
         if ("with correction for down-weighting" in line):
             number = map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i]))
-            print "with correction for down-weighting: {0}".format(number[0])
+            logData.correction = number[0]
+            
         # Peak dynamic memory allocation
         if ("Peak dynamic memory allocation:" in line):
             number = map(float, re.findall(r"[-+]?\d*\.\d+", dumpFile[i]))
-            print "Peak dynamic memory allocation: {0} GB".format(number[0])
+            logData.memory = number[0]
+            
         # total time
         if ("Iteration-end" in line):
             number = map(int, re.findall(r"\d+", dumpFile[i+1]))
-            print "Total time: {0} h {1} m {2} s".format(number[0],number[1],number[2])
+            logData.time = number[:3]
+            
         # warings
         if ("WarningWarningWarningWarning" in line and warningBool == False):
             warningBool = True
             j = i+8
             print "WARNING:"
             while ("Warning" not in dumpFile[j]): 
-                print dumpFile[j]
+                logData.warning.append(dumpFile[j])
                 j += 1
+                
+        # nrec number of records
+        if (" = number of records" in line):
+            number = map(int, re.findall("\d+", dumpFile[i]))
+            logData.nrec = number[0]
+        
+        # ntgb total number of parameters
+        if (" = total number of parameters" in line):
+            number = map(int, re.findall("\d+", dumpFile[i]))
+            logData.ntgb = number[0]
+        
+        # nvgb number of variable parameters
+        if (" = number of variable parameters" in line):
+            number = map(int, re.findall("\d+", dumpFile[i]))
+            logData.nvgb = number[0]
+            
+            
+    logData.print_log()
 
     
     
