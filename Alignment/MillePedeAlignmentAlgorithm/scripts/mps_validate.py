@@ -228,6 +228,7 @@ def main():
         # bigger labels for the text
         big.histoAxis[i].SetLabelSize(0.06)
         big.histo[i].GetYaxis().SetTitleOffset(1.6)
+        big.histo[i].SetFillColor(42)
         
     
     # add labels
@@ -262,11 +263,11 @@ def main():
     text.Draw()
     cBig.cd(2)
     # option "p" to use marker
-    big.histo[0].Draw("p")
+    big.histo[0].Draw("hbarP")
     cBig.cd(3)
-    big.histo[1].Draw("p")
+    big.histo[1].Draw("hbarp")
     cBig.cd(4)
-    big.histo[2].Draw("p")
+    big.histo[2].Draw("hbarL")
     cBig.Update()
     
     # export as png
@@ -276,8 +277,7 @@ def main():
     
     # reset BottomMargin
     gStyle.SetPadBottomMargin(0.1)
-    raw_input("wait...")
-    
+    raw_input("wait..")
     
     # modules
     
@@ -303,8 +303,12 @@ def main():
                         
         # initialize histograms
         for i in range(3):
-            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -mod.maxShift[i], mod.maxShift[i]))
-            mod.histo[i].SetXTitle("[cm]")                    
+            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -max(mod.maxShift), max(mod.maxShift)))
+            mod.histo[i].SetXTitle("[cm]")
+            
+        # show the skewness in the legend
+        gStyle.SetOptStat("nemrs")
+
         
         # add labels
         title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(name_bStruct))
