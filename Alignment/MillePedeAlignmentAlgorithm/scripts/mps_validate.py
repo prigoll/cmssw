@@ -276,7 +276,7 @@ def main():
     
     # reset BottomMargin
     gStyle.SetPadBottomMargin(0.1)
-    raw_input("wait...")
+
     
     
     # modules
@@ -303,7 +303,7 @@ def main():
                         
         # initialize histograms
         for i in range(3):
-            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -mod.maxShift[i], mod.maxShift[i]))
+            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -max(mod.maxShift), max(mod.maxShift)))
             mod.histo[i].SetXTitle("[cm]")                    
         
         # add labels
@@ -326,6 +326,9 @@ def main():
                 for i in range(3):
                     if (abs(line.Par[i]) != 999999): 
                         mod.histo[i].Fill(line.Par[i])
+                        
+        # show the skewness in the legend
+        gStyle.SetOptStat("nemrs")
                 
         
         cMod[number_bStruct].cd(1)
