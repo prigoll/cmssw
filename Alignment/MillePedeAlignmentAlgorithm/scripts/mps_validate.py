@@ -303,8 +303,9 @@ def main():
                         
         # initialize histograms
         for i in range(3):
-            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 100, -max(mod.maxShift), max(mod.maxShift)))
-            mod.histo[i].SetXTitle("[cm]")                    
+            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 10000, -0.1, 0.1))
+            mod.histo[i].SetXTitle("[cm]")
+            mod.histo[i].SetBins(100, -max(mod.maxShift), max(mod.maxShift))
         
         # add labels
         title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(name_bStruct))
