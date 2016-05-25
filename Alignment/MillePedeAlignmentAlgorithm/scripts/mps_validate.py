@@ -43,6 +43,7 @@ class TreeData:
     def __init__(self):
         self.numberOfBins = [0, 0, 0]
         self.maxShift = [0, 0, 0]
+        self.maxBinShift = [0, 0, 0]
         self.binPosition = [1, 1, 1]
         self.histo = []
         self.histoAxis = []
@@ -290,43 +291,66 @@ def main():
         
         mod = TreeData()
         
-        # get max shift
-        for line in MillePedeUser:
-            if (line.ObjId == 1 and geometryGetter.label_in_bStruct(line.Label, number_bStruct)):
-                for i in range(3):
-                    if (abs(line.Par[i]) != 999999 and abs(line.Par[i]) > mod.maxShift[i]):
-                        mod.maxShift[i] = line.Par[i]
-        
-        # round max shift
-        for i in range(3):
-            mod.maxShift[i] = round(mod.maxShift[i],3) + 0.001
+        numberOfBins = 10000
                         
         # initialize histograms
         for i in range(3):
-            mod.histo.append(TH1F("Module {0}".format(mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), 10000, -0.1, 0.1))
+            mod.histo.append(TH1F("{0} {1}".format(name_bStruct, mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), numberOfBins, -0.1, 0.1))
             mod.histo[i].SetXTitle("[cm]")
-            mod.histo[i].SetBins(100, -max(mod.maxShift), max(mod.maxShift))
+            mod.histoAxis.append(mod.histo[i].GetXaxis())
         
         # add labels
         title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(name_bStruct))
         text = TPaveText(0.05, 0.1, 0.95, 0.75)
         text.SetTextAlign(13)
-        text.SetTextSizePixels(20)
-        
-        # TODO chose good limit
-        # error if shift is bigger than limit
-        limit = 0.02
-        for i in range(3):
-            text.AddText("max. shift {0}: {1:.2}".format(mod.xyz[i], mod.maxShift[i]))
-            if (mod.maxShift[i] > limit):
-                text.AddText("! {0} shift bigger than {1} !".format(mod.xyz[i], limit))
-        
+        text.SetTextSizePixels(20)        
 
+        # fill histogram
         for line in MillePedeUser:
             if (line.ObjId == 1 and geometryGetter.label_in_bStruct(line.Label, number_bStruct)):
                 for i in range(3):
                     if (abs(line.Par[i]) != 999999): 
                         mod.histo[i].Fill(line.Par[i])
+                        
+        # find the best range
+        for i in range(3):
+            # get first and last bin with content and chose the one which has a greater distance to the center
+            mod.maxBinShift[i] = max( abs(numberOfBins/2-mod.histo[i].FindFirstBinAbove()), abs(mod.histo[i].FindLastBinAbove()-numberOfBins/2) )
+            # skip empty histogram
+            if (mod.maxBinShift[i] == numberOfBins/2+1):
+                mod.maxBinShift[i] = 0
+
+        # apply the new range
+        for i in range(3):
+            
+            # merge bins, ca. 100 should be visible in the resulting plot
+            mergeNumberBins = max(mod.maxBinShift)
+            # skip empty histogram
+            if (mergeNumberBins != 0):
+                # the 2*maxBinShift bins should shrink to 100 bins
+                mergeNumberBins = int(2*mergeNumberBins/100.)
+                # the total number of bins should be dividable by the bins shrinked together
+                while (numberOfBins%mergeNumberBins != 0):
+                    mergeNumberBins -= 1
+                
+                # Rebin and save new created histogram and axis
+                mod.histo[i] = mod.histo[i].Rebin( mergeNumberBins )
+                mod.histoAxis[i] = mod.histo[i].GetXaxis()
+                
+                # set view range. it is important to note that the number of bins have changed with the rebinning
+                # the total number and the number of shift must be corrected with / mergeNumberBins
+                mod.histoAxis[i].SetRange(int(numberOfBins/(2*mergeNumberBins)-max(mod.maxBinShift) / mergeNumberBins), int(numberOfBins/(2*mergeNumberBins)+max(mod.maxBinShift) / mergeNumberBins))
+            
+               
+        # TODO chose good limit
+        # error if shift is bigger than limit
+        limit = 0.02
+        for i in range(3):
+            text.AddText("max. shift {0}: {1:.2}".format(mod.xyz[i], mod.histoAxis[i].GetBinCenter(mod.maxBinShift[i])))
+            if (mod.histoAxis[i].GetBinCenter(mod.maxBinShift[i]) > limit):
+                text.AddText("! {0} shift bigger than {1} !".format(mod.xyz[i], limit))
+        
+        
                         
         # show the skewness in the legend
         gStyle.SetOptStat("nemrs")
