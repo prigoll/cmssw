@@ -25,9 +25,9 @@ class GeometryGetter:
             for j in range(len(self.boundariesStruct[i])):
                 # end of big strucutre
                 if ( j+1 == len(self.boundariesStruct[i]) ):
-                    self.bStructs[i].children.append(Struct("{0} {1}".format(name, j), self.boundariesStruct[i][j], self.boundariesStruct[i+1][0]-1))    
+                    self.bStructs[i].children.append(Struct("{0} {1}".format(name, j+1), self.boundariesStruct[i][j], self.boundariesStruct[i+1][0]-1))    
                 else:
-                    self.bStructs[i].children.append(Struct("{0} {1}".format(name, j), self.boundariesStruct[i][j], self.boundariesStruct[i][j+1])) 
+                    self.bStructs[i].children.append(Struct("{0} {1}".format(name, j+1), self.boundariesStruct[i][j], self.boundariesStruct[i][j+1])) 
                 
         
         
@@ -83,6 +83,8 @@ class TreeData:
         self.numberOfBins = [0, 0, 0]
         self.maxShift = [0, 0, 0]
         self.maxBinShift = [0, 0, 0]
+        # used binShift
+        self.binShift = [0, 0, 0]
         self.hiddenEntries = [0, 0, 0]
         self.binPosition = [1, 1, 1]
         self.histo = []
@@ -238,7 +240,7 @@ def main():
     treeFile = TFile("{0}/treeFile_merge.root".format(jobDataPath))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(alignmentTime))
     
-    
+    ######################################################################################
     # big structures
     
         
@@ -319,15 +321,15 @@ def main():
     gStyle.SetPadBottomMargin(0.1)
 
     
-    
-    # modules
+    ######################################################################################
+    # module Struct
     
     cMod = []
     
     # loop over all structures
     for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
         cMod.append(TCanvas("canvasModules{0}".format(bStruct.getName()), "Parameter", 300, 0, 800, 600))
-        cMod[bStructNumber].Divide(2,2)
+        cMod[bStructNumber].Divide(2, 2)
         
         mod = TreeData()
         
@@ -379,6 +381,9 @@ def main():
                 else:
                     binShift = max(mod.maxBinShift)
                 
+                # save used binShift
+                mod.binShift[i] = binShift
+                
                 # merge bins, ca. 100 should be visible in the resulting plot
                 mergeNumberBins = binShift
                 # skip empty histogram
@@ -414,22 +419,103 @@ def main():
                         
         # show the skewness in the legend
         gStyle.SetOptStat("nemrs")
-                
         
         cMod[bStructNumber].cd(1)
         title.Draw()
         text.Draw()
         cMod[bStructNumber].cd(2)
-        mod.histo[0].Draw()
+        mod.histo[0].DrawCopy()
         cMod[bStructNumber].cd(3)
-        mod.histo[1].Draw()
+        mod.histo[1].DrawCopy()
         cMod[bStructNumber].cd(4)
-        mod.histo[2].Draw()
+        mod.histo[2].DrawCopy()
         cMod[bStructNumber].Update()
+        raw_input("..")
         
         # export as png
         image.FromPad(cMod[bStructNumber])
         image.WriteImage("{0}/plots/Mod_{1}.png".format(outputPath, bStruct.getName()))
+        
+        
+        ######################################################################################
+        # module subStruct
+        
+        cModSub = []
+        
+        print bStruct.getChildren()
+        
+        # loop over subStructs
+        for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
+            cModSub.append(TCanvas("canvasSubStruct{0}".format(subStruct.getName()), "Parameter", 300, 0, 800, 600))
+            cModSub[subStructNumber].Divide(2, 2)
+            
+            modSub = TreeData()
+            
+            # initialize histograms
+            for i in range(3):
+                modSub.histo.append(TH1F("{0} {1}".format(subStruct.getName(), modSub.xyz[i]), "Parameter {0}".format(modSub.xyz[i]), numberOfBins, -0.1, 0.1))
+                modSub.histo[i].SetXTitle("[cm]")
+                modSub.histoAxis.append(modSub.histo[i].GetXaxis())
+                modSub.histo[i].SetLineColor(6)
+            
+            # add labels
+            titleSub = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(subStruct.getName()))
+            textSub = TPaveText(0.05, 0.1, 0.95, 0.75)
+            textSub.SetTextAlign(13)
+            textSub.SetTextSizePixels(20)
+            
+            # fill histogram
+            for line in MillePedeUser:
+                if (line.ObjId == 1 and subStruct.containLabel(line.Label)):
+                    for i in range(3):
+                        if (abs(line.Par[i]) != 999999): 
+                            modSub.histo[i].Fill(line.Par[i])
+            
+            # find and apply the new range
+            for i in range(3):
+                if (modSub.histo[i].GetEntries() != 0 and modSub.histo[i].GetStdDev() != 0):
+                    # use binShift of the hole structure
+                    binShift = mod.binShift[i]
+                    
+                    # merge bins, ca. 100 should be visible in the resulting plot
+                    mergeNumberBins = binShift
+                    # skip empty histogram
+                    if (mergeNumberBins != 0):
+                        # the 2*maxBinShift bins should shrink to 100 bins
+                        mergeNumberBins = int(2*mergeNumberBins/100.)
+                        # the total number of bins should be dividable by the bins shrinked together
+                        if (mergeNumberBins == 0):
+                            mergeNumberBins = 1
+                        while (numberOfBins%mergeNumberBins != 0 and mergeNumberBins != 1):
+                            mergeNumberBins -= 1
+                        
+                        # Rebin and save new created histogram and axis
+                        modSub.histo[i] = modSub.histo[i].Rebin( mergeNumberBins )
+                        modSub.histoAxis[i] = modSub.histo[i].GetXaxis()
+                        
+                        # set view range. it is important to note that the number of bins have changed with the rebinning
+                        # the total number and the number of shift must be corrected with / mergeNumberBins
+                        modSub.histoAxis[i].SetRange(int(numberOfBins/(2*mergeNumberBins)-binShift / mergeNumberBins), int(numberOfBins/(2*mergeNumberBins)+binShift / mergeNumberBins))
+            
+            # draw subStruct modules and the hole struct
+            cModSub[subStructNumber].cd(1)
+            titleSub.Draw()
+            textSub.Draw()
+            cModSub[subStructNumber].cd(2)
+            modSub.histo[0].DrawCopy()
+            mod.histo[0].DrawCopy("same")
+            cModSub[subStructNumber].cd(3)
+            modSub.histo[1].DrawCopy()
+            mod.histo[1].DrawCopy("same")
+            cModSub[subStructNumber].cd(4)
+            modSub.histo[2].DrawCopy()
+            mod.histo[2].DrawCopy("same")
+            cModSub[subStructNumber].Update()
+            raw_input("stop")
+            
+            
+                
+                
     
     raw_input("wait...")
     
