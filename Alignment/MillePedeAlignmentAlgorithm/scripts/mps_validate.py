@@ -13,25 +13,64 @@ class GeometryGetter:
     
     objid_names = {-1: "notfound", 0: "invalid", 1: "AlignableDetUnit", 2: "AlignableDet", 3: "TPBModule", 4: "TPBLadder", 5: "TPBLayer", 6: "TPBHalfBarrel", 7: "TPBBarrel", 8: "TPEModule", 9: "TPEPanel", 10: "TPEBlade", 11: "TPEHalfDisk", 12: "TPEHalfCylind", 13: "TPEEndcap", 14: "TIBModule", 15: "TIBString", 16: "TIBSurface", 17: "TIBHalfShell", 18: "TIBLayer", 19: "TIBHalfBarrel", 20: "TIBBarrel", 21: "TIDModule", 22: "TIDSide", 23: "TIDRing", 24: "TIDDisk", 25: "TIDEndcap", 26: "TOBModule", 27: "TOBRod", 28: "TOBLayer", 29: "TOBHalfBarrel", 30: "TOBBarrel", 31: "TECModule", 32: "TECRing", 33: "TECPetal", 34: "TECSide", 35: "TECDisk", 36: "TECEndcap", 37: "Pixel", 38: "Strip", 39: "Tracker", 100: "AlignableDTBarrel", 101: "AlignableDTWheel", 102: "AlignableDTStation", 103: "AlignableDTChamber", 104: "AlignableDTSuperLayer", 105: "AlignableDTLayer", 106: "AlignableCSCEndcap", 107: "AlignableCSCStation", 108: "AlignableCSCRing", 109: "AlignableCSCChamber", 110: "AlignableCSCLayer", 111: "AlignableMuon", 112: "Detector", 1000: "Extras", 1001: "BeamSpot"}
     
-    boundaries_bStruct = [61, 17541, 37021, 121061, 144401, 284201, 700000]
-    name_bStruct = ["TrackerTPBHalfBarrel", "TrackerTPEHalfDisk", "TrackerTIBHalfBarrel", "TrackerTIDEndcap", "TrackerTOBHalfBarrel", "TrackerTECEndcap", "newIOV"]
+    # TODO last value is guessed
+#    boundaries_bStruct = [61, 17541, 37021, 121061, 144401, 284201, 700000, 1000000]
+    boundariesStruct = [ [61, 8781], [17541, 19961, 22401,  24821, 27281, 29701, 32141, 34561], [37021, 79041], [144401, 214301], [121061, 132721], [284201, 380121], [700000], [1000000] ]
+    namebStruct = ["TrackerTPBHalfBarrel", "TrackerTPEHalfDisk", "TrackerTIBHalfBarrel", "TrackerTIDEndcap", "TrackerTOBHalfBarrel", "TrackerTECEndcap", "newIOV"]
     
     def __init__(self):
-        pass
+        self.bStructs = []
+        for i, name in enumerate(self.namebStruct):
+            self.bStructs.append(Struct(name, self.boundariesStruct[i][0], self.boundariesStruct[i+1][0]-1, True))
+            for j in range(len(self.boundariesStruct[i])):
+                # end of big strucutre
+                if ( j+1 == len(self.boundariesStruct[i]) ):
+                    self.bStructs[i].children.append(Struct("{0} {1}".format(name, j), self.boundariesStruct[i][j], self.boundariesStruct[i+1][0]-1))    
+                else:
+                    self.bStructs[i].children.append(Struct("{0} {1}".format(name, j), self.boundariesStruct[i][j], self.boundariesStruct[i][j+1])) 
+                
+        
         
     def name_by_objid(self, objid):
         return self.objid_names[objid]
     
-    # check if label is in the range of the structlabels specified by number_bStruct
-    def label_in_bStruct(self, label, number_bStruct):
-        # check if it is the last structure
-        if (number_bStruct < len(self.boundaries_bStruct)):
-            # check if label is between boundaries
-            if (label > self.boundaries_bStruct[number_bStruct] and label < self.boundaries_bStruct[number_bStruct+1]):
-                return True
-        elif (label > self.boundaries_bStruct[number_bStruct]):
-            return True
+    def listbStructs(self):
+        return self.bStructs
     
+    # check if label is in the range of the structlabels specified by bStructNumber
+    def label_in_bStruct(self, label, bStructNumber):
+        # check if it is the last structure
+        if (bStructNumber < len(self.boundaries_bStruct)):
+            # check if label is between boundaries
+            if (label > self.boundaries_bStruct[bStructNumber] and label < self.boundaries_bStruct[bStructNumber+1]):
+                return True
+        elif (label > self.boundaries_bStruct[bStructNumber]):
+            return True
+
+class Struct:
+    """ informaion about the physical structs in the detector
+    """
+    def __init__(self, name, begin, end, big = False):
+        self.name = name
+        self.begin = begin
+        self.end = end
+        self.big = big
+        self.children = []
+        
+    def addChild(self, child):
+        self.children.append(child)
+        
+    def getChildren(self):
+        return self.children
+    
+    def getName(self):
+        return self.name
+    
+    def containLabel(self, label):
+        if (label > self.begin and label < self.end):
+            return True
+        else:
+            return False
     
     
 class TreeData:
@@ -286,9 +325,9 @@ def main():
     cMod = []
     
     # loop over all structures
-    for number_bStruct, name_bStruct in enumerate(geometryGetter.name_bStruct):
-        cMod.append(TCanvas("canvasModules{0}".format(name_bStruct), "Parameter", 300, 0, 800, 600))
-        cMod[number_bStruct].Divide(2,2)
+    for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
+        cMod.append(TCanvas("canvasModules{0}".format(bStruct.getName()), "Parameter", 300, 0, 800, 600))
+        cMod[bStructNumber].Divide(2,2)
         
         mod = TreeData()
         
@@ -296,19 +335,19 @@ def main():
                         
         # initialize histograms
         for i in range(3):
-            mod.histo.append(TH1F("{0} {1}".format(name_bStruct, mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), numberOfBins, -0.1, 0.1))
+            mod.histo.append(TH1F("{0} {1}".format(bStruct.getName(), mod.xyz[i]), "Parameter {0}".format(mod.xyz[i]), numberOfBins, -0.1, 0.1))
             mod.histo[i].SetXTitle("[cm]")
             mod.histoAxis.append(mod.histo[i].GetXaxis())
         
         # add labels
-        title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(name_bStruct))
+        title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(bStruct.getName()))
         text = TPaveText(0.05, 0.1, 0.95, 0.75)
         text.SetTextAlign(13)
         text.SetTextSizePixels(20)        
 
         # fill histogram
         for line in MillePedeUser:
-            if (line.ObjId == 1 and geometryGetter.label_in_bStruct(line.Label, number_bStruct)):
+            if (line.ObjId == 1 and bStruct.containLabel(line.Label)):
                 for i in range(3):
                     if (abs(line.Par[i]) != 999999): 
                         mod.histo[i].Fill(line.Par[i])
@@ -377,20 +416,20 @@ def main():
         gStyle.SetOptStat("nemrs")
                 
         
-        cMod[number_bStruct].cd(1)
+        cMod[bStructNumber].cd(1)
         title.Draw()
         text.Draw()
-        cMod[number_bStruct].cd(2)
+        cMod[bStructNumber].cd(2)
         mod.histo[0].Draw()
-        cMod[number_bStruct].cd(3)
+        cMod[bStructNumber].cd(3)
         mod.histo[1].Draw()
-        cMod[number_bStruct].cd(4)
+        cMod[bStructNumber].cd(4)
         mod.histo[2].Draw()
-        cMod[number_bStruct].Update()
+        cMod[bStructNumber].Update()
         
         # export as png
-        image.FromPad(cMod[number_bStruct])
-        image.WriteImage("{0}/plots/Mod_{1}.png".format(outputPath, name_bStruct))
+        image.FromPad(cMod[bStructNumber])
+        image.WriteImage("{0}/plots/Mod_{1}.png".format(outputPath, bStruct.getName()))
     
     raw_input("wait...")
     
