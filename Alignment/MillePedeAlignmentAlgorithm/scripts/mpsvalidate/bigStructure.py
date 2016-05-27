@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gStyle, gROOT
+from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
 ######################################################################################
