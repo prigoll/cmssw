@@ -81,6 +81,9 @@ class TreeData:
         self.binPosition = [1, 1, 1]
         self.histo = []
         self.histoAxis = []
+        # plot title and text
+        self.title = 0
+        self.text = 0
         
 class LogData:
     """ information out of the pede.dump.gz file
