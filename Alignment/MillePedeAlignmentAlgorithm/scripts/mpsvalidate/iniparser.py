@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+
+##########################################################################
+
+##  Read the ini data which is passed to the function and return the
+##  data as a configData object. If a parameter is given the function
+##  parseParameter will override the config values.
+##
+
+import ConfigParser
+
+class ConfigData:
+    """ stores the config data of the ini files or the console parameters
+    """
+    
+    def __init__(self):
+        # jobmX dir
+        self.jobNumber = -1
+        # MillePedeUser_X time
+        self.jobTime = -1
+        self.jobDataPath = ""
+        self.outputPath = ""
+
+    def parseConfig(self, path):
+        # create ConfigParser object
+        parser = ConfigParser.ConfigParser()
+        
+        # read ini file
+        parser.read(path)
+        
+        # buffer object
+        configBuffer = ConfigData()
+        
+        
+        # collect data and process it
+        try:
+            configBuffer.jobNumber = int(parser.get("GENERAL","job"))
+        except:
+            pass
+        
+        try:
+            configBuffer.jobDataPath = parser.get("GENERAL","jobdatapath")
+        except:
+            pass
+        
+        # set jobDataPath if job number is given and if path is not given
+        if (configBuffer.jobNumber != -1 and configBuffer.jobDataPath == ""):
+            self.jobNumber = configBuffer.jobNumber
+            if (self.jobNumber == 0):
+                self.jobDataPath = ".jobData/jobm"
+            else:
+                self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)
+        
+        # if jobData path is given
+        if (configBuffer.jobDataPath != ""):
+            self.jobDataPath = configBuffer.jobDataPath
+        
+        
+        # data which could be stored directly
+        try:
+            self.jobTime = int(parser.get("GENERAL","time"))
+        except:
+            pass    
+        
+        try:
+            self.outputPath = parser.get("GENERAL","outputpath")
+        except:
+            pass
+        
+
+    def parseParameter(self, args):
+        # check if parameter is given and override the config data
+        if (args.time != -1):
+            self.jobTime = args.time
+            
+        if (args.job != -1):
+            self.jobNumber = args.job
+            
+            # set jobDataPath
+            if (self.jobNumber == 0):
+                self.jobDataPath = ".jobData/jobm"
+            else:
+                self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)

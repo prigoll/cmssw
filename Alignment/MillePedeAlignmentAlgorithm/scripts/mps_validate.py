@@ -9,6 +9,7 @@
 from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 from mpsvalidate.dumpparser import parse
+from mpsvalidate.iniparser import ConfigData
 from mpsvalidate import bigStructure, bigModule, subModule
 
 import argparse
@@ -26,38 +27,39 @@ def main():
     geometryGetter = GeometryGetter()
     
     # ArgumentParser
-    parser = argparse.ArgumentParser(description="Validate your Aligment.")
+    parser = argparse.ArgumentParser(description="Validate your Alignment.")
     # TODO set default -> 0
-    parser.add_argument("-j", "--job", help="chose jobmX directory (default: 0)", default=3, type=int)
-    parser.add_argument("-t", "--time", help="chose MillePedeUser_X Tree (default: 1)", default=1, type=int)
+    parser.add_argument("-j", "--job", help="chose jobmX directory (default: ini-file)", default=-1, type=int)
+    parser.add_argument("-t", "--time", help="chose MillePedeUser_X Tree (default: ini-file)", default=-1, type=int)
+    parser.add_argument("-i", "--ini", help="specify a ini file", default="-1")
     args = parser.parse_args()
     
-    # TODO get latest Alignment directory
-    alignmentNumber = args.job
+    # create config object
+    config = ConfigData()
     
-    # TODO which time MillePedeUser_X
-    alignmentTime = args.time
+    # parse default ini file
+    config.parseConfig("./mpsvalidate/default.ini")
     
-    # jobData path
-    if (alignmentNumber == 0):
-        jobDataPath = "./jobData/jobm"
-    else:
-        jobDataPath = "./jobData/jobm{0}".format(alignmentNumber)
+    # parse user ini file
+    if (args.ini != "-1"):
+        config.parseConfig(args.ini)
     
-    # create output directories
-    outputPath = "validate"
-    if not os.path.exists("{0}/plots".format(outputPath)):
-        os.makedirs("{0}/plots".format(outputPath))
+    # override ini configs with consol parameter
+    config.parseParameter(args)
+    
+    ## create output directories
+    if not os.path.exists("{0}/plots".format(config.outputPath)):
+        os.makedirs("{0}/plots".format(config.outputPath))
     
     # parse the file pede.dump.gz and return a LogData Object
-    pedeDump = parse("{0}/pede.dump.gz".format(jobDataPath))
+    pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath))
     
     # pedeDump.printLog()
     
     # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
-    treeFile = TFile("{0}/treeFile_merge.root".format(jobDataPath))
-    MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(alignmentTime))
+    treeFile = TFile("{0}/treeFile_merge.root".format(config.jobDataPath))
+    MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
     
     
     ##########################################################################
@@ -89,7 +91,7 @@ def main():
     # export as png
     image = TImage.Create()
     image.FromPad(cBig)
-    image.WriteImage("{0}/plots/Big.png".format(outputPath))
+    image.WriteImage("{0}/plots/Big.png".format(config.outputPath))
 
     
     ##########################################################################
@@ -127,7 +129,7 @@ def main():
     
         # export as png
         image.FromPad(cMod[structNumber])
-        image.WriteImage("{0}/plots/Mod_{1}.png".format(outputPath, struct.getName()))
+        image.WriteImage("{0}/plots/Mod_{1}.png".format(config.outputPath, struct.getName()))
         
         
     ##########################################################################
@@ -174,7 +176,7 @@ def main():
 
             # export as png
             image.FromPad(cModSub[bStructNumber][subStructNumber])
-            image.WriteImage("{0}/plots/Mod_{1}_{2}.png".format(outputPath, bStruct.getName(), subStructNumber))
+            image.WriteImage("{0}/plots/Mod_{1}_{2}.png".format(config.outputPath, bStruct.getName(), subStructNumber))
             
     
 if __name__ == "__main__":

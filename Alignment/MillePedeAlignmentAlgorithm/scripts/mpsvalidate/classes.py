@@ -123,3 +123,5 @@ class LogData:
         print "Warning:"
         for line in self.warning:
             print line
+
+        
