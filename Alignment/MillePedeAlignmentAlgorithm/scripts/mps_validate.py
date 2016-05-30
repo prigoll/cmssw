@@ -52,7 +52,7 @@ def main():
         os.makedirs("{0}/plots".format(config.outputPath))
     
     # parse the file pede.dump.gz and return a LogData Object
-    pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath))
+    pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath), config)
     
     # pedeDump.printLog()
     
@@ -67,7 +67,7 @@ def main():
     #
     
     # create the histogram data
-    big = bigStructure.plot(MillePedeUser, geometryGetter)
+    big = bigStructure.plot(MillePedeUser, geometryGetter, config)
     # more space for labels
     gStyle.SetPadBottomMargin(0.25)
     
@@ -99,7 +99,7 @@ def main():
     #
     
     # create histogram data in a list
-    mod = bigModule.plot(MillePedeUser, geometryGetter)
+    mod = bigModule.plot(MillePedeUser, geometryGetter, config)
                     
     # show the skewness in the legend
     gStyle.SetOptStat("nemrs")
@@ -137,7 +137,7 @@ def main():
     #
     
     # create histograms
-    subMod = subModule.plot(MillePedeUser, geometryGetter, mod)
+    subMod = subModule.plot(MillePedeUser, geometryGetter, mod, config)
     
     # draw plots with nested lists
     cModSub = []

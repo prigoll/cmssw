@@ -11,7 +11,7 @@ import gzip
 import re
 
 
-def parse(path):
+def parse(path, config):
 # parse pede.dump.gz
     
     logData = LogData()

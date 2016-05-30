@@ -8,6 +8,7 @@
 ##
 
 import ConfigParser
+import logging
 
 class ConfigData:
     """ stores the config data of the ini files or the console parameters
@@ -18,15 +19,20 @@ class ConfigData:
         self.jobNumber = -1
         # MillePedeUser_X time
         self.jobTime = -1
+        # ./jobData/jobmX path
         self.jobDataPath = ""
+        # base outputpath
         self.outputPath = ""
+        # allow to use the standard deviation as the plotrange
+        self.allowhidden = -1
 
     def parseConfig(self, path):
         # create ConfigParser object
         parser = ConfigParser.ConfigParser()
         
         # read ini file
-        parser.read(path)
+        if (parser.read(path) == []):
+            logging.error("Could not open ini-file: {0}".format(path))
         
         # buffer object
         configBuffer = ConfigData()
@@ -64,6 +70,11 @@ class ConfigData:
         
         try:
             self.outputPath = parser.get("GENERAL","outputpath")
+        except:
+            pass
+        
+        try:
+            self.allowhidden = int(parser.get("PLOTS","allowhidden"))
         except:
             pass
         

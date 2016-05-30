@@ -8,7 +8,7 @@
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
-def plot(MillePedeUser, geometryGetter):
+def plot(MillePedeUser, geometryGetter, config):
         
        
     big = TreeData()

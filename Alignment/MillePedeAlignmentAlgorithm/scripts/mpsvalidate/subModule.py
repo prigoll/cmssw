@@ -9,7 +9,7 @@
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
-def plot(MillePedeUser, geometryGetter, mod):
+def plot(MillePedeUser, geometryGetter, mod, config):
     # nested list with the TreeData
     modSub = []
     

@@ -8,7 +8,7 @@
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
-def plot(MillePedeUser, geometryGetter):
+def plot(MillePedeUser, geometryGetter, config):
     
     mod = []
 
@@ -53,7 +53,8 @@ def plot(MillePedeUser, geometryGetter):
         for i in range(3):
             if (mod[bStructNumber].histo[i].GetEntries() != 0 and mod[bStructNumber].histo[i].GetStdDev() != 0):
                 # if the plotrange is much bigger than the standard deviation use 3 * StdDev als Range
-                if ( max(mod[bStructNumber].maxShift)/mod[bStructNumber].histo[i].GetStdDev() > 9 ):
+                # check the configData if it is allowed to hide data
+                if ( max(mod[bStructNumber].maxShift)/mod[bStructNumber].histo[i].GetStdDev() > 9 and config.allowhidden == 1):
                     # corresponding bin 3*StdDev
                     binShift = int(mod[bStructNumber].histo[i].FindBin(3*mod[bStructNumber].histo[i].GetStdDev()) - numberOfBins/2)
                     # count entries which are not shown anymore
