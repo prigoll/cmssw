@@ -113,12 +113,16 @@ def main():
         cMod[structNumber].cd(1)
         mod[structNumber].title.Draw()
         mod[structNumber].text.Draw()
+        
         cMod[structNumber].cd(2)
         mod[structNumber].histo[0].DrawCopy()
+        
         cMod[structNumber].cd(3)
         mod[structNumber].histo[1].DrawCopy()
+        
         cMod[structNumber].cd(4)
         mod[structNumber].histo[2].DrawCopy()
+        
         cMod[structNumber].Update()
     
         # export as png
@@ -150,17 +154,21 @@ def main():
             subMod[bStructNumber][subStructNumber].title.Draw()
             subMod[bStructNumber][subStructNumber].text.Draw()
             
-            cModSub[bStructNumber][subStructNumber].cd(2)
-            subMod[bStructNumber][subStructNumber].histo[0].DrawCopy()
-            mod[bStructNumber].histo[0].DrawCopy("same")
+            # check if histogram is not emtpy
+            if (subMod[bStructNumber][subStructNumber].histo[0].GetEntries() > 0):
+                cModSub[bStructNumber][subStructNumber].cd(2)
+                subMod[bStructNumber][subStructNumber].histo[0].DrawNormalized()
+                mod[bStructNumber].histo[0].DrawNormalized("same")
             
-            cModSub[bStructNumber][subStructNumber].cd(3)
-            subMod[bStructNumber][subStructNumber].histo[1].DrawCopy()
-            mod[bStructNumber].histo[1].DrawCopy("same")
+            if (subMod[bStructNumber][subStructNumber].histo[1].GetEntries() > 0):
+                cModSub[bStructNumber][subStructNumber].cd(3)
+                subMod[bStructNumber][subStructNumber].histo[1].DrawNormalized()
+                mod[bStructNumber].histo[1].DrawNormalized("same")
             
-            cModSub[bStructNumber][subStructNumber].cd(4)
-            subMod[bStructNumber][subStructNumber].histo[2].DrawCopy()
-            mod[bStructNumber].histo[2].DrawCopy("same")
+            if (subMod[bStructNumber][subStructNumber].histo[2].GetEntries() > 0):
+                cModSub[bStructNumber][subStructNumber].cd(4)
+                subMod[bStructNumber][subStructNumber].histo[2].DrawNormalized()
+                mod[bStructNumber].histo[2].DrawNormalized("same")
             
             cModSub[bStructNumber][subStructNumber].Update()
 

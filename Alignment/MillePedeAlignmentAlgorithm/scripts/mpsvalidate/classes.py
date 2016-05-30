@@ -12,7 +12,7 @@ class GeometryGetter:
     
     # TODO last value is guessed
 #    boundaries_bStruct = [61, 17541, 37021, 121061, 144401, 284201, 700000, 1000000]
-    boundariesStruct = [ [61, 8781], [17541, 19961, 22401,  24821, 27281, 29701, 32141, 34561], [37021, 79041], [144401, 214301], [121061, 132721], [284201, 380121], [700000], [1000000] ]
+    boundariesStruct = [ [61, 8781], [17541, 19961, 22401,  24821, 27281, 29701, 32141, 34561], [37021, 79041], [121061, 132721], [144401, 214301], [284201, 380121], [700000], [1000000] ]
     namebStruct = ["TrackerTPBHalfBarrel", "TrackerTPEHalfDisk", "TrackerTIBHalfBarrel", "TrackerTIDEndcap", "TrackerTOBHalfBarrel", "TrackerTECEndcap", "newIOV"]
     
     def __init__(self):
