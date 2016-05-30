@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+
+##########################################################################
+##  Create histograms out of treeFile_merge.root . The pede.dump.gz file is
+##  paresed. The histograms are plotted as PNG files. The output data is
+##  created as PDF, HTML, ...
+##
+
 from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 from mpsvalidate.dumpparser import parse
@@ -15,8 +22,8 @@ def main():
     
     # run ROOT in batchmode
     gROOT.SetBatch()
+    # create GeometryGetter object
     geometryGetter = GeometryGetter()
-
     
     # ArgumentParser
     parser = argparse.ArgumentParser(description="Validate your Aligment.")
@@ -46,24 +53,27 @@ def main():
     pedeDump = parse("{0}/pede.dump.gz".format(jobDataPath))
     
     # pedeDump.printLog()
-
-    
-    
     
     # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
     treeFile = TFile("{0}/treeFile_merge.root".format(jobDataPath))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(alignmentTime))
     
-    #########################################################################
-    # big Structure
+    
+    ##########################################################################
+    # big structures
+    #
+    
+    # create the histogram data
     big = bigStructure.plot(MillePedeUser, geometryGetter)
     # more space for labels
     gStyle.SetPadBottomMargin(0.25)
     
+    # create canvas
     cBig = TCanvas("canvasBigStrucutres", "Parameter", 300, 0, 800, 600)
     cBig.Divide(2,2)
     
+    # draw histograms
     cBig.cd(1)
     big.title.Draw()
     big.text.Draw()
@@ -82,21 +92,24 @@ def main():
     image.WriteImage("{0}/plots/Big.png".format(outputPath))
 
     
-    #########################################################################
-    # module Struct
+    ##########################################################################
+    # modules of a hole structure
+    #
     
-    
-        
+    # create histogram data in a list
     mod = bigModule.plot(MillePedeUser, geometryGetter)
                     
     # show the skewness in the legend
     gStyle.SetOptStat("nemrs")
     
+    # draw plots
     cMod = []
+    # loop over all structures to get the name
     for structNumber, struct in enumerate(geometryGetter.listbStructs()):
         cMod.append(TCanvas("canvasModules{0}".format(struct.getName()), "Parameter", 300, 0, 800, 600))
         cMod[structNumber].Divide(2, 2)
         
+        # the loop and the data in cMod are in the same order
         cMod[structNumber].cd(1)
         mod[structNumber].title.Draw()
         mod[structNumber].text.Draw()
@@ -113,21 +126,26 @@ def main():
         image.WriteImage("{0}/plots/Mod_{1}.png".format(outputPath, struct.getName()))
         
         
-    ######################################################################################
-    # module subStruct
+    ##########################################################################
+    # modules of a part of a strucutre, together with the hole strucutre
+    #
     
+    # create histograms
     subMod = subModule.plot(MillePedeUser, geometryGetter, mod)
     
+    # draw plots with nested lists
     cModSub = []
     
+    # loop over all structures    
     for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
+        # append nested list with parts of the structure
         cModSub.append([])
+        # loop over the parts of a structure
         for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
-    
             cModSub[bStructNumber].append(TCanvas("canvasSubStruct{0}".format(subStruct.getName()), "Parameter", 300, 0, 800, 600))
             cModSub[bStructNumber][subStructNumber].Divide(2, 2)
             
-            # draw subStruct modules and the hole struct
+            # draw parts of the strucutre and the hole structure
             cModSub[bStructNumber][subStructNumber].cd(1)
             subMod[bStructNumber][subStructNumber].title.Draw()
             subMod[bStructNumber][subStructNumber].text.Draw()

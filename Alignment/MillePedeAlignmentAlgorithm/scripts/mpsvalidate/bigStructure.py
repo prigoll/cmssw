@@ -1,9 +1,13 @@
 #!/usr/bin/env python
+
+##########################################################################
+##  Creates a histogram where the the names of the structures are present
+##  as humanreadable text.
+##
+
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
-######################################################################################
-    # big structures
 def plot(MillePedeUser, geometryGetter):
         
        

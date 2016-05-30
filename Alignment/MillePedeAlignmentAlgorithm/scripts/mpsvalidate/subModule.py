@@ -1,16 +1,26 @@
 #!/usr/bin/env python
+
+##########################################################################
+##  Creates histograms of the modules of a part of a structure and combines it
+##  with a plot of the modules of the hole structure. Returns a nested
+##  list with the TreeData of the histograms
+##
+
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
 def plot(MillePedeUser, geometryGetter, mod):
-   
+    # nested list with the TreeData
     modSub = []
     
+    # number of bins to create the plot
+    # shrinked afterwards
     numberOfBins = 10000
 
+    # loop over a hole structure
     for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
         modSub.append([])
-        # loop over subStructs
+        # loop over the parts of a strucutre
         for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
             
             modSub[bStructNumber].append(TreeData())

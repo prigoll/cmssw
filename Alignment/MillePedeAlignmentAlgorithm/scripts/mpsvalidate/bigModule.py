@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+##########################################################################
+##  Creates histograms of the modules of one structure. and returns them as
+##  a list of TreeData objects.
+##
+
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 

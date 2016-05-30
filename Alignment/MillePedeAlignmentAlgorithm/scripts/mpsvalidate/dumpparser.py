@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+##########################################################################
+##  Parse the pede.dump.gz file and returns a LogData object with the
+##  parsed information of the file.
+##
+
 from mpsvalidate.classes import LogData
 
 import gzip

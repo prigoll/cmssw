@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+##########################################################################
+##  Classes which are needed by the mps_validate.py file.
+##
+
 class GeometryGetter:
     """ Getting human readable names of detector parts
     """
