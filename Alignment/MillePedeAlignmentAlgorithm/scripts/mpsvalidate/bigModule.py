@@ -8,7 +8,7 @@
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
-def plot(MillePedeUser, geometryGetter, config):
+def plot(MillePedeUser, geometryGetter, mode, config):
     
     mod = []
 
@@ -16,7 +16,7 @@ def plot(MillePedeUser, geometryGetter, config):
     for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
         
         
-        mod.append(TreeData())
+        mod.append(TreeData(mode))
         
         numberOfBins = 10000
                         
@@ -37,7 +37,7 @@ def plot(MillePedeUser, geometryGetter, config):
             if (line.ObjId == 1 and bStruct.containLabel(line.Label)):
                 for i in range(3):
                     if (abs(line.Par[i]) != 999999): 
-                        mod[bStructNumber].histo[i].Fill(line.Par[i])
+                        mod[bStructNumber].histo[i].Fill(line.Par[mod[bStructNumber].data[i]])
                         
         # find the best range
         for i in range(3):

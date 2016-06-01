@@ -74,9 +74,9 @@ class TreeData:
     """ Hold information about XYZ
     """
     
-    xyz = {0: "X", 1: "Y", 2: "Z"}
     
-    def __init__(self):
+    
+    def __init__(self, mode):
         self.numberOfBins = [0, 0, 0]
         self.maxShift = [0, 0, 0]
         self.maxBinShift = [0, 0, 0]
@@ -89,6 +89,16 @@ class TreeData:
         # plot title and text
         self.title = 0
         self.text = 0
+        # switch mode for position, rotation, distortion
+        if (mode=="xyz"):
+            self.xyz = {0: "X", 1: "Y", 2: "Z"}
+            self.data = [0, 1, 2]
+        if (mode=="rot"):
+            self.xyz = {0: "#alpha", 1: "#beta", 2: "#gamma"}
+            self.data = [3, 4, 5]
+        if (mode=="dist"):
+            self.xyz = {0: "A", 1: "B", 2: "C"}
+            self.data = [6, 7, 8]
         
 class LogData:
     """ information out of the pede.dump.gz file

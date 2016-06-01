@@ -67,7 +67,7 @@ def main():
     #
     
     # create the histogram data
-    big = bigStructure.plot(MillePedeUser, geometryGetter, config)
+    big = bigStructure.plot(MillePedeUser, geometryGetter, "xyz", config)
     # more space for labels
     gStyle.SetPadBottomMargin(0.25)
     
@@ -99,7 +99,7 @@ def main():
     #
     
     # create histogram data in a list
-    mod = bigModule.plot(MillePedeUser, geometryGetter, config)
+    mod = bigModule.plot(MillePedeUser, geometryGetter, "xyz", config)
                     
     # show the skewness in the legend
     gStyle.SetOptStat("nemrs")
@@ -137,7 +137,7 @@ def main():
     #
     
     # create histograms
-    subMod = subModule.plot(MillePedeUser, geometryGetter, mod, config)
+    subMod = subModule.plot(MillePedeUser, geometryGetter, mod, "xyz", config)
     
     # draw plots with nested lists
     cModSub = []

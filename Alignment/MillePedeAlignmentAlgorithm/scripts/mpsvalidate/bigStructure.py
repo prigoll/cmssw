@@ -8,10 +8,10 @@
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
-def plot(MillePedeUser, geometryGetter, config):
+def plot(MillePedeUser, geometryGetter, mode, config):
         
        
-    big = TreeData()
+    big = TreeData(mode)
     
     # count number of needed bins and max shift
     for line in MillePedeUser:
@@ -38,7 +38,8 @@ def plot(MillePedeUser, geometryGetter, config):
     big.title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures")
     big.text = TPaveText(0.05, 0.1, 0.95, 0.75)
     big.text.SetTextAlign(13)
-    big.text.SetTextSizePixels(22)
+#    big.text.SetTextSizePixels(22)
+    big.text.SetTextSize(0.05)
     
     # TODO chose good limit
     # error if shift is bigger than limit
@@ -53,8 +54,10 @@ def plot(MillePedeUser, geometryGetter, config):
         if (line.ObjId != 1):
             for i in range(3):
                 if (abs(line.Par[i]) != 999999):
+                    # set name of the structure
                     big.histoAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
-                    big.histo[i].SetBinContent(big.binPosition[i], line.Par[i])
+                    # fill with data, big.data[i] xyz or rot data
+                    big.histo[i].SetBinContent(big.binPosition[i], line.Par[big.data[i]])
                     big.binPosition[i] += 1
     
     # rotate labels

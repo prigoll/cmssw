@@ -9,7 +9,7 @@
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
-def plot(MillePedeUser, geometryGetter, mod, config):
+def plot(MillePedeUser, geometryGetter, mod, mode, config):
     # nested list with the TreeData
     modSub = []
     
@@ -23,7 +23,7 @@ def plot(MillePedeUser, geometryGetter, mod, config):
         # loop over the parts of a strucutre
         for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
             
-            modSub[bStructNumber].append(TreeData())
+            modSub[bStructNumber].append(TreeData(mode))
             
             
             # initialize histograms
@@ -44,7 +44,8 @@ def plot(MillePedeUser, geometryGetter, mod, config):
                 if (line.ObjId == 1 and subStruct.containLabel(line.Label)):
                     for i in range(3):
                         if (abs(line.Par[i]) != 999999): 
-                            modSub[bStructNumber][subStructNumber].histo[i].Fill(line.Par[i])
+                            modSub[bStructNumber][subStructNumber].histo[i].Fill(line.Par[ modSub[bStructNumber][subStructNumber].data[i] ])
+                
             
             # find and apply the new range
             for i in range(3):
