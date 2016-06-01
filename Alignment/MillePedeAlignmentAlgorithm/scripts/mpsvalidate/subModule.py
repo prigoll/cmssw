@@ -51,7 +51,7 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
             for line in MillePedeUser:
                 if (line.ObjId == 1 and subStruct.containLabel(line.Label)):
                     for i in range(3):
-                        if (abs(line.Par[i]) != 999999): 
+                        if (abs(line.Par[ modSub[bStructNumber][subStructNumber].data[i] ]) != 999999): 
                             modSub[bStructNumber][subStructNumber].histo[i].Fill(line.Par[ modSub[bStructNumber][subStructNumber].data[i] ])
                 
             
@@ -66,7 +66,7 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
                     # skip empty histogram
                     if (mergeNumberBins != 0):
                         # the 2*maxBinShift bins should shrink to 100 bins
-                        mergeNumberBins = int(2*mergeNumberBins/100.)
+                        mergeNumberBins = int(2.*mergeNumberBins/config.numberofbins)
                         # the total number of bins should be dividable by the bins shrinked together
                         if (mergeNumberBins == 0):
                             mergeNumberBins = 1

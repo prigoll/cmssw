@@ -36,8 +36,8 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         for line in MillePedeUser:
             if (line.ObjId == 1 and bStruct.containLabel(line.Label)):
                 for i in range(3):
-                    if (abs(line.Par[i]) != 999999): 
-                        mod[bStructNumber].histo[i].Fill(line.Par[mod[bStructNumber].data[i]])
+                    if (abs(line.Par[ mod[bStructNumber].data[i] ]) != 999999): 
+                        mod[bStructNumber].histo[i].Fill(line.Par[ mod[bStructNumber].data[i] ])
                         
         # find the best range
         for i in range(3):
@@ -52,11 +52,11 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         # find and apply the new range
         for i in range(3):
             if (mod[bStructNumber].histo[i].GetEntries() != 0 and mod[bStructNumber].histo[i].GetStdDev() != 0):
-                # if the plotrange is much bigger than the standard deviation use 3 * StdDev als Range
+                # if the plotrange is much bigger than the standard deviation use config.widthstdev * StdDev als Range
                 # check the configData if it is allowed to hide data
-                if ( max(mod[bStructNumber].maxShift)/mod[bStructNumber].histo[i].GetStdDev() > 9 and config.allowhidden == 1):
-                    # corresponding bin 3*StdDev
-                    binShift = int(mod[bStructNumber].histo[i].FindBin(3*mod[bStructNumber].histo[i].GetStdDev()) - numberOfBins/2)
+                if ( max(mod[bStructNumber].maxShift)/mod[bStructNumber].histo[i].GetStdDev() > config.defpeak and config.allowhidden == 1 or config.forcestddev == 1):
+                    # corresponding bin config.widthstdev*StdDev
+                    binShift = int(mod[bStructNumber].histo[i].FindBin(config.widthstddev*mod[bStructNumber].histo[i].GetStdDev()) - numberOfBins/2)
                     # count entries which are not shown anymore
                     # bin 1 to begin of histogram
                     for j in range(1, numberOfBins/2 - binShift):
@@ -75,7 +75,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                 # skip empty histogram
                 if (mergeNumberBins != 0):
                     # the 2*maxBinShift bins should shrink to 100 bins
-                    mergeNumberBins = int(2*mergeNumberBins/100.)
+                    mergeNumberBins = int(2.*mergeNumberBins/config.numberofbins)
                     # the total number of bins should be dividable by the bins shrinked together
                     if (mergeNumberBins == 0):
                         mergeNumberBins = 1

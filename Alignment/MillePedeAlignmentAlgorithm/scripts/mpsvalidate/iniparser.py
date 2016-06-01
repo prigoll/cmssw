@@ -25,6 +25,14 @@ class ConfigData:
         self.outputPath = ""
         # allow to use the standard deviation as the plotrange
         self.allowhidden = -1
+        # number of bins after shrinking
+        self.numberofbins = -1
+        # definition of sharp peak; max_outlier / StdDev > X
+        self.defpeak = -1
+        # new histogram width in units of StdDev
+        self.widthstddev = -1
+        # force to use histogram width self.widthstdev * StdDev
+        self.forcestddev = -1
 
     def parseConfig(self, path):
         # create ConfigParser object
@@ -78,6 +86,25 @@ class ConfigData:
         except:
             pass
         
+        try:
+            self.numberofbins = int(parser.get("PLOTS","numberofbins"))
+        except:
+            pass
+        
+        try:
+            self.defpeak = int(parser.get("PLOTS","defpeak"))
+        except:
+            pass
+        
+        try:
+            self.widthstddev = int(parser.get("PLOTS","widthstddev"))
+        except:
+            pass
+        
+        try:
+            self.forcestddev = int(parser.get("PLOTS","forcestddev"))
+        except:
+            pass
 
     def parseParameter(self, args):
         # check if parameter is given and override the config data

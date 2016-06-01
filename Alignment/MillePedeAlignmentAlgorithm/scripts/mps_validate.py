@@ -92,7 +92,7 @@ def main():
         # export as png
         image = TImage.Create()
         image.FromPad(cBig)
-        image.WriteImage("{0}/plots/Big_{1}.png".format(config.outputPath, mode))
+        image.WriteImage("{0}/plots/structures_{1}.png".format(config.outputPath, mode))
 
     
     ##########################################################################
@@ -140,7 +140,7 @@ def main():
         
             # export as png
             image.FromPad(cMod[modeNumber][structNumber])
-            image.WriteImage("{0}/plots/Mod_{1}_{2}.png".format(config.outputPath, struct.getName(), mode))
+            image.WriteImage("{0}/plots/modules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
         
         
     ##########################################################################
@@ -192,7 +192,7 @@ def main():
 
                 # export as png
                 image.FromPad(cModSub[modeNumber][bStructNumber][subStructNumber])
-                image.WriteImage("{0}/plots/Mod_{1}_{2}_{3}.png".format(config.outputPath, bStruct.getName(), subStructNumber, mode))
+                image.WriteImage("{0}/plots/modules_{1}_{2}{3}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber))
             
     
 if __name__ == "__main__":

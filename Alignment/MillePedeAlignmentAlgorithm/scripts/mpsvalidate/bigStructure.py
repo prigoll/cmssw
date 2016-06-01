@@ -51,11 +51,11 @@ def plot(MillePedeUser, geometryGetter, mode, config):
     for line in MillePedeUser:
         if (line.ObjId != 1):
             for i in range(3):
-                if (abs(line.Par[i]) != 999999):
+                if (abs(line.Par[ big.data[i] ]) != 999999):
                     # set name of the structure
                     big.histoAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
                     # fill with data, big.data[i] xyz or rot data
-                    big.histo[i].SetBinContent(big.binPosition[i], line.Par[big.data[i]])
+                    big.histo[i].SetBinContent(big.binPosition[i], line.Par[ big.data[i] ])
                     big.binPosition[i] += 1
     
     # rotate labels
