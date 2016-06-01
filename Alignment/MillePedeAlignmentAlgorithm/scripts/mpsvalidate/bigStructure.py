@@ -27,7 +27,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         big.histo.append(TH1F("Big Structure {0} {1}".format(big.xyz[i], mode), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
         big.histo[i].SetYTitle("[cm]")
         big.histo[i].SetStats(0)
-        big.histo[i].SetMarkerStyle(2)
+        big.histo[i].SetMarkerStyle(5)
         big.histoAxis.append(big.histo[i].GetXaxis())
         # bigger labels for the text
         big.histoAxis[i].SetLabelSize(0.06)

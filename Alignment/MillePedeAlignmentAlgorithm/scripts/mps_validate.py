@@ -80,13 +80,13 @@ def main():
         cBig.cd(1)
         big.title.Draw()
         big.text.Draw()
-        cBig.cd(2)
-        # option "p" to use marker
-        big.histo[0].Draw("p")
-        cBig.cd(3)
-        big.histo[1].Draw("p")
-        cBig.cd(4)
-        big.histo[2].Draw("p")
+        
+        # loop over coordinates
+        for i in range(3):
+            cBig.cd(i+2)
+            # option "p" to use marker
+            big.histo[i].Draw("p")
+        
         cBig.Update()
         
         # export as png
@@ -123,14 +123,10 @@ def main():
             mod[modeNumber][structNumber].title.Draw()
             mod[modeNumber][structNumber].text.Draw()
             
-            cMod[modeNumber][structNumber].cd(2)
-            mod[modeNumber][structNumber].histo[0].DrawCopy()
-            
-            cMod[modeNumber][structNumber].cd(3)
-            mod[modeNumber][structNumber].histo[1].DrawCopy()
-            
-            cMod[modeNumber][structNumber].cd(4)
-            mod[modeNumber][structNumber].histo[2].DrawCopy()
+            # loop over coordinates
+            for i in range(3):
+                cMod[modeNumber][structNumber].cd(i+2)
+                mod[modeNumber][structNumber].histo[i].DrawCopy()
             
             cMod[modeNumber][structNumber].Update()
         
@@ -169,21 +165,13 @@ def main():
                 subMod[modeNumber][bStructNumber][subStructNumber].title.Draw()
                 subMod[modeNumber][bStructNumber][subStructNumber].text.Draw()
                 
-                # check if histogram is not emtpy
-                if (subMod[modeNumber][bStructNumber][subStructNumber].histo[0].GetEntries() > 0):
-                    cModSub[modeNumber][bStructNumber][subStructNumber].cd(2)
-                    subMod[modeNumber][bStructNumber][subStructNumber].histo[0].DrawNormalized()
-                    mod[modeNumber][bStructNumber].histo[0].DrawNormalized("same")
-                
-                if (subMod[modeNumber][bStructNumber][subStructNumber].histo[1].GetEntries() > 0):
-                    cModSub[modeNumber][bStructNumber][subStructNumber].cd(3)
-                    subMod[modeNumber][bStructNumber][subStructNumber].histo[1].DrawNormalized()
-                    mod[modeNumber][bStructNumber].histo[1].DrawNormalized("same")
-                
-                if (subMod[modeNumber][bStructNumber][subStructNumber].histo[2].GetEntries() > 0):
-                    cModSub[modeNumber][bStructNumber][subStructNumber].cd(4)
-                    subMod[modeNumber][bStructNumber][subStructNumber].histo[2].DrawNormalized()
-                    mod[modeNumber][bStructNumber].histo[2].DrawNormalized("same")
+                # loop over coordinates
+                for i in range(3):
+                    # check if histogram is not emtpy
+                    if (subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetEntries() > 0):
+                        cModSub[modeNumber][bStructNumber][subStructNumber].cd(i+2)
+                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].DrawNormalized()
+                        mod[modeNumber][bStructNumber].histo[i].DrawNormalized("same")
                 
                 cModSub[modeNumber][bStructNumber][subStructNumber].Update()
 
