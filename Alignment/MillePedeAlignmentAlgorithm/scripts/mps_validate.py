@@ -123,10 +123,18 @@ def main():
             mod[modeNumber][structNumber].title.Draw()
             mod[modeNumber][structNumber].text.Draw()
             
+            # is there any plot?
+            plotNumber = 0
+            
             # loop over coordinates
             for i in range(3):
-                cMod[modeNumber][structNumber].cd(i+2)
-                mod[modeNumber][structNumber].histo[i].DrawCopy()
+                if(mod[modeNumber][structNumber].histo[i].GetEntries() > 0):
+                    plotNumber += 1
+                    cMod[modeNumber][structNumber].cd(i+2)
+                    mod[modeNumber][structNumber].histo[i].DrawCopy()
+                
+            if (plotNumber == 0):
+                break
             
             cMod[modeNumber][structNumber].Update()
         
@@ -165,13 +173,20 @@ def main():
                 subMod[modeNumber][bStructNumber][subStructNumber].title.Draw()
                 subMod[modeNumber][bStructNumber][subStructNumber].text.Draw()
                 
+                # is there any plot?
+                plotNumber = 0
+                
                 # loop over coordinates
                 for i in range(3):
                     # check if histogram is not emtpy
                     if (subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetEntries() > 0):
+                        plotNumber += 1
                         cModSub[modeNumber][bStructNumber][subStructNumber].cd(i+2)
                         subMod[modeNumber][bStructNumber][subStructNumber].histo[i].DrawNormalized()
                         mod[modeNumber][bStructNumber].histo[i].DrawNormalized("same")
+                
+                if (plotNumber == 0):
+                    break
                 
                 cModSub[modeNumber][bStructNumber][subStructNumber].Update()
 
