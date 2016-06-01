@@ -24,7 +24,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
     
     # initialize histograms
     for i in range(3):
-        big.histo.append(TH1F("Big Structure {0}".format(big.xyz[i]), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
+        big.histo.append(TH1F("Big Structure {0} {1}".format(big.xyz[i], mode), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
         big.histo[i].SetYTitle("[cm]")
         big.histo[i].SetStats(0)
         big.histo[i].SetMarkerStyle(2)
@@ -35,7 +35,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         
     
     # add labels
-    big.title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures")
+    big.title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures {0}".format(mode))
     big.text = TPaveText(0.05, 0.1, 0.95, 0.75)
     big.text.SetTextAlign(13)
 #    big.text.SetTextSizePixels(22)

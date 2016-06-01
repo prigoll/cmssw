@@ -66,117 +66,130 @@ def main():
     # big structures
     #
     
-    # create the histogram data
-    big = bigStructure.plot(MillePedeUser, geometryGetter, "xyz", config)
-    # more space for labels
-    gStyle.SetPadBottomMargin(0.25)
-    
-    # create canvas
-    cBig = TCanvas("canvasBigStrucutres", "Parameter", 300, 0, 800, 600)
-    cBig.Divide(2,2)
-    
-    # draw histograms
-    cBig.cd(1)
-    big.title.Draw()
-    big.text.Draw()
-    cBig.cd(2)
-    # option "p" to use marker
-    big.histo[0].Draw("p")
-    cBig.cd(3)
-    big.histo[1].Draw("p")
-    cBig.cd(4)
-    big.histo[2].Draw("p")
-    cBig.Update()
-    
-    # export as png
-    image = TImage.Create()
-    image.FromPad(cBig)
-    image.WriteImage("{0}/plots/Big.png".format(config.outputPath))
+    for mode in ["xyz", "rot"]:
+        # create the histogram data
+        big = bigStructure.plot(MillePedeUser, geometryGetter, mode, config)
+        # more space for labels
+        gStyle.SetPadBottomMargin(0.25)
+        
+        # create canvas
+        cBig = TCanvas("canvasBigStrucutres_{0}".format(mode), "Parameter", 300, 0, 800, 600)
+        cBig.Divide(2,2)
+        
+        # draw histograms
+        cBig.cd(1)
+        big.title.Draw()
+        big.text.Draw()
+        cBig.cd(2)
+        # option "p" to use marker
+        big.histo[0].Draw("p")
+        cBig.cd(3)
+        big.histo[1].Draw("p")
+        cBig.cd(4)
+        big.histo[2].Draw("p")
+        cBig.Update()
+        
+        # export as png
+        image = TImage.Create()
+        image.FromPad(cBig)
+        image.WriteImage("{0}/plots/Big_{1}.png".format(config.outputPath, mode))
 
     
     ##########################################################################
     # modules of a hole structure
     #
     
-    # create histogram data in a list
-    mod = bigModule.plot(MillePedeUser, geometryGetter, "xyz", config)
-                    
-    # show the skewness in the legend
-    gStyle.SetOptStat("nemrs")
-    
-    # draw plots
+    # store TreeData for different modes
+    mod = []
+    # store Canvas for different modes
     cMod = []
-    # loop over all structures to get the name
-    for structNumber, struct in enumerate(geometryGetter.listbStructs()):
-        cMod.append(TCanvas("canvasModules{0}".format(struct.getName()), "Parameter", 300, 0, 800, 600))
-        cMod[structNumber].Divide(2, 2)
-        
-        # the loop and the data in cMod are in the same order
-        cMod[structNumber].cd(1)
-        mod[structNumber].title.Draw()
-        mod[structNumber].text.Draw()
-        
-        cMod[structNumber].cd(2)
-        mod[structNumber].histo[0].DrawCopy()
-        
-        cMod[structNumber].cd(3)
-        mod[structNumber].histo[1].DrawCopy()
-        
-        cMod[structNumber].cd(4)
-        mod[structNumber].histo[2].DrawCopy()
-        
-        cMod[structNumber].Update()
     
-        # export as png
-        image.FromPad(cMod[structNumber])
-        image.WriteImage("{0}/plots/Mod_{1}.png".format(config.outputPath, struct.getName()))
+    for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
+        # create histogram data in a list
+        mod.append(bigModule.plot(MillePedeUser, geometryGetter, mode, config))
+                        
+        # show the skewness in the legend
+        gStyle.SetOptStat("nemrs")
+        
+        # draw plots
+        cMod.append([])
+        # loop over all structures to get the name
+        for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+            cMod[modeNumber].append(TCanvas("canvasModules{0}_{1}".format(struct.getName(), mode), "Parameter", 300, 0, 800, 600))
+            cMod[modeNumber][structNumber].Divide(2, 2)
+            
+            # the loop and the data in cMod are in the same order
+            cMod[modeNumber][structNumber].cd(1)
+            mod[modeNumber][structNumber].title.Draw()
+            mod[modeNumber][structNumber].text.Draw()
+            
+            cMod[modeNumber][structNumber].cd(2)
+            mod[modeNumber][structNumber].histo[0].DrawCopy()
+            
+            cMod[modeNumber][structNumber].cd(3)
+            mod[modeNumber][structNumber].histo[1].DrawCopy()
+            
+            cMod[modeNumber][structNumber].cd(4)
+            mod[modeNumber][structNumber].histo[2].DrawCopy()
+            
+            cMod[modeNumber][structNumber].Update()
+        
+            # export as png
+            image.FromPad(cMod[modeNumber][structNumber])
+            image.WriteImage("{0}/plots/Mod_{1}_{2}.png".format(config.outputPath, struct.getName(), mode))
         
         
     ##########################################################################
     # modules of a part of a strucutre, together with the hole strucutre
     #
     
-    # create histograms
-    subMod = subModule.plot(MillePedeUser, geometryGetter, mod, "xyz", config)
-    
-    # draw plots with nested lists
+    # store TreeData for different modes
+    subMod = []
+    # store Canvas for different modes
     cModSub = []
     
-    # loop over all structures    
-    for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
-        # append nested list with parts of the structure
+    for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
+        # create histograms
+        subMod.append(subModule.plot(MillePedeUser, geometryGetter, mod, mode, config))
+        
+        # draw plots with nested lists
         cModSub.append([])
-        # loop over the parts of a structure
-        for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
-            cModSub[bStructNumber].append(TCanvas("canvasSubStruct{0}".format(subStruct.getName()), "Parameter", 300, 0, 800, 600))
-            cModSub[bStructNumber][subStructNumber].Divide(2, 2)
-            
-            # draw parts of the strucutre and the hole structure
-            cModSub[bStructNumber][subStructNumber].cd(1)
-            subMod[bStructNumber][subStructNumber].title.Draw()
-            subMod[bStructNumber][subStructNumber].text.Draw()
-            
-            # check if histogram is not emtpy
-            if (subMod[bStructNumber][subStructNumber].histo[0].GetEntries() > 0):
-                cModSub[bStructNumber][subStructNumber].cd(2)
-                subMod[bStructNumber][subStructNumber].histo[0].DrawNormalized()
-                mod[bStructNumber].histo[0].DrawNormalized("same")
-            
-            if (subMod[bStructNumber][subStructNumber].histo[1].GetEntries() > 0):
-                cModSub[bStructNumber][subStructNumber].cd(3)
-                subMod[bStructNumber][subStructNumber].histo[1].DrawNormalized()
-                mod[bStructNumber].histo[1].DrawNormalized("same")
-            
-            if (subMod[bStructNumber][subStructNumber].histo[2].GetEntries() > 0):
-                cModSub[bStructNumber][subStructNumber].cd(4)
-                subMod[bStructNumber][subStructNumber].histo[2].DrawNormalized()
-                mod[bStructNumber].histo[2].DrawNormalized("same")
-            
-            cModSub[bStructNumber][subStructNumber].Update()
+        
+        # loop over all structures    
+        for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
+            # append nested list with parts of the structure
+            cModSub[modeNumber].append([])
+            # loop over the parts of a structure
+            for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
+                cModSub[modeNumber][bStructNumber].append(TCanvas("canvasSubStruct{0}_{1}".format(subStruct.getName(), mode), "Parameter", 300, 0, 800, 600))
+                cModSub[modeNumber][bStructNumber][subStructNumber].Divide(2, 2)
+                
+                # draw parts of the strucutre and the hole structure
+                cModSub[modeNumber][bStructNumber][subStructNumber].cd(1)
+                subMod[modeNumber][bStructNumber][subStructNumber].title.Draw()
+                subMod[modeNumber][bStructNumber][subStructNumber].text.Draw()
+                
+                # check if histogram is not emtpy
+                if (subMod[modeNumber][bStructNumber][subStructNumber].histo[0].GetEntries() > 0):
+                    cModSub[modeNumber][bStructNumber][subStructNumber].cd(2)
+                    subMod[modeNumber][bStructNumber][subStructNumber].histo[0].DrawNormalized()
+                    mod[modeNumber][bStructNumber].histo[0].DrawNormalized("same")
+                
+                if (subMod[modeNumber][bStructNumber][subStructNumber].histo[1].GetEntries() > 0):
+                    cModSub[modeNumber][bStructNumber][subStructNumber].cd(3)
+                    subMod[modeNumber][bStructNumber][subStructNumber].histo[1].DrawNormalized()
+                    mod[modeNumber][bStructNumber].histo[1].DrawNormalized("same")
+                
+                if (subMod[modeNumber][bStructNumber][subStructNumber].histo[2].GetEntries() > 0):
+                    cModSub[modeNumber][bStructNumber][subStructNumber].cd(4)
+                    subMod[modeNumber][bStructNumber][subStructNumber].histo[2].DrawNormalized()
+                    mod[modeNumber][bStructNumber].histo[2].DrawNormalized("same")
+                
+                cModSub[modeNumber][bStructNumber][subStructNumber].Update()
 
-            # export as png
-            image.FromPad(cModSub[bStructNumber][subStructNumber])
-            image.WriteImage("{0}/plots/Mod_{1}_{2}.png".format(config.outputPath, bStruct.getName(), subStructNumber))
+                # export as png
+                image.FromPad(cModSub[modeNumber][bStructNumber][subStructNumber])
+                image.WriteImage("{0}/plots/Mod_{1}_{2}_{3}.png".format(config.outputPath, bStruct.getName(), subStructNumber, mode))
             
     
 if __name__ == "__main__":

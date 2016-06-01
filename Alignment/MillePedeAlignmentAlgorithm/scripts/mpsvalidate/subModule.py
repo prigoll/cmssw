@@ -10,6 +10,14 @@ from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
 
 def plot(MillePedeUser, geometryGetter, mod, mode, config):
+    # get modeNumber
+    if (mode == "xyz"):
+        modeNumber = 0
+    if (mode == "rot"):
+        modeNumber = 1
+    if (mode == "dist"):
+        modeNumber = 2
+    
     # nested list with the TreeData
     modSub = []
     
@@ -28,13 +36,13 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
             
             # initialize histograms
             for i in range(3):
-                modSub[bStructNumber][subStructNumber].histo.append(TH1F("{0} {1}".format(subStruct.getName(), modSub[bStructNumber][subStructNumber].xyz[i]), "Parameter {0}".format(modSub[bStructNumber][subStructNumber].xyz[i]), numberOfBins, -0.1, 0.1))
+                modSub[bStructNumber][subStructNumber].histo.append(TH1F("{0} {1} {2}".format(subStruct.getName(), modSub[bStructNumber][subStructNumber].xyz[i], mode), "Parameter {0}".format(modSub[bStructNumber][subStructNumber].xyz[i]), numberOfBins, -0.1, 0.1))
                 modSub[bStructNumber][subStructNumber].histo[i].SetXTitle("[cm]")
                 modSub[bStructNumber][subStructNumber].histoAxis.append(modSub[bStructNumber][subStructNumber].histo[i].GetXaxis())
                 modSub[bStructNumber][subStructNumber].histo[i].SetLineColor(6)
             
             # add labels
-            modSub[bStructNumber][subStructNumber].title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0}".format(subStruct.getName()))
+            modSub[bStructNumber][subStructNumber].title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0} {1}".format(subStruct.getName(), mode))
             modSub[bStructNumber][subStructNumber].text = TPaveText(0.05, 0.1, 0.95, 0.75)
             modSub[bStructNumber][subStructNumber].text.SetTextAlign(13)
             modSub[bStructNumber][subStructNumber].text.SetTextSizePixels(20)
@@ -51,7 +59,7 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
             for i in range(3):
                 if (modSub[bStructNumber][subStructNumber].histo[i].GetEntries() != 0 and modSub[bStructNumber][subStructNumber].histo[i].GetStdDev() != 0):
                     # use binShift of the hole structure
-                    binShift = mod[bStructNumber].binShift[i]
+                    binShift = mod[modeNumber][bStructNumber].binShift[i]
                     
                     # merge bins, ca. 100 should be visible in the resulting plot
                     mergeNumberBins = binShift
