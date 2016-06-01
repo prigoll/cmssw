@@ -95,9 +95,11 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         # error if shift is bigger than limit
         limit = 0.02
         for i in range(3):
-            mod[bStructNumber].text.AddText("max. shift {0}: {1:.2}".format(mod[bStructNumber].xyz[i], mod[bStructNumber].maxShift[i]))
-            if (mod[bStructNumber].maxShift[i] > limit):
-                mod[bStructNumber].text.AddText("! {0} shift bigger than {1} !".format(mod[bStructNumber].xyz[i], limit))
-            if (mod[bStructNumber].hiddenEntries[i] != 0):
-                mod[bStructNumber].text.AddText("! {0} entries not shown !".format(int(mod[bStructNumber].hiddenEntries[i])))
+            # skip empty
+            if (mod[bStructNumber].histo[i].GetEntries() > 0):
+                mod[bStructNumber].text.AddText("max. shift {0}: {1:.2}".format(mod[bStructNumber].xyz[i], mod[bStructNumber].maxShift[i]))
+                if (mod[bStructNumber].maxShift[i] > limit):
+                    mod[bStructNumber].text.AddText("! {0} shift bigger than {1} !".format(mod[bStructNumber].xyz[i], limit))
+                if (mod[bStructNumber].hiddenEntries[i] != 0):
+                    mod[bStructNumber].text.AddText("! {0} entries not shown !".format(int(mod[bStructNumber].hiddenEntries[i])))
     return mod
