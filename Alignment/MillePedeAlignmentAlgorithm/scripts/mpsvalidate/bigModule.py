@@ -29,7 +29,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         # add labels
         mod[bStructNumber].title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0} {1}".format(bStruct.getName(), mode))
         mod[bStructNumber].text = TPaveText(0.05, 0.1, 0.95, 0.75)
-        mod[bStructNumber].text.SetTextAlign(13)
+        mod[bStructNumber].text.SetTextAlign(12)
         mod[bStructNumber].text.SetTextSizePixels(20)        
 
         # fill histogram

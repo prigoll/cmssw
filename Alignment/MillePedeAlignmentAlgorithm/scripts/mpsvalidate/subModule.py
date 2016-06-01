@@ -44,7 +44,7 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
             # add labels
             modSub[bStructNumber][subStructNumber].title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Module: {0} {1}".format(subStruct.getName(), mode))
             modSub[bStructNumber][subStructNumber].text = TPaveText(0.05, 0.1, 0.95, 0.75)
-            modSub[bStructNumber][subStructNumber].text.SetTextAlign(13)
+            modSub[bStructNumber][subStructNumber].text.SetTextAlign(12)
             modSub[bStructNumber][subStructNumber].text.SetTextSizePixels(20)
             
             # fill histogram

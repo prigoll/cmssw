@@ -184,7 +184,7 @@ def main():
                         cModSub[modeNumber][bStructNumber][subStructNumber].cd(i+2)
                         subMod[modeNumber][bStructNumber][subStructNumber].histo[i].DrawNormalized()
                         mod[modeNumber][bStructNumber].histo[i].DrawNormalized("same")
-                
+
                 if (plotNumber == 0):
                     break
                 
