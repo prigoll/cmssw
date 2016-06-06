@@ -133,5 +133,14 @@ class LogData:
         print "Warning:"
         for line in self.warning:
             print line
-
-        
+            
+class OutputData:
+    """ stores the information about the data which should be part of the Output
+    """
+    
+    def __init__(self, plottype="", name="", number="", parameter="", filename=""):
+        self.plottype = plottype
+        self.name = name
+        self.number = number
+        self.parameter = parameter
+        self.filename = filename

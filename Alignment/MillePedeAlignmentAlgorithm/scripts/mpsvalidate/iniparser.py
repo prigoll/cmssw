@@ -33,6 +33,9 @@ class ConfigData:
         self.widthstddev = -1
         # force to use histogram width self.widthstdev * StdDev
         self.forcestddev = -1
+        
+        # list with the plots for the output
+        self.outputList = []
 
     def parseConfig(self, path):
         # create ConfigParser object

@@ -7,10 +7,10 @@
 ##
 
 from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gStyle, gROOT
-from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
+from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 from mpsvalidate.dumpparser import parse
 from mpsvalidate.iniparser import ConfigData
-from mpsvalidate import bigStructure, bigModule, subModule
+from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator
 
 import argparse
 import logging
@@ -93,6 +93,10 @@ def main():
         image = TImage.Create()
         image.FromPad(cBig)
         image.WriteImage("{0}/plots/structures_{1}.png".format(config.outputPath, mode))
+        
+        # add to output list
+        output = OutputData(plottype="big", parameter=mode, filename="structures_{0}.png".format(mode))
+        config.outputList.append(output)
 
     
     ##########################################################################
@@ -141,6 +145,10 @@ def main():
             # export as png
             image.FromPad(cMod[modeNumber][structNumber])
             image.WriteImage("{0}/plots/modules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
+            
+            # add to output list
+            output = OutputData(plottype="mod", name=struct.getName(), parameter=mode, filename="modules_{0}_{1}.png".format(config.outputPath, mode, struct.getName()))
+            config.outputList.append(output)
         
         
     ##########################################################################
@@ -212,8 +220,18 @@ def main():
 
                 # export as png
                 image.FromPad(cModSub[modeNumber][bStructNumber][subStructNumber])
-                image.WriteImage("{0}/plots/modules_{1}_{2}.png".format(config.outputPath, mode, subStruct.getName()))
+                image.WriteImage("{0}/plots/modules_{1}_{2}{3}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
+                
+                # add to output list
+                output = OutputData(plottype="subMod", name=struct.getName(), number=subStructNumber+1, parameter=mode, filename="modules_{0}_{1}{2}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
+                config.outputList.append(output)
             
+            
+    ##########################################################################
+    # create PDF
+    #
+    
+    pdfCreator.create("tex_template.tex", "aaaa.tex", config)
     
 if __name__ == "__main__":
     main()
