@@ -147,7 +147,7 @@ def main():
             image.WriteImage("{0}/plots/modules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
             
             # add to output list
-            output = OutputData(plottype="mod", name=struct.getName(), parameter=mode, filename="modules_{0}_{1}.png".format(config.outputPath, mode, struct.getName()))
+            output = OutputData(plottype="mod", name=struct.getName(), parameter=mode, filename="modules_{0}_{1}.png".format(mode, struct.getName()))
             config.outputList.append(output)
         
         
@@ -223,7 +223,7 @@ def main():
                 image.WriteImage("{0}/plots/modules_{1}_{2}{3}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
                 
                 # add to output list
-                output = OutputData(plottype="subMod", name=struct.getName(), number=subStructNumber+1, parameter=mode, filename="modules_{0}_{1}{2}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
+                output = OutputData(plottype="subMod", name=bStruct.getName(), number=subStructNumber+1, parameter=mode, filename="modules_{0}_{1}{2}.png".format(mode, bStruct.getName(), subStructNumber+1))
                 config.outputList.append(output)
             
             

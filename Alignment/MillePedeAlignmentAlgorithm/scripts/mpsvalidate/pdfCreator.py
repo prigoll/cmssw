@@ -43,14 +43,14 @@ def create(templateFile, outputFile, config):
     # hole modules
     
     # check if there are module plots
-    if any(x for x in config.outputList if (x.plottype == "module" and x.number == "")):
+    if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "")):
         out += "\section{{Modules}}\n"
         
         # loop over all structures
         for moduleName in GeometryGetter.namebStruct:
             
             # check if there is a plot for this module
-            if any(x for x in config.outputList if (x.plottype == "module" and x.number == "" and x.name == moduleName)):
+            if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName)):
                 out += "\subsection{{{0}}}\n".format(moduleName)
                 
                 # loop over modes
@@ -58,14 +58,14 @@ def create(templateFile, outputFile, config):
                     
                     
                     # get module plot
-                    module = [x for x in config.outputList if (x.plottype == "module" and x.number == "" and x.name == moduleName and x.parameter==mode)]
+                    module = [x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName and x.parameter==mode)]
                     # get list of sub module plots
-                    moduleSub = [x for x in config.outputList if (x.plottype == "module" and x.number != "" and x.name == moduleName and x.parameter==mode)]
+                    moduleSub = [x for x in config.outputList if (x.plottype == "subMod" and x.number != "" and x.name == moduleName and x.parameter==mode)]
                 
                     # check if plot there is a plot in this mode
                     if module:
-                        out += "\subsection{{{0}}}\n".format(mode)
-                        out += "\includegraphics[width=\linewidth]{{{0}/plots/{1}}}\n".format(config.outputPath, module.filename)
+                        out += "\subsubsection{{{0}}}\n".format(mode)
+                        out += "\includegraphics[width=\linewidth]{{{0}/plots/{1}}}\n".format(config.outputPath, module[0].filename)
                         
                         # loop over submodules
                         for plot in moduleSub:
