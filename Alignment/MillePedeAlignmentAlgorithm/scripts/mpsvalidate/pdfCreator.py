@@ -14,11 +14,10 @@ class TexTemplate(string.Template):
     delimiter = "%%"
     
 
-def create(templateFile, outputFile, config):
+def create(outputFile, config):
     
     # load template
-    # TODO path
-    with open("./mpsvalidate/{0}".format(templateFile), "r") as template:
+    with open("./mpsvalidate/tex_template.tex", "r") as template:
         data = template.read()
         template.close()
     
@@ -75,12 +74,12 @@ def create(templateFile, outputFile, config):
     data = data.substitute(out=out)
     
     # TODO path
-    with open("{0}".format(outputFile), "w") as output:
+    with open("{0}/{1}".format(config.outputPath, outputFile), "w") as output:
         output.write(data)
         output.close()
     
     # TODO run pdflatex
-    os.system("pdflatex {0}".format(outputFile) )
+    os.system("pdflatex -output-directory={0}  {1}/{2}".format(config.outputPath, config.outputPath, outputFile) )
     
 
 if __name__ == "__main__":

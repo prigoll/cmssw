@@ -23,6 +23,8 @@ class ConfigData:
         self.jobDataPath = ""
         # base outputpath
         self.outputPath = ""
+        # latex file name
+        self.latexfile = ""
         # allow to use the standard deviation as the plotrange
         self.allowhidden = -1
         # number of bins after shrinking
@@ -85,6 +87,11 @@ class ConfigData:
             pass
         
         try:
+            self.latexfile = parser.get("GENERAL","latexfile")
+        except:
+            pass
+        
+        try:
             self.allowhidden = int(parser.get("PLOTS","allowhidden"))
         except:
             pass
@@ -108,6 +115,7 @@ class ConfigData:
             self.forcestddev = int(parser.get("PLOTS","forcestddev"))
         except:
             pass
+        
 
     def parseParameter(self, args):
         # check if parameter is given and override the config data

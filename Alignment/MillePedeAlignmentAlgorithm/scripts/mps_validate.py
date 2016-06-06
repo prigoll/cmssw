@@ -231,7 +231,7 @@ def main():
     # create PDF
     #
     
-    pdfCreator.create("tex_template.tex", "aaaa.tex", config)
+    pdfCreator.create(config.latexfile, config)
     
 if __name__ == "__main__":
     main()
