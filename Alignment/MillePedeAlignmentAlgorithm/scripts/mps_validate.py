@@ -192,7 +192,7 @@ def main():
 
                 # export as png
                 image.FromPad(cModSub[modeNumber][bStructNumber][subStructNumber])
-                image.WriteImage("{0}/plots/modules_{1}_{2}{3}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber))
+                image.WriteImage("{0}/plots/modules_{1}_{2}.png".format(config.outputPath, mode, subStruct.getName()))
             
     
 if __name__ == "__main__":

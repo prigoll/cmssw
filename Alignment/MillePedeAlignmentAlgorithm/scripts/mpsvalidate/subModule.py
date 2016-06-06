@@ -61,6 +61,14 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
                     # use binShift of the hole structure
                     binShift = mod[modeNumber][bStructNumber].binShift[i]
                     
+                    # count entries which are not shown anymore
+                    # bin 1 to begin of histogram
+                    for j in range(1, numberOfBins/2 - binShift):
+                        modSub[bStructNumber][subStructNumber].hiddenEntries[i] += modSub[bStructNumber][subStructNumber].histo[i].GetBinContent(j)
+                    # from the end of shown bins to the end of histogram
+                    for j in range(numberOfBins/2 + binShift, modSub[bStructNumber][subStructNumber].histo[i].GetNbinsX()):
+                        modSub[bStructNumber][subStructNumber].hiddenEntries[i] += modSub[bStructNumber][subStructNumber].histo[i].GetBinContent(j)
+                    
                     # merge bins, ca. 100 should be visible in the resulting plot
                     mergeNumberBins = binShift
                     # skip empty histogram
@@ -80,4 +88,12 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
                         # set view range. it is important to note that the number of bins have changed with the rebinning
                         # the total number and the number of shift must be corrected with / mergeNumberBins
                         modSub[bStructNumber][subStructNumber].histoAxis[i].SetRange(int(numberOfBins/(2*mergeNumberBins)-binShift / mergeNumberBins), int(numberOfBins/(2*mergeNumberBins)+binShift / mergeNumberBins))
+            
+            # output hiddenEntries
+            for i in range(3):
+                # skip empty
+                if (modSub[bStructNumber][subStructNumber].histo[i].GetEntries() > 0):
+                    if (modSub[bStructNumber][subStructNumber].hiddenEntries[i] != 0):
+                        modSub[bStructNumber][subStructNumber].text.AddText("! {0} {1} entries not shown !".format(modSub[bStructNumber][subStructNumber].xyz[i], int(modSub[bStructNumber][subStructNumber].hiddenEntries[i])))
+                        
     return modSub
