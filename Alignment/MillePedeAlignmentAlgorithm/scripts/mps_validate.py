@@ -54,8 +54,6 @@ def main():
     # parse the file pede.dump.gz and return a LogData Object
     pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath), config)
     
-    # pedeDump.printLog()
-    
     # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
     treeFile = TFile("{0}/treeFile_merge.root".format(config.jobDataPath))
@@ -231,7 +229,7 @@ def main():
     # create PDF
     #
     
-    pdfCreator.create(config.latexfile, config)
+    pdfCreator.create(pedeDump, config.latexfile, config)
     
 if __name__ == "__main__":
     main()

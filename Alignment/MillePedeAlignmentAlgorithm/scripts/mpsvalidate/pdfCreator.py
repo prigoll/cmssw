@@ -14,7 +14,7 @@ class TexTemplate(string.Template):
     delimiter = "%%"
     
 
-def create(outputFile, config):
+def create(pedeDump, outputFile, config):
     
     # load template
     with open("./mpsvalidate/tex_template.tex", "r") as template:
@@ -26,6 +26,27 @@ def create(outputFile, config):
     
     # output string
     out = ""
+    
+    
+    # pede.dump.gz
+    
+    out += "\section{{pede.dump.gz}}\n"
+    if (pedeDump.sumValue != 0):
+        out += r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(pedeDump.sumSteps, pedeDump.sumValue)
+    else:
+        out += r"\begin{{align*}}Sum(W*Chi^2)/Sum(Ndf)/<W> &= {0}\\ &= {1}\end{{align*}}".format(pedeDump.sumSteps, pedeDump.sumWValue)
+    out += r"with correction for down-weighting: {0}\\".format(pedeDump.correction)
+    out += r"Peak dynamic memory allocation: {0} GB\\".format(pedeDump.memory)
+    out += r"Total time: {0} h {1} m {2} s\\".format(pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
+    out += r"Number of records: {0}\\".format(pedeDump.nrec)
+    out += r"Total number of parameters: {0}\\".format(pedeDump.ntgb)
+    out += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
+    out += r"Warning:\\"
+    for line in pedeDump.warning:
+        # check if line empty
+        if line.replace(r" ", r""):
+            line.replace("%", "\\\%")
+            out += line+r"\\"
 
 
     # big Structures
@@ -80,7 +101,3 @@ def create(outputFile, config):
     
     # TODO run pdflatex
     os.system("pdflatex -output-directory={0}  {1}/{2}".format(config.outputPath, config.outputPath, outputFile) )
-    
-
-if __name__ == "__main__":
-    create("tex_template.tex", "aaaa.tex", "asdf")
