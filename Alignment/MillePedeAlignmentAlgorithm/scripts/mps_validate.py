@@ -163,6 +163,7 @@ def main():
         for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
             # append nested list with parts of the structure
             cModSub[modeNumber].append([])
+            
             # loop over the parts of a structure
             for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
                 cModSub[modeNumber][bStructNumber].append(TCanvas("canvasSubStruct{0}_{1}".format(subStruct.getName(), mode), "Parameter", 300, 0, 800, 600))
@@ -182,8 +183,27 @@ def main():
                     if (subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetEntries() > 0):
                         plotNumber += 1
                         cModSub[modeNumber][bStructNumber][subStructNumber].cd(i+2)
-                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].DrawNormalized()
-                        mod[modeNumber][bStructNumber].histo[i].DrawNormalized("same")
+                        
+                        # skip empty
+                        if (mod[modeNumber][bStructNumber].histo[i].GetEntries() == 0):
+                            break
+                        
+                        # normalize bStruct
+                        mod[modeNumber][bStructNumber].histo[i].Scale( 1./mod[modeNumber][bStructNumber].histo[i].Integral() )
+                        # get y maximum1
+                        maximum1 = mod[modeNumber][bStructNumber].histo[i].GetMaximum()
+                        
+                        # normalize
+                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Scale(1./subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Integral())
+                        # get y maximum2
+                        maximum2 = subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetMaximum()
+                        
+                        # set SetRangeUser
+                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetYaxis().SetRangeUser(0., max([maximum1, maximum2]) * 1.1)
+                                               
+                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Draw()
+                        
+                        mod[modeNumber][bStructNumber].histo[i].Draw("same")
 
                 if (plotNumber == 0):
                     break
