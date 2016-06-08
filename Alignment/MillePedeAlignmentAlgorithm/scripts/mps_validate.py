@@ -10,7 +10,7 @@ from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gSt
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 from mpsvalidate.dumpparser import parse
 from mpsvalidate.iniparser import ConfigData
-from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator
+from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator, beamerCreator
 
 import argparse
 import logging
@@ -237,10 +237,11 @@ def main():
             
             
     ##########################################################################
-    # create PDF
+    # create TEX, beamer
     #
     
     pdfCreator.create(pedeDump, config.latexfile, config)
+    beamerCreator.create(pedeDump, "beamer.tex", config)
     
 if __name__ == "__main__":
     main()

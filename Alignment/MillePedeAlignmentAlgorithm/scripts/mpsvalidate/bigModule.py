@@ -101,5 +101,5 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                 if (mod[bStructNumber].maxShift[i] > limit):
                     mod[bStructNumber].text.AddText("! {0} shift bigger than {1} !".format(mod[bStructNumber].xyz[i], limit))
                 if (mod[bStructNumber].hiddenEntries[i] != 0):
-                    mod[bStructNumber].text.AddText("! {0} {1} entries not shown !".format(mod[bStructNumber].xyz[i], int(mod[bStructNumber].hiddenEntries[i])))
+                    mod[bStructNumber].text.AddText("! {0} {1} outlier !".format(mod[bStructNumber].xyz[i], int(mod[bStructNumber].hiddenEntries[i])))
     return mod

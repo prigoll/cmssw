@@ -94,6 +94,6 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
                 # skip empty
                 if (modSub[bStructNumber][subStructNumber].histo[i].GetEntries() > 0):
                     if (modSub[bStructNumber][subStructNumber].hiddenEntries[i] != 0):
-                        modSub[bStructNumber][subStructNumber].text.AddText("! {0} {1} entries not shown !".format(modSub[bStructNumber][subStructNumber].xyz[i], int(modSub[bStructNumber][subStructNumber].hiddenEntries[i])))
+                        modSub[bStructNumber][subStructNumber].text.AddText("! {0} {1} outlier !".format(modSub[bStructNumber][subStructNumber].xyz[i], int(modSub[bStructNumber][subStructNumber].hiddenEntries[i])))
                         
     return modSub

@@ -51,14 +51,17 @@ def create(pedeDump, outputFile, config):
             out += "\\end{verbatim}\n"
 
 
+    # humanreadable names
+    names = {"xyz": "Translation", "rot": "Rotation", "dist": "Deformation"}
+
     # big Structures
     
     big = [x for x in config.outputList if (x.plottype == "big")]
     
     if big:
-        out += "\section{{Big structures}}\n"
+        out += "\section{{High level structures}}\n"
         for i in big:
-            out += "\subsection{{{0}}}\n".format(i.parameter)
+            out += "\subsection{{{0}}}\n".format(names[i.parameter])
             out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(config.outputPath, i.filename)
             
 
@@ -74,9 +77,6 @@ def create(pedeDump, outputFile, config):
             # check if there is a plot for this module
             if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName)):
                 out += "\subsection{{{0}}}\n".format(moduleName)
-                
-                # readable names
-                names = {"xyz": "Translation", "rot": "Rotation", "dist": "Deformation"}
                 
                 # loop over modes
                 for mode in ["xyz", "rot", "dist"]:
