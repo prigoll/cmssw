@@ -48,9 +48,11 @@ def main():
     config.parseParameter(args)
     
     ## create output directories
-    if not os.path.exists("{0}/plots".format(config.outputPath)):
-        os.makedirs("{0}/plots".format(config.outputPath))
-    
+    if not os.path.exists("{0}/plots/pdf".format(config.outputPath)):
+        os.makedirs("{0}/plots/pdf".format(config.outputPath))
+    if not os.path.exists("{0}/plots/png".format(config.outputPath)):
+        os.makedirs("{0}/plots/png".format(config.outputPath))
+        
     # parse the file pede.dump.gz and return a LogData Object
     pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath), config)
     
@@ -87,13 +89,16 @@ def main():
         
         cBig.Update()
         
+        # save as pdf
+        cBig.Print("{0}/plots/pdf/structures_{1}.pdf".format(config.outputPath, mode))
+        
         # export as png
         image = TImage.Create()
         image.FromPad(cBig)
-        image.WriteImage("{0}/plots/structures_{1}.png".format(config.outputPath, mode))
+        image.WriteImage("{0}/plots/png/structures_{1}.png".format(config.outputPath, mode))
         
         # add to output list
-        output = OutputData(plottype="big", parameter=mode, filename="structures_{0}.png".format(mode))
+        output = OutputData(plottype="big", parameter=mode, filename="structures_{0}".format(mode))
         config.outputList.append(output)
 
     
@@ -139,13 +144,16 @@ def main():
                 break
             
             cMod[modeNumber][structNumber].Update()
+            
+            # save as pdf
+            cMod[modeNumber][structNumber].Print("{0}/plots/pdf/modules_{1}_{2}.pdf".format(config.outputPath, mode, struct.getName()))
         
             # export as png
             image.FromPad(cMod[modeNumber][structNumber])
-            image.WriteImage("{0}/plots/modules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
+            image.WriteImage("{0}/plots/png/modules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
             
             # add to output list
-            output = OutputData(plottype="mod", name=struct.getName(), parameter=mode, filename="modules_{0}_{1}.png".format(mode, struct.getName()))
+            output = OutputData(plottype="mod", name=struct.getName(), parameter=mode, filename="modules_{0}_{1}".format(mode, struct.getName()))
             config.outputList.append(output)
         
         
@@ -215,13 +223,16 @@ def main():
                     break
                 
                 cModSub[modeNumber][bStructNumber][subStructNumber].Update()
+                
+                # save as pdf
+                cModSub[modeNumber][bStructNumber][subStructNumber].Print("{0}/plots/pdf/modules_{1}_{2}{3}.pdf".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
 
                 # export as png
                 image.FromPad(cModSub[modeNumber][bStructNumber][subStructNumber])
-                image.WriteImage("{0}/plots/modules_{1}_{2}{3}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
+                image.WriteImage("{0}/plots/png/modules_{1}_{2}{3}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
                 
                 # add to output list
-                output = OutputData(plottype="subMod", name=bStruct.getName(), number=subStructNumber+1, parameter=mode, filename="modules_{0}_{1}{2}.png".format(mode, bStruct.getName(), subStructNumber+1))
+                output = OutputData(plottype="subMod", name=bStruct.getName(), number=subStructNumber+1, parameter=mode, filename="modules_{0}_{1}{2}".format(mode, bStruct.getName(), subStructNumber+1))
                 config.outputList.append(output)
             
             

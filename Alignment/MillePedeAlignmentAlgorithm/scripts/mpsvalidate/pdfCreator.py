@@ -43,10 +43,12 @@ def create(pedeDump, outputFile, config):
     out += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
     out += r"Warning:\\"
     for line in pedeDump.warning:
+        
         # check if line empty
         if line.replace(r" ", r""):
-            line.replace("%", "\\\%")
-            out += line+r"\\"
+            out += "\\begin{verbatim}"
+            out += line
+            out += "\\end{verbatim}\n"
 
 
     # big Structures
@@ -57,7 +59,7 @@ def create(pedeDump, outputFile, config):
         out += "\section{{Big structures}}\n"
         for i in big:
             out += "\subsection{{{0}}}\n".format(i.parameter)
-            out += "\includegraphics[width=\linewidth]{{{0}/plots/{1}}}\n".format(config.outputPath, i.filename)
+            out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(config.outputPath, i.filename)
             
 
     # hole modules
@@ -73,6 +75,9 @@ def create(pedeDump, outputFile, config):
             if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName)):
                 out += "\subsection{{{0}}}\n".format(moduleName)
                 
+                # readable names
+                names = {"xyz": "Translation", "rot": "Rotation", "dist": "Deformation"}
+                
                 # loop over modes
                 for mode in ["xyz", "rot", "dist"]:
                     
@@ -84,12 +89,12 @@ def create(pedeDump, outputFile, config):
                 
                     # check if plot there is a plot in this mode
                     if module:
-                        out += "\subsubsection{{{0}}}\n".format(mode)
-                        out += "\includegraphics[width=\linewidth]{{{0}/plots/{1}}}\n".format(config.outputPath, module[0].filename)
+                        out += "\subsubsection{{{0}}}\n".format(names[mode])
+                        out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(config.outputPath, module[0].filename)
                         
                         # loop over submodules
                         for plot in moduleSub:
-                            out += "\includegraphics[width=\linewidth]{{{0}/plots/{1}}}\n".format(config.outputPath, plot.filename)
+                            out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(config.outputPath, plot.filename)
 
     
     data = data.substitute(out=out)

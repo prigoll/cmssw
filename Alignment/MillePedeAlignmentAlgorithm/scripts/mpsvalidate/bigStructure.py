@@ -35,7 +35,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         
     
     # add labels
-    big.title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Big Structures {0}".format(mode))
+    big.title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "High Level Structures {0}".format(mode))
     big.text = TPaveText(0.05, 0.1, 0.95, 0.75)
     big.text.SetTextAlign(12)
     
