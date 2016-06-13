@@ -22,8 +22,12 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                         
         # initialize histograms
         for i in range(3):
-            mod[bStructNumber].histo.append(TH1F("{0} {1} {2}".format(bStruct.getName(), mod[bStructNumber].xyz[i], mode), "Parameter {0}".format(mod[bStructNumber].xyz[i]), numberOfBins, -0.1, 0.1))
-            mod[bStructNumber].histo[i].SetXTitle("[cm]")
+            # bigger range if plot is xyz
+            if (mode=="xyz"):
+                mod[bStructNumber].histo.append(TH1F("{0} {1} {2}".format(bStruct.getName(), mod[bStructNumber].xyz[i], mode), "Parameter {0}".format(mod[bStructNumber].xyz[i]), numberOfBins, -1000, 1000))
+            else:
+                mod[bStructNumber].histo.append(TH1F("{0} {1} {2}".format(bStruct.getName(), mod[bStructNumber].xyz[i], mode), "Parameter {0}".format(mod[bStructNumber].xyz[i]), numberOfBins, -0.1, 0.1))
+            mod[bStructNumber].histo[i].SetXTitle(mod[bStructNumber].unit)
             mod[bStructNumber].histoAxis.append(mod[bStructNumber].histo[i].GetXaxis())
         
         # add labels
@@ -37,7 +41,11 @@ def plot(MillePedeUser, geometryGetter, mode, config):
             if (line.ObjId == 1 and bStruct.containLabel(line.Label)):
                 for i in range(3):
                     if (abs(line.Par[ mod[bStructNumber].data[i] ]) != 999999): 
-                        mod[bStructNumber].histo[i].Fill(line.Par[ mod[bStructNumber].data[i] ])
+                        # transform xyz data from cm to #mu m
+                        if (mode == "xyz"):
+                            mod[bStructNumber].histo[i].Fill(10000*line.Par[ mod[bStructNumber].data[i] ])
+                        else:
+                            mod[bStructNumber].histo[i].Fill(line.Par[ mod[bStructNumber].data[i] ])
                         
         # find the best range
         for i in range(3):

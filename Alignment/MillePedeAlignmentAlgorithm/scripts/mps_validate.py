@@ -287,7 +287,8 @@ def main():
                         maximum1 = mod[modeNumber][bStructNumber].histo[i].GetMaximum()
                         
                         # normalize
-                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Scale(1./subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Integral())
+                        if (subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Integral() != 0):
+                            subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Scale(1./subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Integral())
                         # get y maximum2
                         maximum2 = subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetMaximum()
                         

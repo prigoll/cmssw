@@ -94,12 +94,15 @@ class TreeData:
         if (mode=="xyz"):
             self.xyz = {0: "X", 1: "Y", 2: "Z"}
             self.data = [0, 1, 2]
+            self.unit = "#mum"
         if (mode=="rot"):
             self.xyz = {0: "#alpha", 1: "#beta", 2: "#gamma"}
             self.data = [3, 4, 5]
+            self.unit = ""
         if (mode=="dist"):
             self.xyz = {0: "A", 1: "B", 2: "C"}
             self.data = [6, 7, 8]
+            self.unit = ""
         
 class LogData:
     """ information out of the pede.dump.gz file

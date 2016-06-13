@@ -36,8 +36,12 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
             
             # initialize histograms
             for i in range(3):
-                modSub[bStructNumber][subStructNumber].histo.append(TH1F("{0} {1} {2}".format(subStruct.getName(), modSub[bStructNumber][subStructNumber].xyz[i], mode), "Parameter {0}".format(modSub[bStructNumber][subStructNumber].xyz[i]), numberOfBins, -0.1, 0.1))
-                modSub[bStructNumber][subStructNumber].histo[i].SetXTitle("[cm]")
+                # bigger range if plot is xyz
+                if (mode=="xyz"):
+                    modSub[bStructNumber][subStructNumber].histo.append(TH1F("{0} {1} {2}".format(subStruct.getName(), modSub[bStructNumber][subStructNumber].xyz[i], mode), "Parameter {0}".format(modSub[bStructNumber][subStructNumber].xyz[i]), numberOfBins, -1000, 1000))
+                else:
+                    modSub[bStructNumber][subStructNumber].histo.append(TH1F("{0} {1} {2}".format(subStruct.getName(), modSub[bStructNumber][subStructNumber].xyz[i], mode), "Parameter {0}".format(modSub[bStructNumber][subStructNumber].xyz[i]), numberOfBins, -0.1, 0.1))
+                modSub[bStructNumber][subStructNumber].histo[i].SetXTitle(modSub[bStructNumber][subStructNumber].unit)
                 modSub[bStructNumber][subStructNumber].histoAxis.append(modSub[bStructNumber][subStructNumber].histo[i].GetXaxis())
                 modSub[bStructNumber][subStructNumber].histo[i].SetLineColor(6)
             
@@ -52,7 +56,11 @@ def plot(MillePedeUser, geometryGetter, mod, mode, config):
                 if (line.ObjId == 1 and subStruct.containLabel(line.Label)):
                     for i in range(3):
                         if (abs(line.Par[ modSub[bStructNumber][subStructNumber].data[i] ]) != 999999): 
-                            modSub[bStructNumber][subStructNumber].histo[i].Fill(line.Par[ modSub[bStructNumber][subStructNumber].data[i] ])
+                            # transform xyz data from cm to #mu m
+                            if (mode == "xyz"):
+                                modSub[bStructNumber][subStructNumber].histo[i].Fill(10000*line.Par[ modSub[bStructNumber][subStructNumber].data[i] ])
+                            else:
+                                modSub[bStructNumber][subStructNumber].histo[i].Fill(line.Par[ modSub[bStructNumber][subStructNumber].data[i] ])
                 
             
             # find and apply the new range

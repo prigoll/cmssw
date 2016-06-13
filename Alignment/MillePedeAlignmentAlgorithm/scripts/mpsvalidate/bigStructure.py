@@ -25,7 +25,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
     # initialize histograms
     for i in range(3):
         big.histo.append(TH1F("Big Structure {0} {1}".format(big.xyz[i], mode), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
-        big.histo[i].SetYTitle("[cm]")
+        big.histo[i].SetYTitle(big.unit)
         big.histo[i].SetStats(0)
         big.histo[i].SetMarkerStyle(5)
         big.histoAxis.append(big.histo[i].GetXaxis())
@@ -55,7 +55,11 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                     # set name of the structure
                     big.histoAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
                     # fill with data, big.data[i] xyz or rot data
-                    big.histo[i].SetBinContent(big.binPosition[i], line.Par[ big.data[i] ])
+                    # transform xyz data from cm to #mu m
+                    if (mode=="xyz"):
+                        big.histo[i].SetBinContent(big.binPosition[i], 10000*line.Par[ big.data[i] ])
+                    else:
+                        big.histo[i].SetBinContent(big.binPosition[i], line.Par[ big.data[i] ])
                     big.binPosition[i] += 1
     
     # rotate labels
