@@ -6,60 +6,118 @@
 ##  get a time dependent plot.
 ##
 
-from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT
-from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData
+from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TLegend, TImage
+from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 
-def plot(MillePedeUser, geometryGetter, mode, config, jobTime):
+def plot(treeFile, geometryGetter, mode, config):
+    
+    
+    # list of all avaible TTrees
+    listMillePedeUser = []
+    MillePedeUser = []
+    # TODO use Ttrees in ini file
+    for i in range(1, 31):
+        if (treeFile.GetListOfKeys().Contains("MillePedeUser_{0}".format(i))):
+            listMillePedeUser.append(i)
+    
+    # load MillePedeUser_X TTrees
+    for i in listMillePedeUser:
+        MillePedeUser.append(treeFile.Get("MillePedeUser_{0}".format(i)))
         
-       
-    big = TreeData(mode)
-    
-    # count number of needed bins and max/min shift
-    for line in MillePedeUser:
-        if (line.ObjId != 1):
+      
+    # loop over a hole structure
+    for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
+        # create canvas
+        canvas = TCanvas("canvasTimeBigStrucutres_{0}".format(mode), "Parameter", 300, 0, 800, 600)
+        canvas.Divide(2,2)
+        
+        legend = TLegend(0.05, 0.1, 0.95, 0.75)
+        
+        time = TreeData(mode)
+        
+        histo = []
+        
+        minimum = [0, 0, 0]
+        maximum = [0, 0, 0]
+        
+        
+        # loop over the parts of a strucutre
+        for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
+            
+            histo.append([])
+            
+            
+            # initialize histograms
+            # loop over coordinates
             for i in range(3):
-                if (abs(line.Par[i]) != 999999):
-                    big.numberOfBins[i] += 1
-                    if (line.Par[i] > big.maxShift[i]):
-                        big.maxShift[i] = line.Par[i]
-                    if (line.Par[i] < big.minShift[i]):
-                        big.minShift[i] = line.Par[i]
+                histo[subStructNumber].append(TH1F("Time Structure {0} {1} {2} {3}".format(time.xyz[i], mode, subStruct.name, subStructNumber), "Parameter {0}".format(time.xyz[i]), len(listMillePedeUser), 0, len(listMillePedeUser)))
+                histo[subStructNumber][i].SetYTitle(time.unit)
+                histo[subStructNumber][i].SetStats(0)
+                histo[subStructNumber][i].SetMarkerStyle(5)
+                # bigger labels for the text
+                histo[subStructNumber][i].GetXaxis().SetLabelSize(0.06)
+                histo[subStructNumber][i].GetYaxis().SetTitleOffset(1.6)
+                
     
-    # initialize histograms
-    for i in range(3):
-        big.histo.append(TH1F("Time Structure {0} {1} {2}".format(big.xyz[i], mode, jobTime), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
-        big.histo[i].SetYTitle("[cm]")
-        big.histo[i].SetStats(0)
-        big.histo[i].SetMarkerStyle(5)
-        big.histoAxis.append(big.histo[i].GetXaxis())
-        # bigger labels for the text
-        big.histoAxis[i].SetLabelSize(0.06)
-        big.histo[i].GetYaxis().SetTitleOffset(1.6)
+                # fill histogram
+                # loop over MillePedeUser_X
+                for treeNumber, tree in enumerate(MillePedeUser):
+                    # loop over tree
+                    for line in tree:
+                        if (line.ObjId != 1 and abs(line.Par[i]) != 999999 and subStruct.containLabel(line.Label)):
+                            # note that the first bin is referenced by 1
+                            histo[subStructNumber][i].GetXaxis().SetBinLabel(treeNumber+1, str(listMillePedeUser[treeNumber]))
+                            histo[subStructNumber][i].SetBinContent(treeNumber+1, line.Par[i])
+                            # get maximum/minimum
+                            if (line.Par[i] > maximum[i]):
+                                maximum[i] = line.Par[i]
+                            if (line.Par[i] < minimum[i]):
+                                minimum[i] = line.Par[i]
+            
+            # fill legend
+            legend.AddEntry(histo[subStructNumber][0], "{0} {1}".format(subStruct.name, subStructNumber))
+            
+        
+        # add text
+        title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Time dependent Structures {0}".format(mode))
+        
+        # draw on canvas
+        canvas.cd(1)
+        title.Draw()
+        legend.Draw()
+        
+        # draw plots on canvas
+        # loop over coordinates
+        for i in range(3):
+            canvas.cd(2+i)
+            
+            # set first plot to maximum/minimum
+            histo[0][i].SetMaximum(maximum[i])
+            histo[0][i].SetMinimum(minimum[i])
+            
+            # loop over substructs
+            for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
+                histo[subStructNumber][i].Draw("lpsame")
+    
+        #
+        
+        canvas.Update()
+        
+        # save as pdf
+        canvas.Print("{0}/plots/pdf/timeStructures_{1}_{2}.pdf".format(config.outputPath, mode, bStruct.name))
+        
+        # export as png
+        image = TImage.Create()
+        image.FromPad(canvas)
+        image.WriteImage("{0}/plots/png/timeStructures_{1}_{2}.png".format(config.outputPath, mode, bStruct.name))
+        
+        # add to output list
+        output = OutputData(plottype="time", parameter=mode, filename="timeStructures_{0}_{1}".format(mode, bStruct.name))
+        config.outputList.append(output)
+    
         
     
-    # add labels
-    big.title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "Time dependent Structures {0}".format(mode))
-    big.text = TPaveText(0.05, 0.1, 0.95, 0.75)
-    big.text.SetTextAlign(12)
+# rotate labels
+#for i in range(3):
+#    big.histoAxis[i].LabelsOption("v")
     
-    # fill histograms with value and name
-    for line in MillePedeUser:
-        if (line.ObjId != 1):
-            for i in range(3):
-                if (abs(line.Par[ big.data[i] ]) != 999999):
-                    # set name of the structure
-                    big.histoAxis[i].SetBinLabel(big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
-                    # fill with data, big.data[i] xyz or rot data
-                    big.histo[i].SetBinContent(big.binPosition[i], line.Par[ big.data[i] ])
-                    big.binPosition[i] += 1
-    
-    # rotate labels
-    for i in range(3):
-        big.histoAxis[i].LabelsOption("v")
-    
-
-    
-    # reset BottomMargin
-    gStyle.SetPadBottomMargin(0.1)
-    
-    return big
