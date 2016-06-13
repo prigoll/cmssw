@@ -6,11 +6,11 @@
 ##  created as PDF, HTML, ...
 ##
 
-from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gStyle, gROOT
+from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gStyle, gROOT, TLegend
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 from mpsvalidate.dumpparser import parse
 from mpsvalidate.iniparser import ConfigData
-from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator, beamerCreator
+from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator, beamerCreator, timeStructure
 
 import argparse
 import logging
@@ -60,6 +60,85 @@ def main():
     # open root file and get TTree MillePedeUser_X
     treeFile = TFile("{0}/treeFile_merge.root".format(config.jobDataPath))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
+    
+    
+    ##########################################################################
+    # time dependend big structures
+    #
+    
+    # list of all avaible TTrees
+    listMillePedeUser = []
+    # TODO use Ttrees in ini file
+    for i in range(1, 31):
+        if (treeFile.GetListOfKeys().Contains("MillePedeUser_{0}".format(i))):
+            listMillePedeUser.append(i)
+    
+    for mode in ["xyz", "rot"]:
+        # create the histogram data
+        bigX = []
+        legend = TLegend(0.05, 0.1, 0.95, 0.75)
+        maximum = [0, 0, 0]
+        minimum = [0, 0, 0]
+        
+        # loop over MillePedeUser_X TTrees
+        # note that bigX data is stored in a list
+        for jobTime, jobTimeName in enumerate(listMillePedeUser):
+            MillePedeUser_X = treeFile.Get("MillePedeUser_{0}".format(jobTimeName))
+            bigX.append(timeStructure.plot(MillePedeUser_X, geometryGetter, "rot", config, jobTimeName))
+            # get maximum in each coordinate
+            for i in range(3):
+                if (bigX[jobTime].maxShift[i] > maximum[i]):
+                    maximum[i] = bigX[jobTime].maxShift[i]
+                if (bigX[jobTime].minShift[i] < minimum[i]):
+                    minimum[i] = bigX[jobTime].minShift[i]
+        
+        # more space for labels
+        gStyle.SetPadBottomMargin(0.25)
+        
+        # create canvas
+        cBig = TCanvas("canvasTimeBigStrucutres_{0}".format(mode), "Parameter", 300, 0, 800, 600)
+        cBig.Divide(2,2)
+        
+        # draw histograms
+        cBig.cd(1)
+        bigX[0].title.Draw()
+        
+        # loop over coordinates
+        for i in range(3):
+            cBig.cd(i+2)
+            
+            # set minimum and maximum of first plot
+            bigX[0].histo[i].SetMaximum(1.05*maximum[i])
+            bigX[0].histo[i].SetMinimum(1.05*minimum[i])
+            
+            # loop over MillePedeUser_X TTree data
+            # note that bigX data is stored in a list
+            for jobTime, jobTimeName in enumerate(listMillePedeUser):
+                # chose different color for every TTree
+                bigX[jobTime].histo[i].SetMarkerColor(jobTime+1)
+                # option "p" to use marker
+                bigX[jobTime].histo[i].Draw("pSame")
+                
+                # only AddEntry to legend in the first coordinate
+                if (i==0):
+                    legend.AddEntry(bigX[jobTime].histo[i], "{0}".format(jobTimeName), "p")
+        
+        cBig.cd(1)
+        legend.Draw()
+        
+        cBig.Update()
+        
+        # save as pdf
+        cBig.Print("{0}/plots/pdf/timeStructures_{1}.pdf".format(config.outputPath, mode))
+        
+        # export as png
+        image = TImage.Create()
+        image.FromPad(cBig)
+        image.WriteImage("{0}/plots/png/timeStructures_{1}.png".format(config.outputPath, mode))
+        
+        # add to output list
+        output = OutputData(plottype="time", parameter=mode, filename="timeStructures_{0}".format(mode))
+        config.outputList.append(output)
     
     
     ##########################################################################

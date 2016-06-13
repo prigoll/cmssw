@@ -79,6 +79,7 @@ class TreeData:
     def __init__(self, mode):
         self.numberOfBins = [0, 0, 0]
         self.maxShift = [0, 0, 0]
+        self.minShift = [0, 0, 0]
         self.maxBinShift = [0, 0, 0]
         # used binShift
         self.binShift = [0, 0, 0]
