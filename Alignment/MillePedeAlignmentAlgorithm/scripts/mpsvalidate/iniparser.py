@@ -35,6 +35,10 @@ class ConfigData:
         self.widthstddev = -1
         # force to use histogram width self.widthstdev * StdDev
         self.forcestddev = -1
+        # every parameter (e.g. xyz) with same range
+        self.samerange = -1
+        # rangemode 1 = multiple of StdDev, 2 = show all, 3 = use given ranges
+        self.rangemode = -1
         
         # list with the plots for the output
         self.outputList = []
@@ -115,6 +119,17 @@ class ConfigData:
             self.forcestddev = int(parser.get("PLOTS","forcestddev"))
         except:
             pass
+        
+        try:
+            self.samerange = int(parser.get("PLOTS","samerange"))
+        except:
+            pass
+        
+        try:
+            self.rangemode = int(parser.get("PLOTS","rangemode"))
+        except:
+            pass
+        
         
 
     def parseParameter(self, args):

@@ -62,29 +62,58 @@ def plot(MillePedeUser, geometryGetter, mode, config):
             if (abs(mod[bStructNumber].maxBinShift[i]) == numberOfBins/2+1):
                 mod[bStructNumber].maxBinShift[i] = 0
 
-        # find and apply the new range
-        for i in range(3):
-            if (mod[bStructNumber].histo[i].GetEntries() != 0 and mod[bStructNumber].histo[i].GetStdDev() != 0):
-                # if the plotrange is much bigger than the standard deviation use config.widthstdev * StdDev als Range
-                # check the configData if it is allowed to hide data
-                if ( max(mod[bStructNumber].maxShift)/mod[bStructNumber].histo[i].GetStdDev() > config.defpeak and config.allowhidden == 1 or config.forcestddev == 1):
-                    # corresponding bin config.widthstdev*StdDev
-                    binShift = int(mod[bStructNumber].histo[i].FindBin(config.widthstddev*mod[bStructNumber].histo[i].GetStdDev()) - numberOfBins/2)
-                    # count entries which are not shown anymore
-                    # bin 1 to begin of histogram
-                    for j in range(1, numberOfBins/2 - binShift):
-                        mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
-                    # from the end of shown bins to the end of histogram
-                    for j in range(numberOfBins/2 + binShift, mod[bStructNumber].histo[i].GetNbinsX()):
-                        mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
-                else:
-                    binShift = max(mod[bStructNumber].maxBinShift)
-                
-                # save used binShift
+        # three types of ranges
+        
+        # 1. multiple of standard dev
+        if (config.rangemode == 1):
+            for i in range(3):
+                if (mod[bStructNumber].histo[i].GetEntries() != 0 and mod[bStructNumber].histo[i].GetStdDev() != 0):
+                    # if the plotrange is much bigger than the standard deviation use config.widthstdev * StdDev als Range
+                    # check the configData if it is allowed to hide data
+                    if ( max(mod[bStructNumber].maxShift)/mod[bStructNumber].histo[i].GetStdDev() > config.defpeak and config.allowhidden == 1 or config.forcestddev == 1):
+                        # corresponding bin config.widthstdev*StdDev
+                        binShift = int(mod[bStructNumber].histo[i].FindBin(config.widthstddev*mod[bStructNumber].histo[i].GetStdDev()) - numberOfBins/2)
+                        # count entries which are not shown anymore
+                        # bin 1 to begin of histogram
+                        for j in range(1, numberOfBins/2 - binShift):
+                            mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
+                        # from the end of shown bins to the end of histogram
+                        for j in range(numberOfBins/2 + binShift, mod[bStructNumber].histo[i].GetNbinsX()):
+                            mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
+                    else:
+                        binShift = max(mod[bStructNumber].maxBinShift)
+                    
+                    # save used binShift
+                    mod[bStructNumber].binShift[i] = binShift
+        
+        # 2. show all
+        if (config.rangemode == 2):
+            for i in range(3):
+                mod[bStructNumber].binShift[i] = mod[bStructNumber].maxBinShift[i]
+        
+        # 3. use given ranges
+        # TODO which values to use
+        if (config.rangemode == 3):
+            if (mode == "xyz"):
+                binShift = int(100./mod[bStructNumber].histo[i].GetBinWidth(1))
+            if (mode == "rot"):
+                binShift = int(0.03/mod[bStructNumber].histo[i].GetBinWidth(1))
+            if (mode == "dist"):
+                binShift = int(0.03/mod[bStructNumber].histo[i].GetBinWidth(1))
+            # set binshift
+            for i in range(3):
                 mod[bStructNumber].binShift[i] = binShift
-                
+        
+        # all plot the same range
+        if (config.samerange == 1):
+            for i in range(3):
+                mod[bStructNumber].binShift[i] = max(mod[bStructNumber].binShift)
+        
+        # apply new range
+        for i in range(3):
+            if (mod[bStructNumber].histo[i].GetEntries() != 0):
                 # merge bins, ca. 100 should be visible in the resulting plot
-                mergeNumberBins = binShift
+                mergeNumberBins = mod[bStructNumber].binShift[i]
                 # skip empty histogram
                 if (mergeNumberBins != 0):
                     # the 2*maxBinShift bins should shrink to 100 bins
@@ -101,7 +130,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                     
                     # set view range. it is important to note that the number of bins have changed with the rebinning
                     # the total number and the number of shift must be corrected with / mergeNumberBins
-                    mod[bStructNumber].histoAxis[i].SetRange(int(numberOfBins/(2*mergeNumberBins)-binShift / mergeNumberBins), int(numberOfBins/(2*mergeNumberBins)+binShift / mergeNumberBins))
+                    mod[bStructNumber].histoAxis[i].SetRange(int(numberOfBins/(2*mergeNumberBins)-mod[bStructNumber].binShift[i] / mergeNumberBins), int(numberOfBins/(2*mergeNumberBins)+mod[bStructNumber].binShift[i] / mergeNumberBins))
             
                 
         # TODO chose good limit
