@@ -17,12 +17,12 @@ def plot(MillePedeUser, geometryGetter, mode, config):
     for line in MillePedeUser:
         if (line.ObjId != 1):
             for i in range(3):
-                if (abs(line.Par[i]) != 999999):
+                if (abs(line.Par[ big.data[i] ]) != 999999):
                     if (mode == "xyz"):
-                        line.Par[i] *= 10000                    
+                        line.Par[ big.data[i] ] *= 10000                    
                     big.numberOfBins[i] += 1
-                    if (abs(line.Par[i]) > abs(big.maxShift[i])):
-                        big.maxShift[i] = line.Par[i]
+                    if (abs(line.Par[ big.data[i] ]) > abs(big.maxShift[i])):
+                        big.maxShift[i] = line.Par[ big.data[i] ]
     
     # initialize histograms
     for i in range(3):
@@ -45,7 +45,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
     # error if shift is bigger than limit
     limit = 0.02
     for i in range(3):
-        big.text.AddText("max. shift {0}: {1:.3f}".format(big.xyz[i], big.maxShift[i]))
+        big.text.AddText("max. shift {0}: {1:.2}".format(big.xyz[i], big.maxShift[i]))
         if (abs(big.maxShift[i]) > limit):
             big.text.AddText("! {0} shift bigger than {1} !".format(big.xyz[i], limit))
     
@@ -68,6 +68,18 @@ def plot(MillePedeUser, geometryGetter, mode, config):
     for i in range(3):
         big.histoAxis[i].LabelsOption("v")
     
+    # reset y range
+    
+    # use given values
+    # TODO what value
+    # TODO when to apply given values
+    
+    # TODO own configuration?
+    # all the same range
+    if (config.samerange == 1):
+        # apply new range
+        for i in range(3):
+            big.histo[i].GetYaxis().SetRangeUser( -1.05*max(map(abs, big.maxShift)), 1.05*max(map(abs, big.maxShift)) )
 
     
     # reset BottomMargin
