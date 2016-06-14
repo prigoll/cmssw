@@ -47,15 +47,20 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                         else:
                             mod[bStructNumber].histo[i].Fill(line.Par[ mod[bStructNumber].data[i] ])
                         
-        # find the best range
+         # find the best range
         for i in range(3):
             # get first and last bin with content and chose the one which has a greater distance to the center
-            mod[bStructNumber].maxBinShift[i] = max( abs(numberOfBins/2-mod[bStructNumber].histo[i].FindFirstBinAbove()), abs(mod[bStructNumber].histo[i].FindLastBinAbove()-numberOfBins/2) )
+            if (abs(numberOfBins/2-mod[bStructNumber].histo[i].FindFirstBinAbove()) > abs(mod[bStructNumber].histo[i].FindLastBinAbove()-numberOfBins/2) ):
+                mod[bStructNumber].maxBinShift[i] = abs(numberOfBins/2-mod[bStructNumber].histo[i].FindFirstBinAbove())
+                # set the maxShift value
+                mod[bStructNumber].maxShift[i] = mod[bStructNumber].histo[i].GetBinCenter(mod[bStructNumber].histo[i].FindFirstBinAbove())
+            else:
+                mod[bStructNumber].maxBinShift[i] = abs(mod[bStructNumber].histo[i].FindLastBinAbove()-numberOfBins/2)
+                # set the maxShift value
+                mod[bStructNumber].maxShift[i] = mod[bStructNumber].histo[i].GetBinCenter(mod[bStructNumber].histo[i].FindLastBinAbove())
             # skip empty histogram
-            if (mod[bStructNumber].maxBinShift[i] == numberOfBins/2+1):
+            if (abs(mod[bStructNumber].maxBinShift[i]) == numberOfBins/2+1):
                 mod[bStructNumber].maxBinShift[i] = 0
-            # set the maxShift value
-            mod[bStructNumber].maxShift[i] = mod[bStructNumber].histo[i].GetBinCenter( numberOfBins/2+mod[bStructNumber].maxBinShift[i] )
 
         # find and apply the new range
         for i in range(3):
@@ -105,8 +110,8 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         for i in range(3):
             # skip empty
             if (mod[bStructNumber].histo[i].GetEntries() > 0):
-                mod[bStructNumber].text.AddText("max. shift {0}: {1:.2}".format(mod[bStructNumber].xyz[i], mod[bStructNumber].maxShift[i]))
-                if (mod[bStructNumber].maxShift[i] > limit):
+                mod[bStructNumber].text.AddText("max. shift {0}: {1:.2f}".format(mod[bStructNumber].xyz[i], mod[bStructNumber].maxShift[i]))
+                if (abs(mod[bStructNumber].maxShift[i]) > limit):
                     mod[bStructNumber].text.AddText("! {0} shift bigger than {1} !".format(mod[bStructNumber].xyz[i], limit))
                 if (mod[bStructNumber].hiddenEntries[i] != 0):
                     mod[bStructNumber].text.AddText("! {0} {1} outlier !".format(mod[bStructNumber].xyz[i], int(mod[bStructNumber].hiddenEntries[i])))

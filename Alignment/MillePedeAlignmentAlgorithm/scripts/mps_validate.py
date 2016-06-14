@@ -67,11 +67,11 @@ def main():
     #
     
     
-    
+    '''
     for mode in ["xyz", "rot"]:
         # create the histogram data
         timeStructure.plot(treeFile, geometryGetter, mode, config)
-    
+    '''
     
     ##########################################################################
     # big structures
