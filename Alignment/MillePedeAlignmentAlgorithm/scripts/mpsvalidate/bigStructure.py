@@ -90,7 +90,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                         break
                     # if not possible, show all no hidden entries!
                 if (abs(big.maxShift[i]) > config.rangexyzHL[-1]):
-                    big.usedRange[i] = config.rangexyzHL[-1]
+                    big.usedRange[i] = big.maxShift[i]
             if (mode == "rot"):
                 # loop over given values
                 # without last value
@@ -101,11 +101,10 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                         break
                     # if not possible, show all no hidden entries!
                 if (abs(big.maxShift[i]) > config.rangerotHL[-1]):
-                    big.usedRange[i] = config.rangerotHL[-1]
+                    big.usedRange[i] = big.maxShift[i]
     
     # apply new range (usedRange)
     for i in range(3):
-        print big.usedRange
         big.histo[i].GetYaxis().SetRangeUser( -1.05*abs(big.usedRange[i]), 1.05*abs(big.usedRange[i]) )
     
     # all the same range
