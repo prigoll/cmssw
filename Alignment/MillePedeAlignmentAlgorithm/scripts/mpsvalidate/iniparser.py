@@ -144,17 +144,35 @@ class ConfigData:
         except:
             pass
         
+        try:
+            self.rangexyzM = parser.get("MODULEPLOTS","rangexyz")
+            self.rangexyzM = sorted(map(float, self.rangexyzM.replace(" ", "").split(",")))
+        except:
+            pass
+        
+        try:
+            self.rangerotM = parser.get("MODULEPLOTS","rangerot")
+            self.rangerotM = sorted(map(float, self.rangerotM.replace(" ", "").split(",")))
+        except:
+            pass
+        
+        try:
+            self.rangedistM = parser.get("MODULEPLOTS","rangedist")
+            self.rangedistM = sorted(map(float, self.rangedistM.replace(" ", "").split(",")))
+        except:
+            pass
+        
         ## HIGHLEVELPLOTS
         
         try:
             self.rangexyzHL = parser.get("HIGHLEVELPLOTS","rangexyz")
-            self.rangexyzHL = sorted(map(float,self.rangexyzHL.replace(" ", "").split(",")))
+            self.rangexyzHL = sorted(map(float, self.rangexyzHL.replace(" ", "").split(",")))
         except:
             pass
         
         try:
             self.rangerotHL = parser.get("HIGHLEVELPLOTS","rangerot")
-            self.rangerotHL = sorted(map(float,self.rangerotHL.replace(" ", "").split(",")))
+            self.rangerotHL = sorted(map(float, self.rangerotHL.replace(" ", "").split(",")))
         except:
             pass
         

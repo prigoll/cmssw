@@ -82,6 +82,7 @@ def main():
         big = bigStructure.plot(MillePedeUser, geometryGetter, mode, config)
         # more space for labels
         gStyle.SetPadBottomMargin(0.25)
+        gStyle.SetOptStat("emrs")
         
         # create canvas
         cBig = TCanvas("canvasBigStrucutres_{0}".format(mode), "Parameter", 300, 0, 800, 600)
@@ -127,7 +128,7 @@ def main():
         mod.append(bigModule.plot(MillePedeUser, geometryGetter, mode, config))
                         
         # show the skewness in the legend
-        gStyle.SetOptStat("nemrs")
+        gStyle.SetOptStat("emrs")
         
         # draw plots
         cMod.append([])

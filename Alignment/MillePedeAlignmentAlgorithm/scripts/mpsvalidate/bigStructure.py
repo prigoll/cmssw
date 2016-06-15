@@ -29,7 +29,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         big.histo.append(TH1F("Big Structure {0} {1}".format(big.xyz[i], mode), "Parameter {0}".format(big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
         big.histo[i].SetYTitle(big.unit)
         big.histo[i].SetStats(0)
-        big.histo[i].SetMarkerStyle(5)
+        big.histo[i].SetMarkerStyle(21)
         big.histoAxis.append(big.histo[i].GetXaxis())
         # bigger labels for the text
         big.histoAxis[i].SetLabelSize(0.06)
@@ -81,38 +81,29 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         # loop over coordinates
         for i in range(3):
             if (mode == "xyz"):
-                # loop over given values
-                # without last value
-                for value in config.rangexyzHL:
-                    # maximum smaller than given value
-                    if (abs(big.maxShift[i]) < value):
-                        big.usedRange[i] = value
-                        break
-                    # if not possible, show all no hidden entries!
-                if (abs(big.maxShift[i]) > config.rangexyzHL[-1]):
-                    big.usedRange[i] = big.maxShift[i]
+                valuelist = config.rangexyzHL
             if (mode == "rot"):
-                # loop over given values
-                # without last value
-                for value in config.rangerotHL:
-                    # maximum smaller than given value
-                    if (abs(big.maxShift[i]) < value):
-                        big.usedRange[i] = value
-                        break
-                    # if not possible, show all no hidden entries!
-                if (abs(big.maxShift[i]) > config.rangerotHL[-1]):
-                    big.usedRange[i] = big.maxShift[i]
-    
-    # apply new range (usedRange)
-    for i in range(3):
-        big.histo[i].GetYaxis().SetRangeUser( -1.05*abs(big.usedRange[i]), 1.05*abs(big.usedRange[i]) )
+                valuelist = config.rangerotHL
+            # loop over given values
+            # without last value
+            for value in valuelist:
+                # maximum smaller than given value
+                if (abs(big.maxShift[i]) < value):
+                    big.usedRange[i] = value
+                    break
+                # if not possible, force highest
+            if (abs(big.maxShift[i]) > valuelist[-1]):
+                big.usedRange[i] = valuelist[-1]
     
     # all the same range
     if (config.samerangeHL == 1):
         # apply new range
         for i in range(3):
-            big.histo[i].GetYaxis().SetRangeUser( -1.05*max(map(abs, big.usedRange)), 1.05*max(map(abs, big.usedRange)) )
+            big.usedRange[i] = max(map(abs, big.usedRange))
 
+    # apply new range (usedRange)
+    for i in range(3):
+        big.histo[i].GetYaxis().SetRangeUser( -1.05*abs(big.usedRange[i]), 1.05*abs(big.usedRange[i]) )
     
     # reset BottomMargin
     gStyle.SetPadBottomMargin(0.1)

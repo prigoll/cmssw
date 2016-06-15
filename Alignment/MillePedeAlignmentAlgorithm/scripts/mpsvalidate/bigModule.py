@@ -73,13 +73,6 @@ def plot(MillePedeUser, geometryGetter, mode, config):
                     if ( max(mod[bStructNumber].maxShift)/mod[bStructNumber].histo[i].GetStdDev() > config.defpeak and config.allowhidden == 1 or config.forcestddev == 1):
                         # corresponding bin config.widthstdev*StdDev
                         binShift = int(mod[bStructNumber].histo[i].FindBin(config.widthstddev*mod[bStructNumber].histo[i].GetStdDev()) - numberOfBins/2)
-                        # count entries which are not shown anymore
-                        # bin 1 to begin of histogram
-                        for j in range(1, numberOfBins/2 - binShift):
-                            mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
-                        # from the end of shown bins to the end of histogram
-                        for j in range(numberOfBins/2 + binShift, mod[bStructNumber].histo[i].GetNbinsX()):
-                            mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
                     else:
                         binShift = max(mod[bStructNumber].maxBinShift)
                     
@@ -90,24 +83,46 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         if (config.rangemode == 2):
             for i in range(3):
                 mod[bStructNumber].binShift[i] = mod[bStructNumber].maxBinShift[i]
-        
+                
         # 3. use given ranges
-        # TODO which values to use
         if (config.rangemode == 3):
-            if (mode == "xyz"):
-                binShift = int(100./mod[bStructNumber].histo[i].GetBinWidth(1))
-            if (mode == "rot"):
-                binShift = int(0.03/mod[bStructNumber].histo[i].GetBinWidth(1))
-            if (mode == "dist"):
-                binShift = int(0.03/mod[bStructNumber].histo[i].GetBinWidth(1))
-            # set binshift
             for i in range(3):
-                mod[bStructNumber].binShift[i] = binShift
+                if (mode == "xyz"):
+                    valuelist = config.rangexyzM
+                if (mode == "rot"):
+                    valuelist = config.rangerotM
+                if (mode == "dist"):
+                    valuelist = config.rangedistM
+                    
+                for value in valuelist:
+                    # maximum smaller than given value
+                    if (abs(mod[bStructNumber].maxShift[i]) < value):
+                        binShift = value
+                        break
+                # if not possible, force highest
+                if (abs(mod[bStructNumber].maxShift[i]) > valuelist[-1]):
+                    binShift = valuelist[-1]
+                # calculate binShift
+                mod[bStructNumber].binShift[i] = int(binShift/mod[bStructNumber].histo[i].GetBinWidth(1))
+
         
         # all plot the same range
         if (config.samerange == 1):
             for i in range(3):
                 mod[bStructNumber].binShift[i] = max(mod[bStructNumber].binShift)
+                
+        # save used range
+        for i in range(3):
+            mod[bStructNumber].usedRange[i] = mod[bStructNumber].binShift[i]
+                
+        # count entries which are not shown anymore
+        for i in range(3):
+            # bin 1 to begin of histogram
+            for j in range(1, numberOfBins/2 - mod[bStructNumber].binShift[i]):
+                mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
+            # from the end of shown bins to the end of histogram
+            for j in range(numberOfBins/2 + mod[bStructNumber].binShift[i], mod[bStructNumber].histo[i].GetNbinsX()):
+                mod[bStructNumber].hiddenEntries[i] += mod[bStructNumber].histo[i].GetBinContent(j)
         
         # apply new range
         for i in range(3):
@@ -139,7 +154,7 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         for i in range(3):
             # skip empty
             if (mod[bStructNumber].histo[i].GetEntries() > 0):
-                mod[bStructNumber].text.AddText("max. shift {0}: {1:.2f}".format(mod[bStructNumber].xyz[i], mod[bStructNumber].maxShift[i]))
+                mod[bStructNumber].text.AddText("max. shift {0}: {1:.2}".format(mod[bStructNumber].xyz[i], mod[bStructNumber].maxShift[i]))
                 if (abs(mod[bStructNumber].maxShift[i]) > limit):
                     mod[bStructNumber].text.AddText("! {0} shift bigger than {1} !".format(mod[bStructNumber].xyz[i], limit))
                 if (mod[bStructNumber].hiddenEntries[i] != 0):
