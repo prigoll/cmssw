@@ -81,92 +81,11 @@ def main():
     
     ##########################################################################
     # modules of a hole structure
+    # and part of structure
     #
     
     bigModule.plot(MillePedeUser, geometryGetter, config)
     
-        
-    ##########################################################################
-    # modules of a part of a strucutre, together with the hole strucutre
-    #
-    
-    '''
-    # store TreeData for different modes
-    subMod = []
-    # store Canvas for different modes
-    cModSub = []
-    
-    for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-        # create histograms
-        subMod.append(subModule.plot(MillePedeUser, geometryGetter, mod, mode, config))
-        
-        # draw plots with nested lists
-        cModSub.append([])
-        
-        # loop over all structures    
-        for bStructNumber, bStruct in enumerate(geometryGetter.listbStructs()):
-            # append nested list with parts of the structure
-            cModSub[modeNumber].append([])
-            
-            # loop over the parts of a structure
-            for subStructNumber, subStruct in enumerate(bStruct.getChildren()):
-                cModSub[modeNumber][bStructNumber].append(TCanvas("canvasSubStruct{0}_{1}".format(subStruct.getName(), mode), "Parameter", 300, 0, 800, 600))
-                cModSub[modeNumber][bStructNumber][subStructNumber].Divide(2, 2)
-                
-                # draw parts of the strucutre and the hole structure
-                cModSub[modeNumber][bStructNumber][subStructNumber].cd(1)
-                subMod[modeNumber][bStructNumber][subStructNumber].title.Draw()
-                subMod[modeNumber][bStructNumber][subStructNumber].text.Draw()
-                
-                # is there any plot?
-                plotNumber = 0
-                
-                # loop over coordinates
-                for i in range(3):
-                    # check if histogram is not emtpy
-                    if (subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetEntries() > 0):
-                        plotNumber += 1
-                        cModSub[modeNumber][bStructNumber][subStructNumber].cd(i+2)
-                        
-                        # skip empty
-                        if (mod[modeNumber][bStructNumber].histo[i].GetEntries() == 0):
-                            break
-                        
-                        # normalize bStruct
-                        mod[modeNumber][bStructNumber].histo[i].Scale( 1./mod[modeNumber][bStructNumber].histo[i].Integral() )
-                        # get y maximum1
-                        maximum1 = mod[modeNumber][bStructNumber].histo[i].GetMaximum()
-                        
-                        # normalize
-                        if (subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Integral() != 0):
-                            subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Scale(1./subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Integral())
-                        # get y maximum2
-                        maximum2 = subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetMaximum()
-                        
-                        # set SetRangeUser
-                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].GetYaxis().SetRangeUser(0., max([maximum1, maximum2]) * 1.1)
-                                               
-                        subMod[modeNumber][bStructNumber][subStructNumber].histo[i].Draw()
-                        
-                        mod[modeNumber][bStructNumber].histo[i].Draw("same")
-
-                if (plotNumber == 0):
-                    break
-                
-                cModSub[modeNumber][bStructNumber][subStructNumber].Update()
-                
-                # save as pdf
-                cModSub[modeNumber][bStructNumber][subStructNumber].Print("{0}/plots/pdf/modules_{1}_{2}{3}.pdf".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
-
-                # export as png
-                image.FromPad(cModSub[modeNumber][bStructNumber][subStructNumber])
-                image.WriteImage("{0}/plots/png/modules_{1}_{2}{3}.png".format(config.outputPath, mode, bStruct.getName(), subStructNumber+1))
-                
-                # add to output list
-                output = OutputData(plottype="subMod", name=bStruct.getName(), number=subStructNumber+1, parameter=mode, filename="modules_{0}_{1}{2}".format(mode, bStruct.getName(), subStructNumber+1))
-                config.outputList.append(output)
-            
-            '''
     ##########################################################################
     # create TEX, beamer
     #
