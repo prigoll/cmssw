@@ -15,6 +15,7 @@ class ConfigData:
     """
     
     def __init__(self):
+        ## General
         # jobmX dir
         self.jobNumber = -1
         # MillePedeUser_X time
@@ -25,6 +26,8 @@ class ConfigData:
         self.outputPath = ""
         # latex file name
         self.latexfile = ""
+        
+        ## MODULEPLOTS
         # allow to use the standard deviation as the plotrange
         self.allowhidden = -1
         # number of bins after shrinking
@@ -39,6 +42,16 @@ class ConfigData:
         self.samerange = -1
         # rangemode 1 = multiple of StdDev, 2 = show all, 3 = use given ranges
         self.rangemode = -1
+        
+        ## HIGHLEVELPLOTS
+        # given ranges
+        self.rangexyzHL = []
+        self.rangerotHL = []
+        # every parameter (e.g. xyz) with same range
+        self.samerangeHL = -1
+        # rangemode 1 = show all, 2 = use given ranges
+        self.rangemodeHL = -1
+        
         
         # list with the plots for the output
         self.outputList = []
@@ -95,41 +108,65 @@ class ConfigData:
         except:
             pass
         
+        ## MODULEPLOTS        
         try:
-            self.allowhidden = int(parser.get("PLOTS","allowhidden"))
+            self.allowhidden = int(parser.get("MODULEPLOTS","allowhidden"))
         except:
             pass
         
         try:
-            self.numberofbins = int(parser.get("PLOTS","numberofbins"))
+            self.numberofbins = int(parser.get("MODULEPLOTS","numberofbins"))
         except:
             pass
         
         try:
-            self.defpeak = int(parser.get("PLOTS","defpeak"))
+            self.defpeak = int(parser.get("MODULEPLOTS","defpeak"))
         except:
             pass
         
         try:
-            self.widthstddev = int(parser.get("PLOTS","widthstddev"))
+            self.widthstddev = int(parser.get("MODULEPLOTS","widthstddev"))
         except:
             pass
         
         try:
-            self.forcestddev = int(parser.get("PLOTS","forcestddev"))
+            self.forcestddev = int(parser.get("MODULEPLOTS","forcestddev"))
         except:
             pass
         
         try:
-            self.samerange = int(parser.get("PLOTS","samerange"))
+            self.samerange = int(parser.get("MODULEPLOTS","samerange"))
         except:
             pass
         
         try:
-            self.rangemode = int(parser.get("PLOTS","rangemode"))
+            self.rangemode = int(parser.get("MODULEPLOTS","rangemode"))
         except:
             pass
         
+        ## HIGHLEVELPLOTS
+        
+        try:
+            self.rangexyzHL = parser.get("HIGHLEVELPLOTS","rangexyz")
+            self.rangexyzHL = sorted(map(float,self.rangexyzHL.replace(" ", "").split(",")))
+        except:
+            pass
+        
+        try:
+            self.rangerotHL = parser.get("HIGHLEVELPLOTS","rangerot")
+            self.rangerotHL = sorted(map(float,self.rangerotHL.replace(" ", "").split(",")))
+        except:
+            pass
+        
+        try:
+            self.samerangeHL = int(parser.get("HIGHLEVELPLOTS","samerange"))
+        except:
+            pass
+        
+        try:
+            self.rangemodeHL = int(parser.get("HIGHLEVELPLOTS","rangemode"))
+        except:
+            pass
         
 
     def parseParameter(self, args):

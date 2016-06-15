@@ -64,15 +64,15 @@ def plot(treeFile, geometryGetter, mode, config):
                 for treeNumber, tree in enumerate(MillePedeUser):
                     # loop over tree
                     for line in tree:
-                        if (line.ObjId != 1 and abs(line.Par[i]) != 999999 and subStruct.containLabel(line.Label)):
+                        if (line.ObjId != 1 and abs(line.Par[ time.data[i] ]) != 999999 and subStruct.containLabel(line.Label)):
                             # note that the first bin is referenced by 1
                             histo[subStructNumber][i].GetXaxis().SetBinLabel(treeNumber+1, str(listMillePedeUser[treeNumber]))
-                            histo[subStructNumber][i].SetBinContent(treeNumber+1, line.Par[i])
+                            histo[subStructNumber][i].SetBinContent(treeNumber+1, line.Par[ time.data[i] ])
                             # get maximum/minimum
-                            if (line.Par[i] > maximum[i]):
-                                maximum[i] = line.Par[i]
-                            if (line.Par[i] < minimum[i]):
-                                minimum[i] = line.Par[i]
+                            if (line.Par[ time.data[i] ] > maximum[i]):
+                                maximum[i] = line.Par[ time.data[i] ]
+                            if (line.Par[ time.data[i] ] < minimum[i]):
+                                minimum[i] = line.Par[ time.data[i] ]
             
             # fill legend
             legend.AddEntry(histo[subStructNumber][0], "{0} {1}".format(subStruct.name, subStructNumber))

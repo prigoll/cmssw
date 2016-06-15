@@ -69,17 +69,50 @@ def plot(MillePedeUser, geometryGetter, mode, config):
         big.histoAxis[i].LabelsOption("v")
     
     # reset y range
+    # two types of ranges
     
-    # use given values
-    # TODO what value
-    # TODO when to apply given values
+    # 1. show all
+    if (config.rangemodeHL == 1):
+        for i in range(3):
+            big.usedRange[i] = big.maxShift[i]
     
-    # TODO own configuration?
+    # 2. use given values
+    if (config.rangemodeHL == 2):
+        # loop over coordinates
+        for i in range(3):
+            if (mode == "xyz"):
+                # loop over given values
+                # without last value
+                for value in config.rangexyzHL:
+                    # maximum smaller than given value
+                    if (abs(big.maxShift[i]) < value):
+                        big.usedRange[i] = value
+                        break
+                    # if not possible, show all no hidden entries!
+                if (abs(big.maxShift[i]) > config.rangexyzHL[-1]):
+                    big.usedRange[i] = config.rangexyzHL[-1]
+            if (mode == "rot"):
+                # loop over given values
+                # without last value
+                for value in config.rangerotHL:
+                    # maximum smaller than given value
+                    if (abs(big.maxShift[i]) < value):
+                        big.usedRange[i] = value
+                        break
+                    # if not possible, show all no hidden entries!
+                if (abs(big.maxShift[i]) > config.rangerotHL[-1]):
+                    big.usedRange[i] = config.rangerotHL[-1]
+    
+    # apply new range (usedRange)
+    for i in range(3):
+        print big.usedRange
+        big.histo[i].GetYaxis().SetRangeUser( -1.05*abs(big.usedRange[i]), 1.05*abs(big.usedRange[i]) )
+    
     # all the same range
-    if (config.samerange == 1):
+    if (config.samerangeHL == 1):
         # apply new range
         for i in range(3):
-            big.histo[i].GetYaxis().SetRangeUser( -1.05*max(map(abs, big.maxShift)), 1.05*max(map(abs, big.maxShift)) )
+            big.histo[i].GetYaxis().SetRangeUser( -1.05*max(map(abs, big.usedRange)), 1.05*max(map(abs, big.usedRange)) )
 
     
     # reset BottomMargin

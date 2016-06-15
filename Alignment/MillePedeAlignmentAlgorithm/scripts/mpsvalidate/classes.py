@@ -85,6 +85,7 @@ class TreeData:
         self.binShift = [0, 0, 0]
         self.hiddenEntries = [0, 0, 0]
         self.binPosition = [1, 1, 1]
+        self.usedRange = [0, 0, 0]
         self.histo = []
         self.histoAxis = []
         # plot title and text
