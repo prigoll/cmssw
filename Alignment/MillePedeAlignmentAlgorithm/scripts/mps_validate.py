@@ -77,42 +77,9 @@ def main():
     # big structures
     #
     
-    for mode in ["xyz", "rot"]:
-        # create the histogram data
-        big = bigStructure.plot(MillePedeUser, geometryGetter, mode, config)
-        # more space for labels
-        gStyle.SetPadBottomMargin(0.25)
-        gStyle.SetOptStat("emrs")
-        
-        # create canvas
-        cBig = TCanvas("canvasBigStrucutres_{0}".format(mode), "Parameter", 300, 0, 800, 600)
-        cBig.Divide(2,2)
-        
-        # draw histograms
-        cBig.cd(1)
-        big.title.Draw()
-        big.text.Draw()
-        
-        # loop over coordinates
-        for i in range(3):
-            cBig.cd(i+2)
-            # option "p" to use marker
-            big.histo[i].Draw("p")
-        
-        cBig.Update()
-        
-        # save as pdf
-        cBig.Print("{0}/plots/pdf/structures_{1}.pdf".format(config.outputPath, mode))
-        
-        # export as png
-        image = TImage.Create()
-        image.FromPad(cBig)
-        image.WriteImage("{0}/plots/png/structures_{1}.png".format(config.outputPath, mode))
-        
-        # add to output list
-        output = OutputData(plottype="big", parameter=mode, filename="structures_{0}".format(mode))
-        config.outputList.append(output)
+    big = bigStructure.plot(MillePedeUser, geometryGetter, config)
 
+    
     
     ##########################################################################
     # modules of a hole structure
