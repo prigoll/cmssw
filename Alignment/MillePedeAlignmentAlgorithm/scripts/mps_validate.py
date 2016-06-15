@@ -77,69 +77,20 @@ def main():
     # big structures
     #
     
-    big = bigStructure.plot(MillePedeUser, geometryGetter, config)
-
-    
+    big = bigStructure.plot(MillePedeUser, geometryGetter,  config)
     
     ##########################################################################
     # modules of a hole structure
     #
     
-    # store TreeData for different modes
-    mod = []
-    # store Canvas for different modes
-    cMod = []
+    bigModule.plot(MillePedeUser, geometryGetter, config)
     
-    for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-        # create histogram data in a list
-        mod.append(bigModule.plot(MillePedeUser, geometryGetter, mode, config))
-                        
-        # show the skewness in the legend
-        gStyle.SetOptStat("emrs")
-        
-        # draw plots
-        cMod.append([])
-        # loop over all structures to get the name
-        for structNumber, struct in enumerate(geometryGetter.listbStructs()):
-            cMod[modeNumber].append(TCanvas("canvasModules{0}_{1}".format(struct.getName(), mode), "Parameter", 300, 0, 800, 600))
-            cMod[modeNumber][structNumber].Divide(2, 2)
-            
-            # the loop and the data in cMod are in the same order
-            cMod[modeNumber][structNumber].cd(1)
-            mod[modeNumber][structNumber].title.Draw()
-            mod[modeNumber][structNumber].text.Draw()
-            
-            # is there any plot?
-            plotNumber = 0
-            
-            # loop over coordinates
-            for i in range(3):
-                if(mod[modeNumber][structNumber].histo[i].GetEntries() > 0):
-                    plotNumber += 1
-                    cMod[modeNumber][structNumber].cd(i+2)
-                    mod[modeNumber][structNumber].histo[i].DrawCopy()
-                
-            if (plotNumber == 0):
-                break
-            
-            cMod[modeNumber][structNumber].Update()
-            
-            # save as pdf
-            cMod[modeNumber][structNumber].Print("{0}/plots/pdf/modules_{1}_{2}.pdf".format(config.outputPath, mode, struct.getName()))
-        
-            # export as png
-            image.FromPad(cMod[modeNumber][structNumber])
-            image.WriteImage("{0}/plots/png/modules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
-            
-            # add to output list
-            output = OutputData(plottype="mod", name=struct.getName(), parameter=mode, filename="modules_{0}_{1}".format(mode, struct.getName()))
-            config.outputList.append(output)
-        
         
     ##########################################################################
     # modules of a part of a strucutre, together with the hole strucutre
     #
     
+    '''
     # store TreeData for different modes
     subMod = []
     # store Canvas for different modes
@@ -215,7 +166,7 @@ def main():
                 output = OutputData(plottype="subMod", name=bStruct.getName(), number=subStructNumber+1, parameter=mode, filename="modules_{0}_{1}{2}".format(mode, bStruct.getName(), subStructNumber+1))
                 config.outputList.append(output)
             
-            
+            '''
     ##########################################################################
     # create TEX, beamer
     #
