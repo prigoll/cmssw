@@ -6,7 +6,7 @@
 ##  list with the TreeData of the histograms
 ##
 
-from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TImage
+from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TImage, TLegend
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 
 def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
@@ -130,7 +130,8 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
     
     canvas.cd(1)
     parentPlot.title.Draw()
-    parentPlot.text.Draw()
+    
+    legend = TLegend(0.05, 0.1, 0.95, 0.75)
     
     for i in range(3):
         canvas.cd(i+2)
@@ -163,10 +164,15 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
         
         for subStructNumber, subStruct in enumerate(struct.getChildren()):
             # use a copy for shorter name
-            plots[subStructNumber].histo[i].Draw("same")
+            plot = plots[subStructNumber].histo[i]
             
-        
-                
+            plot.SetLineColorAlpha(subStructNumber+2, 0.5)
+            plot.Draw("same")
+            if (i == 0):
+                legend.AddEntry(plot, "{0}".format(subStructNumber), "l")
+            
+    canvas.cd(1)
+    legend.Draw()
     canvas.Update()
     
     # save as pdf

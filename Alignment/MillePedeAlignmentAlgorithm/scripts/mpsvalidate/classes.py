@@ -91,6 +91,8 @@ class TreeData:
         # plot title and text
         self.title = 0
         self.text = 0
+        self.label = ""
+        self.objid = 0
         # switch mode for position, rotation, distortion
         if (mode=="xyz"):
             self.xyz = {0: "X", 1: "Y", 2: "Z"}
