@@ -114,23 +114,26 @@ def plot(treeFile, geometryGetter, mode, config):
         # loop over coordinates
         for i in range(3):
             canvas.cd(2+i)
-            
+                      
             # set first plot to maximum/minimum
             for plot in plots:
                 if (plot.objid == objid):
                     plot.histo[i].SetMaximum(1.05*maximum[index][i])
                     plot.histo[i].SetMinimum(1.05*minimum[index][i])
+                    print minimum[index][i], maximum[index][i]
+                    break
             
-            index = 1
+            number = 1
             
             for plot in plots:
                 if (plot.objid == objid):
+                    print plot.histo[i].GetMaximum()
+                    plot.histo[i].SetLineColorAlpha(number+2, 0.5)
+                    plot.histo[i].SetMarkerColorAlpha(number+2, 1)
                     plot.histo[i].Draw("lpsame")
-                    plot.histo[i].SetLineColorAlpha(index+2, 0.5)
-                    plot.histo[i].SetMarkerColorAlpha(index+2, 1)
                     if (i == 0):
-                        legend.AddEntry(plot.histo[i], "{0}".format(index))
-                        index += 1
+                        legend.AddEntry(plot.histo[i], "{0}".format(number))
+                    number += 1
         
         canvas.cd(1)
         legend.Draw()
