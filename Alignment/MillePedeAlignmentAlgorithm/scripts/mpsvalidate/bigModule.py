@@ -103,7 +103,7 @@ def plot(MillePedeUser, geometryGetter, config):
             # three types of ranges
             
             # 1. multiple of standard dev
-            if (config.rangemode == 1):
+            if (config.rangemode == "stddev"):
                 for i in range(3):
                     if (plot.histo[i].GetEntries() != 0 and plot.histo[i].GetStdDev() != 0):
                         # if the plotrange is much bigger than the standard deviation use config.widthstdev * StdDev als Range
@@ -118,12 +118,12 @@ def plot(MillePedeUser, geometryGetter, config):
                         plot.binShift[i] = binShift
             
             # 2. show all
-            if (config.rangemode == 2):
+            if (config.rangemode == "all"):
                 for i in range(3):
                     plot.binShift[i] = plot.maxBinShift[i]
                     
             # 3. use given ranges
-            if (config.rangemode == 3):
+            if (config.rangemode == "given"):
                 for i in range(3):
                     if (mode == "xyz"):
                         valuelist = config.rangexyzM

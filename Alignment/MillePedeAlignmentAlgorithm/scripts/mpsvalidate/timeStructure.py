@@ -164,11 +164,11 @@ def plot(treeFile, geometryGetter, config):
                 for plot in plots:
                     if (plot.objid == objid):
                         # 1. show all
-                        if (config.rangemodeHL == 1):
+                        if (config.rangemodeHL == "all"):
                             plot.usedRange[i] = max(maximum[index][i], minimum[index][i])
                         
                         # 2. use given values
-                        if (config.rangemodeHL == 2):
+                        if (config.rangemodeHL == "given"):
                             # loop over coordinates
                             if (mode == "xyz"):
                                 valuelist = config.rangexyzHL

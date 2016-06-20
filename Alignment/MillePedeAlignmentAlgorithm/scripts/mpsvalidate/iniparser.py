@@ -52,7 +52,7 @@ class ConfigData:
         self.forcestddev = -1
         # every parameter (e.g. xyz) with same range
         self.samerange = -1
-        # rangemode 1 = multiple of StdDev, 2 = show all, 3 = use given ranges
+        # rangemode "stddev" = multiple of StdDev, "all" = show all, "given" = use given ranges
         self.rangemode = -1
         
         ## HIGHLEVELPLOTS
@@ -61,7 +61,7 @@ class ConfigData:
         self.rangerotHL = []
         # every parameter (e.g. xyz) with same range
         self.samerangeHL = -1
-        # rangemode 1 = show all, 2 = use given ranges
+        # rangemode "all" = show all, "given" = use given ranges
         self.rangemodeHL = -1
         
         ## Time dependent
@@ -154,7 +154,7 @@ class ConfigData:
             pass
         
         try:
-            self.rangemode = int(parser.get("MODULEPLOTS","rangemode"))
+            self.rangemode = parser.get("MODULEPLOTS","rangemode")
         except:
             pass
         
@@ -196,7 +196,7 @@ class ConfigData:
             pass
         
         try:
-            self.rangemodeHL = int(parser.get("HIGHLEVELPLOTS","rangemode"))
+            self.rangemodeHL = parser.get("HIGHLEVELPLOTS","rangemode")
         except:
             pass
         

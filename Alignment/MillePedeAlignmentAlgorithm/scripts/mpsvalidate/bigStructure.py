@@ -76,12 +76,12 @@ def plot(MillePedeUser, geometryGetter, config):
         # two types of ranges
         
         # 1. show all
-        if (config.rangemodeHL == 1):
+        if (config.rangemodeHL == "all"):
             for i in range(3):
                 big.usedRange[i] = big.maxShift[i]
         
         # 2. use given values
-        if (config.rangemodeHL == 2):
+        if (config.rangemodeHL == "given"):
             # loop over coordinates
             for i in range(3):
                 if (mode == "xyz"):
