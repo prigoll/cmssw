@@ -66,18 +66,13 @@ def main():
     # time dependend big structures
     #
     
-    
-
-    for mode in ["xyz", "rot"]:
-        # create the histogram data
-        timeStructure.plot(treeFile, geometryGetter, mode, config)
-
+    timeStructure.plot(treeFile, geometryGetter, config)
     
     ##########################################################################
     # big structures
     #
     
-    big = bigStructure.plot(MillePedeUser, geometryGetter,  config)
+    big = bigStructure.plot(MillePedeUser, geometryGetter, config)
     
     ##########################################################################
     # modules of a hole structure

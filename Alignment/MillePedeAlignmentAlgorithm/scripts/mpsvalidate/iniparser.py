@@ -52,6 +52,9 @@ class ConfigData:
         # rangemode 1 = show all, 2 = use given ranges
         self.rangemodeHL = -1
         
+        ## Time dependent
+        self.firsttree = -1
+        
         
         # list with the plots for the output
         self.outputList = []
@@ -183,6 +186,11 @@ class ConfigData:
         
         try:
             self.rangemodeHL = int(parser.get("HIGHLEVELPLOTS","rangemode"))
+        except:
+            pass
+        
+        try:
+            self.firsttree = int(parser.get("TIMEPLOTS","firsttree"))
         except:
             pass
         
