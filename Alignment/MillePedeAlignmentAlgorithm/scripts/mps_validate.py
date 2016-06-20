@@ -55,9 +55,7 @@ def main():
     if not os.path.exists("{0}/plots/png".format(config.outputPath)):
         os.makedirs("{0}/plots/png".format(config.outputPath))
         
-    # parse the file pede.dump.gz and return a LogData Object
-    pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath), config)
-    
+        
     # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
     treeFile = TFile("{0}/treeFile_merge.root".format(config.jobDataPath))
@@ -66,32 +64,44 @@ def main():
     # set gStyle
     setgstyle()
     
+    ##########################################################################
+    # parse the file pede.dump.gz and return a LogData Object
+    #
+    
+    if (config.showdump == 1):
+        pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath), config)
     
     ##########################################################################
     # time dependend big structures
     #
     
-    timeStructure.plot(treeFile, geometryGetter, config)
+    if (config.showtime == 1):
+        timeStructure.plot(treeFile, geometryGetter, config)
     
     ##########################################################################
     # big structures
     #
     
-    big = bigStructure.plot(MillePedeUser, geometryGetter, config)
+    if (config.showhighlevel == 1):
+        big = bigStructure.plot(MillePedeUser, geometryGetter, config)
     
     ##########################################################################
     # modules of a hole structure
     # and part of structure
     #
     
-    bigModule.plot(MillePedeUser, geometryGetter, config)
+    if (config.showmodule == 1):
+        bigModule.plot(MillePedeUser, geometryGetter, config)
     
     ##########################################################################
     # create TEX, beamer
     #
     
-    pdfCreator.create(pedeDump, config.latexfile, config)
-    beamerCreator.create(pedeDump, "beamer.tex", config)
+    if (config.showdump == 1 and config.showtime == 1 and config.showhighlevel == 1 and config.showmodule == 1 and config.showbeamer == 1 and config.showsubmodule):
+        if (config.showtex == 1):
+            pdfCreator.create(pedeDump, config.latexfile, config)
+        if (config.showbeamer == 1):
+            beamerCreator.create(pedeDump, "beamer.tex", config)
     
 if __name__ == "__main__":
     main()

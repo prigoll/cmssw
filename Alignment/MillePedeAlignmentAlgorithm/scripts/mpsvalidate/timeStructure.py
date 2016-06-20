@@ -105,7 +105,11 @@ def plot(treeFile, geometryGetter, config):
                             for i in range(3):
                                 # note that the first bin is referenced by 1
                                 plot.histo[i].GetXaxis().SetBinLabel(treeNumber+1, str(listMillePedeUser[treeNumber]))
-                                plot.histo[i].SetBinContent(treeNumber+1, line.Par[ plot.data[i] ])
+                                # transform xyz data from cm to #mu m
+                                if (mode == "xyz"):
+                                    plot.histo[i].SetBinContent(treeNumber+1, 10000*line.Par[ plot.data[i] ])
+                                else:
+                                    plot.histo[i].SetBinContent(treeNumber+1, line.Par[ plot.data[i] ])
                     
         ######################################################################
         # find maximum/minimum
@@ -153,13 +157,42 @@ def plot(treeFile, geometryGetter, config):
             # loop over coordinates
             for i in range(3):
                 canvas.cd(2+i)
-                        
-                # set first plot to maximum/minimum
+                
+                # reset y range of first plot
+                # two types of ranges
+                
                 for plot in plots:
                     if (plot.objid == objid):
-                        plot.histo[i].SetMaximum(1.1*maximum[index][i])
-                        plot.histo[i].SetMinimum(1.1*minimum[index][i])
-                        break
+                        # 1. show all
+                        if (config.rangemodeHL == 1):
+                            plot.usedRange[i] = max(maximum[index][i], minimum[index][i])
+                        
+                        # 2. use given values
+                        if (config.rangemodeHL == 2):
+                            # loop over coordinates
+                            if (mode == "xyz"):
+                                valuelist = config.rangexyzHL
+                            if (mode == "rot"):
+                                valuelist = config.rangerotHL
+                            # loop over given values
+                            # without last value
+                            for value in valuelist:
+                                # maximum smaller than given value
+                                if (abs(max(maximum[index][i], minimum[index][i])) < value):
+                                    plot.usedRange[i] = value
+                                    break
+                                # if not possible, force highest
+                            if (abs(max(maximum[index][i], minimum[index][i])) > valuelist[-1]):
+                                plot.usedRange[i] = valuelist[-1]
+                    
+                        # all the same range
+                        if (config.samerangeHL == 1):
+                            # apply new range
+                            plot.usedRange[i] = max(map(abs, plot.usedRange))
+
+                        # apply new range (usedRange)
+                        plot.histo[i].GetYaxis().SetRangeUser( -1.2*abs(plot.usedRange[i]), 1.2*abs(plot.usedRange[i]) )
+                
                 
                 number = 1
                 

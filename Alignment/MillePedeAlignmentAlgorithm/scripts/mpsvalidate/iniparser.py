@@ -29,6 +29,16 @@ class ConfigData:
         # identification in every plot (e.g. mp1885)
         self.message = ""
         
+        ## what should be created
+        self.showdump = -1
+        self.showtime = -1
+        self.showhighlevel = -1
+        self.showmodule = -1
+        self.showsubmodule = -1
+        self.showtex = -1
+        self.showbeamer = -1
+        
+        
         ## MODULEPLOTS
         # allow to use the standard deviation as the plotrange
         self.allowhidden = -1
@@ -55,8 +65,7 @@ class ConfigData:
         self.rangemodeHL = -1
         
         ## Time dependent
-        self.firsttree = -1
-        
+        self.firsttree = -1        
         
         # list with the plots for the output
         self.outputList = []
@@ -191,8 +200,48 @@ class ConfigData:
         except:
             pass
         
+        ## TIMEPLOTS
+        
         try:
             self.firsttree = int(parser.get("TIMEPLOTS","firsttree"))
+        except:
+            pass
+        
+        ## SHOW
+        
+        try:
+            self.showdump = int(parser.get("SHOW","showdump"))
+        except:
+            pass
+        
+        try:
+            self.showtime = int(parser.get("SHOW","showtime"))
+        except:
+            pass
+        
+        try:
+            self.showhighlevel = int(parser.get("SHOW","showhighlevel"))
+        except:
+            pass
+        
+        try:
+            self.showmodule = int(parser.get("SHOW","showmodule"))
+        except:
+            pass
+        
+        try:
+            self.showsubmodule = int(parser.get("SHOW","showsubmodule"))
+        except:
+            pass
+                
+        try:
+            self.showtex = int(parser.get("SHOW","showtex"))
+        except:
+            pass
+        
+                
+        try:
+            self.showbeamer = int(parser.get("SHOW","showbeamer"))
         except:
             pass
         

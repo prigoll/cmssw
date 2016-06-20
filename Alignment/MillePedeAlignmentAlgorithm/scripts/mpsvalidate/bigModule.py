@@ -254,9 +254,10 @@ def plot(MillePedeUser, geometryGetter, config):
     # make plots with substructure
     #
     
-    for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-        for structNumber, struct in enumerate(geometryGetter.listbStructs()):
-            # use a copy for shorter name
-            plot = plots[modeNumber][structNumber]
-    
-            subModule.plot(MillePedeUser, geometryGetter, mode, struct, plot, config)
+    if (config.showsubmodule == 1):
+        for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
+            for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+                # use a copy for shorter name
+                plot = plots[modeNumber][structNumber]
+        
+                subModule.plot(MillePedeUser, geometryGetter, mode, struct, plot, config)
