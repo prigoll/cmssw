@@ -107,7 +107,7 @@ def plot(MillePedeUser, geometryGetter, config):
 
         # apply new range (usedRange)
         for i in range(3):
-            big.histo[i].GetYaxis().SetRangeUser( -1.05*abs(big.usedRange[i]), 1.05*abs(big.usedRange[i]) )
+            big.histo[i].GetYaxis().SetRangeUser( -1.1*abs(big.usedRange[i]), 1.1*abs(big.usedRange[i]) )
         
         
         # create canvas

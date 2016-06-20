@@ -10,6 +10,7 @@ from ROOT import TTree, TFile, TH1F, TCanvas, TImage, TPaveLabel, TPaveText, gSt
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 from mpsvalidate.dumpparser import parse
 from mpsvalidate.iniparser import ConfigData
+from mpsvalidate.style import setgstyle
 from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator, beamerCreator, timeStructure
 
 import argparse
@@ -61,6 +62,9 @@ def main():
     # open root file and get TTree MillePedeUser_X
     treeFile = TFile("{0}/treeFile_merge.root".format(config.jobDataPath))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
+    
+    # set gStyle
+    setgstyle()
     
     
     ##########################################################################

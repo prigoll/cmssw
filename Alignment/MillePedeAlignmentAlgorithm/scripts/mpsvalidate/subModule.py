@@ -160,7 +160,7 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
                 
                 
         # set range and plot
-        parentPlot.histo[i].GetYaxis().SetRangeUser(0., 1.05*max(maximum))
+        parentPlot.histo[i].GetYaxis().SetRangeUser(0., 1.1*max(maximum))
         parentPlot.histo[i].Draw()
         
         for subStructNumber, subStruct in enumerate(struct.getChildren()):

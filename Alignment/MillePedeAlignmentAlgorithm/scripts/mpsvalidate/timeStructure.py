@@ -157,8 +157,8 @@ def plot(treeFile, geometryGetter, config):
                 # set first plot to maximum/minimum
                 for plot in plots:
                     if (plot.objid == objid):
-                        plot.histo[i].SetMaximum(1.05*maximum[index][i])
-                        plot.histo[i].SetMinimum(1.05*minimum[index][i])
+                        plot.histo[i].SetMaximum(1.1*maximum[index][i])
+                        plot.histo[i].SetMinimum(1.1*minimum[index][i])
                         break
                 
                 number = 1
