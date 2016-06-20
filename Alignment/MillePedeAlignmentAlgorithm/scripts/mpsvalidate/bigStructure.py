@@ -7,6 +7,7 @@
 
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TImage
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
+from mpsvalidate.style import identification
 
 def plot(MillePedeUser, geometryGetter, config):
     # more space for labels
@@ -117,6 +118,10 @@ def plot(MillePedeUser, geometryGetter, config):
         cBig.cd(1)
         big.title.Draw()
         big.text.Draw()
+        
+        # draw identification
+        ident = identification(config)
+        ident.Draw()
         
         # loop over coordinates
         for i in range(3):

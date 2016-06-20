@@ -26,6 +26,8 @@ class ConfigData:
         self.outputPath = ""
         # latex file name
         self.latexfile = ""
+        # identification in every plot (e.g. mp1885)
+        self.message = ""
         
         ## MODULEPLOTS
         # allow to use the standard deviation as the plotrange
@@ -208,3 +210,6 @@ class ConfigData:
                 self.jobDataPath = ".jobData/jobm"
             else:
                 self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)
+        
+        if (args.message != ""):
+            self.message = args.message

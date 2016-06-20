@@ -32,6 +32,7 @@ def main():
     parser.add_argument("-j", "--job", help="chose jobmX directory (default: ini-file)", default=-1, type=int)
     parser.add_argument("-t", "--time", help="chose MillePedeUser_X Tree (default: ini-file)", default=-1, type=int)
     parser.add_argument("-i", "--ini", help="specify a ini file", default="-1")
+    parser.add_argument("-m", "--message", help="identification on every plot", default="mpXXXX")
     args = parser.parse_args()
     
     # create config object

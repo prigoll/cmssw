@@ -8,6 +8,7 @@
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TImage
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 from mpsvalidate import subModule
+from mpsvalidate.style import identification
 
 def plot(MillePedeUser, geometryGetter, config):
     
@@ -217,6 +218,10 @@ def plot(MillePedeUser, geometryGetter, config):
             canvas.cd(1)
             plot.title.Draw()
             plot.text.Draw()
+            
+            # draw identification
+            ident = identification(config)
+            ident.Draw()
             
             # is there any plot?
             plotNumber = 0

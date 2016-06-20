@@ -8,6 +8,7 @@
 
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TLegend, TImage
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
+from mpsvalidate.style import identification
 
 def plot(treeFile, geometryGetter, config):
     
@@ -143,6 +144,10 @@ def plot(treeFile, geometryGetter, config):
             # draw on canvas
             canvas.cd(1)
             title.Draw()
+            
+            # draw identification
+            ident = identification(config)
+            ident.Draw()
             
             # draw plots on canvas
             # loop over coordinates

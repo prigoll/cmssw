@@ -8,6 +8,7 @@
 
 from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TImage, TLegend
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
+from mpsvalidate.style import identification
 
 def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
     
@@ -172,7 +173,12 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
                 legend.AddEntry(plot, "{0}".format(subStructNumber), "l")
             
     canvas.cd(1)
+    
     legend.Draw()
+    # draw identification
+    ident = identification(config)
+    ident.Draw()
+    
     canvas.Update()
     
     # save as pdf
