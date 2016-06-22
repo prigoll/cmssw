@@ -156,19 +156,14 @@ def plot(treeFile, geometryGetter, config):
             # TGraph copies to hide outlier
             copy = []
             
-            # draw plots on canvas
-            # loop over coordinates
-            for i in range(3):
-                canvas.cd(2+i)
-                
-                # reset y range of first plot
+            # reset y range of first plot
                 # two types of ranges
-                
+            for i in range(3):
                 for plot in plots:
                     if (plot.objid == objid):
                         # 1. show all
                         if (config.rangemodeHL == "all"):
-                            plot.usedRange[i] = max(maximum[index][i], minimum[index][i])
+                            plot.usedRange[i] = max(abs(maximum[index][i]), abs(minimum[index][i]))
                         
                         # 2. use given values
                         if (config.rangemodeHL == "given"):
@@ -181,35 +176,40 @@ def plot(treeFile, geometryGetter, config):
                             # without last value
                             for value in valuelist:
                                 # maximum smaller than given value
-                                if (abs(max(maximum[index][i], minimum[index][i])) < value):
+                                if (max(abs(maximum[index][i]), abs(minimum[index][i])) < value):
                                     plot.usedRange[i] = value
                                     break
-                                # if not possible, force highest
-                            if (abs(max(maximum[index][i], minimum[index][i])) > valuelist[-1]):
+                            # if not possible, force highest
+                            if (max(abs(maximum[index][i]), abs(minimum[index][i])) > valuelist[-1]):
                                 plot.usedRange[i] = valuelist[-1]
                     
-                        # all the same range
-                        if (config.samerangeHL == 1):
-                            # apply new range
-                            plot.usedRange[i] = max(map(abs, plot.usedRange))                
+            # draw plots on canvas
+            for i in range(3):
+                canvas.cd(2+i)
                 
                 number = 1
                 
                 for plot in plots:
                     if (plot.objid == objid):
+                        # all the same range
+                        if (config.samerangeHL == 1):
+                            plot.usedRange[i] = max(map(abs, plot.usedRange)) 
+                            
+                        # set new range
+                        plot.histo[i].GetYaxis().SetRangeUser( -1.2*abs(plot.usedRange[i]), 1.2*abs(plot.usedRange[i]) )
+                        
                         plot.histo[i].SetLineColorAlpha(number+2, 0.5)
                         plot.histo[i].SetMarkerColorAlpha(number+2, 1)
                                                
                         # option "AXIS" to only draw the axis
-                        plot.histo[i].Draw("AXIS")
-                        # set new range
-                        plot.histo[i].GetYaxis().SetRangeUser( -1.2*abs(plot.usedRange[i]), 1.2*abs(plot.usedRange[i]) )
+                        plot.histo[i].Draw("AXISSAME")
+                        
                         
                         # TGraph object to hide outlier
                         copy.append(TGraph(plot.histo[i]))
                         # set the new range
-                        copy[-1].SetMaximum( 1.1*abs(plot.usedRange[i]) )
-                        copy[-1].SetMinimum( -1.1*abs(plot.usedRange[i]) )
+                        copy[-1].SetMaximum( 1.2*abs(plot.usedRange[i]) )
+                        copy[-1].SetMinimum( -1.2*abs(plot.usedRange[i]) )
                         # draw the data
                         copy[-1].Draw("LPSAME")
             
