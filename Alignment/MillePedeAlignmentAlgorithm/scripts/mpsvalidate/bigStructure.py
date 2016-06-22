@@ -23,7 +23,7 @@ def plot(MillePedeUser, geometryGetter, config):
                 for i in range(3):
                     if (abs(line.Par[ big.data[i] ]) != 999999):
                         if (mode == "xyz"):
-                            line.Par[ big.data[i] ] *= 10000                    
+                            line.Par[ big.data[i] ] *= 10000
                         big.numberOfBins[i] += 1
                         if (abs(line.Par[ big.data[i] ]) > abs(big.maxShift[i])):
                             big.maxShift[i] = line.Par[ big.data[i] ]
@@ -45,9 +45,8 @@ def plot(MillePedeUser, geometryGetter, config):
         big.text = TPaveText(0.05, 0.1, 0.95, 0.75)
         big.text.SetTextAlign(12)
         
-        # TODO chose good limit
         # error if shift is bigger than limit
-        limit = 0.02
+        limit = config.limit[mode]
         for i in range(3):
             big.text.AddText("max. shift {0}: {1:.2}".format(big.xyz[i], big.maxShift[i]))
             if (abs(big.maxShift[i]) > limit):

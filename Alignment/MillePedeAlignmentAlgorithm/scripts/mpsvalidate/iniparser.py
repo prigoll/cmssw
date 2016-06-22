@@ -28,6 +28,9 @@ class ConfigData:
         self.latexfile = ""
         # identification in every plot (e.g. mp1885)
         self.message = ""
+        # limits for warning dict with keys xyz, rot, dist
+        # arguments must be given in this order
+        self.limit = {}
         
         ## what should be created
         self.showdump = -1
@@ -119,6 +122,14 @@ class ConfigData:
         
         try:
             self.latexfile = parser.get("GENERAL","latexfile")
+        except:
+            pass
+        
+        try:
+            self.limit = parser.get("GENERAL","limit")
+            self.limit = map(float, self.limit.replace(" ","").split(","))
+            # make a dict to lookup by mode
+            self.limit = dict(zip(["xyz", "rot", "dist"], self.limit))
         except:
             pass
         

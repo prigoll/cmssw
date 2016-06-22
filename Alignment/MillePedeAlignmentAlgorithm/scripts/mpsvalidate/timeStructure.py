@@ -19,7 +19,6 @@ def plot(treeFile, geometryGetter, config):
         # list of all avaible TTrees
         listMillePedeUser = []
         MillePedeUser = []
-        # TODO use Ttrees in ini file
         for i in range(config.firsttree, 101):
             if (treeFile.GetListOfKeys().Contains("MillePedeUser_{0}".format(i))):
                 listMillePedeUser.append(i)

@@ -184,9 +184,8 @@ def plot(MillePedeUser, geometryGetter, config):
                         # the total number and the number of shift must be corrected with / mergeNumberBins
                         plot.histoAxis[i].SetRange(int(numberOfBins/(2*mergeNumberBins)-plot.binShift[i] / mergeNumberBins), int(numberOfBins/(2*mergeNumberBins)+plot.binShift[i] / mergeNumberBins))    
     
-            # TODO chose good limit
             # error if shift is bigger than limit
-            limit = 0.02
+            limit = config.limit[mode]
             for i in range(3):
                 # skip empty
                 if (plot.histo[i].GetEntries() > 0):
