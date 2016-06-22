@@ -6,7 +6,7 @@
 ##  get a time dependent plot.
 ##
 
-from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TLegend, TImage
+from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TLegend, TImage, TGraph
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 from mpsvalidate.style import identification
 
@@ -153,6 +153,9 @@ def plot(treeFile, geometryGetter, config):
             ident = identification(config)
             ident.Draw()
             
+            # TGraph copies to hide outlier
+            copy = []
+            
             # draw plots on canvas
             # loop over coordinates
             for i in range(3):
@@ -188,11 +191,7 @@ def plot(treeFile, geometryGetter, config):
                         # all the same range
                         if (config.samerangeHL == 1):
                             # apply new range
-                            plot.usedRange[i] = max(map(abs, plot.usedRange))
-
-                        # apply new range (usedRange)
-                        plot.histo[i].GetYaxis().SetRangeUser( -1.2*abs(plot.usedRange[i]), 1.2*abs(plot.usedRange[i]) )
-                
+                            plot.usedRange[i] = max(map(abs, plot.usedRange))                
                 
                 number = 1
                 
@@ -200,7 +199,21 @@ def plot(treeFile, geometryGetter, config):
                     if (plot.objid == objid):
                         plot.histo[i].SetLineColorAlpha(number+2, 0.5)
                         plot.histo[i].SetMarkerColorAlpha(number+2, 1)
-                        plot.histo[i].Draw("lpsame")
+                                               
+                        # option "AXIS" to only draw the axis
+                        plot.histo[i].Draw("AXIS")
+                        # set new range
+                        plot.histo[i].GetYaxis().SetRangeUser( -1.2*abs(plot.usedRange[i]), 1.2*abs(plot.usedRange[i]) )
+                        
+                        # TGraph object to hide outlier
+                        copy.append(TGraph(plot.histo[i]))
+                        # set the new range
+                        copy[-1].SetMaximum( 1.1*abs(plot.usedRange[i]) )
+                        copy[-1].SetMinimum( -1.1*abs(plot.usedRange[i]) )
+                        # draw the data
+                        copy[-1].Draw("LPSAME")
+            
+                        
                         if (i == 0):
                             legend.AddEntry(plot.histo[i], "{0}".format(number))
                         number += 1

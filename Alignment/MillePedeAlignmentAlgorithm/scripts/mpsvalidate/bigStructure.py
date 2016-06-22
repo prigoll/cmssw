@@ -5,7 +5,7 @@
 ##  as humanreadable text.
 ##
 
-from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TImage
+from ROOT import TTree, TH1F, TPaveLabel, TPaveText, gStyle, gROOT, TCanvas, TImage, TGraph
 from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, OutputData
 from mpsvalidate.style import identification
 
@@ -104,10 +104,11 @@ def plot(MillePedeUser, geometryGetter, config):
             # apply new range
             for i in range(3):
                 big.usedRange[i] = max(map(abs, big.usedRange))
-
+        '''
         # apply new range (usedRange)
         for i in range(3):
             big.histo[i].GetYaxis().SetRangeUser( -1.1*abs(big.usedRange[i]), 1.1*abs(big.usedRange[i]) )
+        '''
         
         
         # create canvas
@@ -123,11 +124,24 @@ def plot(MillePedeUser, geometryGetter, config):
         ident = identification(config)
         ident.Draw()
         
+        # TGraph copy to hide outlier
+        copy = 3*[None]
+        
         # loop over coordinates
         for i in range(3):
             cBig.cd(i+2)
-            # option "p" to use marker
-            big.histo[i].Draw("p")
+            # option "AXIS" to only draw the axis
+            big.histo[i].Draw("AXIS")
+            # set new range
+            big.histo[i].GetYaxis().SetRangeUser( -1.1*abs(big.usedRange[i]), 1.1*abs(big.usedRange[i]) )
+            
+            # TGraph object to hide outlier
+            copy[i] = TGraph(big.histo[i])
+            # set the new range
+            copy[i].SetMaximum( 1.1*abs(big.usedRange[i]) )
+            copy[i].SetMinimum( -1.1*abs(big.usedRange[i]) )
+            # draw the data
+            copy[i].Draw("PSAME")
             
         cBig.Update()
         
