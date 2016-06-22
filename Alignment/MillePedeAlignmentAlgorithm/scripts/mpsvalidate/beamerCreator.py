@@ -40,6 +40,9 @@ def create(pedeDump, outputFile, config):
     
     # output string
     out = Out()
+    
+    # general information
+    out.addSlide("General information", "Project: "+config.message)
         
     # pede.dump.gz
     if (pedeDump.sumValue != 0):
@@ -79,6 +82,20 @@ def create(pedeDump, outputFile, config):
         text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(config.outputPath, i.filename)
         
         out.addSlide("High level structures", text)
+        
+    # time (IOV) dependent plots
+    
+    time = [x for x in config.outputList if (x.plottype == "time")]
+    
+    if time:
+        # get list with names of the structures
+        for structure in [x.name for x in time if x.parameter == "xyz"]:
+            for mode in ["xyz", "rot"]:
+                text = "\\framesubtitle{{{0}}}\n".format(structure+" "+names[mode])
+                filename = [x.filename for x in time if (x.parameter == mode and x.name ==structure)][0]
+                text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(config.outputPath, filename)
+                
+                out.addSlide("Time (IOV) dependent plots", text)
             
 
     # hole modules
