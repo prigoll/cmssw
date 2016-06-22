@@ -11,7 +11,7 @@ from mpsvalidate.classes import GeometryGetter, Struct, TreeData, LogData, Outpu
 from mpsvalidate.dumpparser import parse
 from mpsvalidate.iniparser import ConfigData
 from mpsvalidate.style import setgstyle
-from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator, beamerCreator, timeStructure
+from mpsvalidate import bigStructure, bigModule, subModule, pdfCreator, beamerCreator, htmlCreator, timeStructure
 
 import argparse
 import logging
@@ -102,6 +102,8 @@ def main():
             pdfCreator.create(pedeDump, config.latexfile, config)
         if (config.showbeamer == 1):
             beamerCreator.create(pedeDump, "beamer.tex", config)
+        if (config.showhtml == 1):
+            htmlCreator.create(pedeDump, "html_file.html", config)
     
 if __name__ == "__main__":
     main()

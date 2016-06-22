@@ -231,5 +231,5 @@ def plot(treeFile, geometryGetter, config):
             image.WriteImage("{0}/plots/png/timeStructures_{1}_{2}.png".format(config.outputPath, mode, geometryGetter.name_by_objid(objid)))
             
             # add to output list
-            output = OutputData(plottype="time", parameter=mode, filename="timeStructures_{0}_{1}".format(mode, geometryGetter.name_by_objid(objid)))
+            output = OutputData(plottype="time", name=geometryGetter.name_by_objid(objid), parameter=mode, filename="timeStructures_{0}_{1}".format(mode, geometryGetter.name_by_objid(objid)))
             config.outputList.append(output)

@@ -40,6 +40,7 @@ class ConfigData:
         self.showsubmodule = -1
         self.showtex = -1
         self.showbeamer = -1
+        self.showhtml = -1
         
         
         ## MODULEPLOTS
@@ -240,10 +241,14 @@ class ConfigData:
             self.showtex = int(parser.get("SHOW","showtex"))
         except:
             pass
-        
                 
         try:
             self.showbeamer = int(parser.get("SHOW","showbeamer"))
+        except:
+            pass
+        
+        try:
+            self.showhtml = int(parser.get("SHOW","showhtml"))
         except:
             pass
         
