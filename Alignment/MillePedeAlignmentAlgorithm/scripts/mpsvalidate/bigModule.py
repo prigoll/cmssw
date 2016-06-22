@@ -107,8 +107,7 @@ def plot(MillePedeUser, geometryGetter, config):
                 for i in range(3):
                     if (plot.histo[i].GetEntries() != 0 and plot.histo[i].GetStdDev() != 0):
                         # if the plotrange is much bigger than the standard deviation use config.widthstdev * StdDev als Range
-                        # check the configData if it is allowed to hide data
-                        if ( max(plot.maxShift)/plot.histo[i].GetStdDev() > config.defpeak and config.allowhidden == 1 or config.forcestddev == 1):
+                        if ( max(plot.maxShift)/plot.histo[i].GetStdDev() > config.defpeak):
                             # corresponding bin config.widthstdev*StdDev
                             binShift = int(plot.histo[i].FindBin(config.widthstddev*plot.histo[i].GetStdDev()) - numberOfBins/2)
                         else:

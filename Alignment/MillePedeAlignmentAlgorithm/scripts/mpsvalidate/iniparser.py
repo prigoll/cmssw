@@ -40,20 +40,20 @@ class ConfigData:
         
         
         ## MODULEPLOTS
-        # allow to use the standard deviation as the plotrange
-        self.allowhidden = -1
         # number of bins after shrinking
         self.numberofbins = -1
         # definition of sharp peak; max_outlier / StdDev > X
         self.defpeak = -1
         # new histogram width in units of StdDev
         self.widthstddev = -1
-        # force to use histogram width self.widthstdev * StdDev
-        self.forcestddev = -1
         # every parameter (e.g. xyz) with same range
         self.samerange = -1
         # rangemode "stddev" = multiple of StdDev, "all" = show all, "given" = use given ranges
         self.rangemode = -1
+        # ranges
+        self.rangexyzM = []
+        self.rangerotM = []
+        self.rangedistM = []
         
         ## HIGHLEVELPLOTS
         # given ranges
@@ -123,11 +123,7 @@ class ConfigData:
             pass
         
         ## MODULEPLOTS        
-        try:
-            self.allowhidden = int(parser.get("MODULEPLOTS","allowhidden"))
-        except:
-            pass
-        
+       
         try:
             self.numberofbins = int(parser.get("MODULEPLOTS","numberofbins"))
         except:
@@ -140,11 +136,6 @@ class ConfigData:
         
         try:
             self.widthstddev = int(parser.get("MODULEPLOTS","widthstddev"))
-        except:
-            pass
-        
-        try:
-            self.forcestddev = int(parser.get("MODULEPLOTS","forcestddev"))
         except:
             pass
         
