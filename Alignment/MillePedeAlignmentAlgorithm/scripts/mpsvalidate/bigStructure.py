@@ -105,22 +105,23 @@ def plot(MillePedeUser, geometryGetter, config):
                 big.usedRange[i] = max(map(abs, big.usedRange))
 
         # count outlieres
-        for line in MillePedeUser:
-            if (line.ObjId != 1):
-                for i in range(3):
-                    if (abs(line.Par[ big.data[i] ]) != 999999):
-                        # transform xyz data from cm to #mu m
-                        if (mode=="xyz"):
-                            if (abs(10000*line.Par[ big.data[i] ]) > big.usedRange[i]):
-                                big.hiddenEntries[i] += 1
-                        else:
-                            if (abs(line.Par[ big.data[i] ]) > big.usedRange[i]):
-                                big.hiddenEntries[i] += 1
+        if (config.rangemodeHL == "given"):
+            for line in MillePedeUser:
+                if (line.ObjId != 1):
+                    for i in range(3):
+                        if (abs(line.Par[ big.data[i] ]) != 999999):
+                            # transform xyz data from cm to #mu m
+                            if (mode=="xyz"):
+                                if (abs(10000*line.Par[ big.data[i] ]) > big.usedRange[i]):
+                                    big.hiddenEntries[i] += 1
+                            else:
+                                if (abs(line.Par[ big.data[i] ]) > big.usedRange[i]):
+                                    big.hiddenEntries[i] += 1
 
-        # add number of outlieres to text
-        for i in range(3):
-            if (big.hiddenEntries[i] != 0):
-                big.text.AddText("! {0} {1} outlier !".format(big.xyz[i], int(big.hiddenEntries[i])))
+            # add number of outlieres to text
+            for i in range(3):
+                if (big.hiddenEntries[i] != 0):
+                    big.text.AddText("! {0} {1} outlier !".format(big.xyz[i], int(big.hiddenEntries[i])))
 
         # create canvas
         cBig = TCanvas("canvasBigStrucutres_{0}".format(mode), "Parameter", 300, 0, 800, 600)
