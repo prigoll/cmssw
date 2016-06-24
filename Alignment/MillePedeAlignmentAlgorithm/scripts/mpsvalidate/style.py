@@ -2,14 +2,16 @@
 
 ##########################################################################
 ##
-##  Set the style of the output
+# Set the style of the output
 ##
 
 from ROOT import TPaveText, gStyle
 
+
 ######################################################################
 # creates the identification text in the top left corner
 #
+
 
 def identification(config):
     text = TPaveText(0.0, 0.95, 1.0, 1.0, "blNDC")
@@ -26,16 +28,17 @@ def identification(config):
 # by https://github.com/mschrode/AwesomePlots/blob/master/Style.cc
 #
 
+
 def setgstyle():
-    #Zero horizontal error bars
+    # Zero horizontal error bars
     gStyle.SetErrorX(0)
 
     # For the canvas
     gStyle.SetCanvasBorderMode(0)
     gStyle.SetCanvasColor(0)
-    gStyle.SetCanvasDefH(800) #Height of canvas
-    gStyle.SetCanvasDefW(800) #Width of canvas
-    gStyle.SetCanvasDefX(0)   #Position on screen
+    gStyle.SetCanvasDefH(800)  # Height of canvas
+    gStyle.SetCanvasDefW(800)  # Width of canvas
+    gStyle.SetCanvasDefX(0)  # Position on screen
     gStyle.SetCanvasDefY(0)
 
     # For the frame
@@ -73,21 +76,21 @@ def setgstyle():
     gStyle.SetOptStat(0)
 
     # For the axis
-    gStyle.SetAxisColor(1,"XYZ")
-    gStyle.SetTickLength(0.03,"XYZ")
-    gStyle.SetNdivisions(510,"XYZ")
+    gStyle.SetAxisColor(1, "XYZ")
+    gStyle.SetTickLength(0.03, "XYZ")
+    gStyle.SetNdivisions(510, "XYZ")
     gStyle.SetPadTickX(1)
     gStyle.SetPadTickY(1)
     gStyle.SetStripDecimals(False)
 
     # For the axis labels and titles
-    gStyle.SetTitleColor(1,"XYZ")
-    gStyle.SetLabelColor(1,"XYZ")
-    gStyle.SetLabelFont(42,"XYZ")
-    gStyle.SetLabelOffset(0.007,"XYZ")
-    gStyle.SetLabelSize(0.045,"XYZ")
-    gStyle.SetTitleFont(42,"XYZ")
-    gStyle.SetTitleSize(0.06,"XYZ")
+    gStyle.SetTitleColor(1, "XYZ")
+    gStyle.SetLabelColor(1, "XYZ")
+    gStyle.SetLabelFont(42, "XYZ")
+    gStyle.SetLabelOffset(0.007, "XYZ")
+    gStyle.SetLabelSize(0.045, "XYZ")
+    gStyle.SetTitleFont(42, "XYZ")
+    gStyle.SetTitleSize(0.06, "XYZ")
 #    gStyle.SetTitleXOffset(0.9)
 #    gStyle.SetTitleYOffset(0.1)
 

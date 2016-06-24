@@ -2,20 +2,21 @@
 
 ##########################################################################
 
-##  Read the ini data which is passed to the function and return the
-##  data as a configData object. If a parameter is given the function
-##  parseParameter will override the config values.
+# Read the ini data which is passed to the function and return the
+# data as a configData object. If a parameter is given the function
+# parseParameter will override the config values.
 ##
 
 import ConfigParser
 import logging
 
+
 class ConfigData:
     """ stores the config data of the ini files or the console parameters
     """
-    
+
     def __init__(self):
-        ## General
+        # General
         # jobmX dir
         self.jobNumber = -1
         # MillePedeUser_X time
@@ -31,8 +32,8 @@ class ConfigData:
         # limits for warning dict with keys xyz, rot, dist
         # arguments must be given in this order
         self.limit = {}
-        
-        ## what should be created
+
+        # what should be created
         self.showdump = -1
         self.showtime = -1
         self.showhighlevel = -1
@@ -41,9 +42,8 @@ class ConfigData:
         self.showtex = -1
         self.showbeamer = -1
         self.showhtml = -1
-        
-        
-        ## MODULEPLOTS
+
+        # MODULEPLOTS
         # number of bins after shrinking
         self.numberofbins = -1
         # definition of sharp peak; max_outlier / StdDev > X
@@ -52,14 +52,15 @@ class ConfigData:
         self.widthstddev = -1
         # every parameter (e.g. xyz) with same range
         self.samerange = -1
-        # rangemode "stddev" = multiple of StdDev, "all" = show all, "given" = use given ranges
+        # rangemode "stddev" = multiple of StdDev, "all" = show all, "given" =
+        # use given ranges
         self.rangemode = -1
         # ranges
         self.rangexyzM = []
         self.rangerotM = []
         self.rangedistM = []
-        
-        ## HIGHLEVELPLOTS
+
+        # HIGHLEVELPLOTS
         # given ranges
         self.rangexyzHL = []
         self.rangerotHL = []
@@ -67,36 +68,35 @@ class ConfigData:
         self.samerangeHL = -1
         # rangemode "all" = show all, "given" = use given ranges
         self.rangemodeHL = -1
-        
-        ## Time dependent
-        self.firsttree = -1        
-        
+
+        # Time dependent
+        self.firsttree = -1
+
         # list with the plots for the output
         self.outputList = []
 
     def parseConfig(self, path):
         # create ConfigParser object
         parser = ConfigParser.ConfigParser()
-        
+
         # read ini file
         if (parser.read(path) == []):
             logging.error("Could not open ini-file: {0}".format(path))
-        
+
         # buffer object
         configBuffer = ConfigData()
-        
-        
+
         # collect data and process it
         try:
-            configBuffer.jobNumber = int(parser.get("GENERAL","job"))
+            configBuffer.jobNumber = int(parser.get("GENERAL", "job"))
         except:
             pass
-        
+
         try:
-            configBuffer.jobDataPath = parser.get("GENERAL","jobdatapath")
+            configBuffer.jobDataPath = parser.get("GENERAL", "jobdatapath")
         except:
             pass
-        
+
         # set jobDataPath if job number is given and if path is not given
         if (configBuffer.jobNumber != -1 and configBuffer.jobDataPath == ""):
             self.jobNumber = configBuffer.jobNumber
@@ -104,168 +104,171 @@ class ConfigData:
                 self.jobDataPath = ".jobData/jobm"
             else:
                 self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)
-        
+
         # if jobData path is given
         if (configBuffer.jobDataPath != ""):
             self.jobDataPath = configBuffer.jobDataPath
-        
-        
+
         # data which could be stored directly
         try:
-            self.jobTime = int(parser.get("GENERAL","time"))
-        except:
-            pass    
-        
-        try:
-            self.outputPath = parser.get("GENERAL","outputpath")
+            self.jobTime = int(parser.get("GENERAL", "time"))
         except:
             pass
-        
+
         try:
-            self.latexfile = parser.get("GENERAL","latexfile")
+            self.outputPath = parser.get("GENERAL", "outputpath")
         except:
             pass
-        
+
         try:
-            self.limit = parser.get("GENERAL","limit")
-            self.limit = map(float, self.limit.replace(" ","").split(","))
+            self.latexfile = parser.get("GENERAL", "latexfile")
+        except:
+            pass
+
+        try:
+            self.limit = parser.get("GENERAL", "limit")
+            self.limit = map(float, self.limit.replace(" ", "").split(","))
             # make a dict to lookup by mode
             self.limit = dict(zip(["xyz", "rot", "dist"], self.limit))
         except:
             pass
-        
-        ## MODULEPLOTS        
-       
+
+        # MODULEPLOTS
+
         try:
-            self.numberofbins = int(parser.get("MODULEPLOTS","numberofbins"))
+            self.numberofbins = int(parser.get("MODULEPLOTS", "numberofbins"))
         except:
             pass
-        
+
         try:
-            self.defpeak = int(parser.get("MODULEPLOTS","defpeak"))
+            self.defpeak = int(parser.get("MODULEPLOTS", "defpeak"))
         except:
             pass
-        
+
         try:
-            self.widthstddev = int(parser.get("MODULEPLOTS","widthstddev"))
+            self.widthstddev = int(parser.get("MODULEPLOTS", "widthstddev"))
         except:
             pass
-        
+
         try:
-            self.samerange = int(parser.get("MODULEPLOTS","samerange"))
+            self.samerange = int(parser.get("MODULEPLOTS", "samerange"))
         except:
             pass
-        
+
         try:
-            self.rangemode = parser.get("MODULEPLOTS","rangemode")
+            self.rangemode = parser.get("MODULEPLOTS", "rangemode")
         except:
             pass
-        
+
         try:
-            self.rangexyzM = parser.get("MODULEPLOTS","rangexyz")
-            self.rangexyzM = sorted(map(float, self.rangexyzM.replace(" ", "").split(",")))
+            self.rangexyzM = parser.get("MODULEPLOTS", "rangexyz")
+            self.rangexyzM = sorted(
+                map(float, self.rangexyzM.replace(" ", "").split(",")))
         except:
             pass
-        
+
         try:
-            self.rangerotM = parser.get("MODULEPLOTS","rangerot")
-            self.rangerotM = sorted(map(float, self.rangerotM.replace(" ", "").split(",")))
+            self.rangerotM = parser.get("MODULEPLOTS", "rangerot")
+            self.rangerotM = sorted(
+                map(float, self.rangerotM.replace(" ", "").split(",")))
         except:
             pass
-        
+
         try:
-            self.rangedistM = parser.get("MODULEPLOTS","rangedist")
-            self.rangedistM = sorted(map(float, self.rangedistM.replace(" ", "").split(",")))
+            self.rangedistM = parser.get("MODULEPLOTS", "rangedist")
+            self.rangedistM = sorted(
+                map(float, self.rangedistM.replace(" ", "").split(",")))
         except:
             pass
-        
-        ## HIGHLEVELPLOTS
-        
+
+        # HIGHLEVELPLOTS
+
         try:
-            self.rangexyzHL = parser.get("HIGHLEVELPLOTS","rangexyz")
-            self.rangexyzHL = sorted(map(float, self.rangexyzHL.replace(" ", "").split(",")))
+            self.rangexyzHL = parser.get("HIGHLEVELPLOTS", "rangexyz")
+            self.rangexyzHL = sorted(
+                map(float, self.rangexyzHL.replace(" ", "").split(",")))
         except:
             pass
-        
+
         try:
-            self.rangerotHL = parser.get("HIGHLEVELPLOTS","rangerot")
-            self.rangerotHL = sorted(map(float, self.rangerotHL.replace(" ", "").split(",")))
+            self.rangerotHL = parser.get("HIGHLEVELPLOTS", "rangerot")
+            self.rangerotHL = sorted(
+                map(float, self.rangerotHL.replace(" ", "").split(",")))
         except:
             pass
-        
+
         try:
-            self.samerangeHL = int(parser.get("HIGHLEVELPLOTS","samerange"))
+            self.samerangeHL = int(parser.get("HIGHLEVELPLOTS", "samerange"))
         except:
             pass
-        
+
         try:
-            self.rangemodeHL = parser.get("HIGHLEVELPLOTS","rangemode")
+            self.rangemodeHL = parser.get("HIGHLEVELPLOTS", "rangemode")
         except:
             pass
-        
-        ## TIMEPLOTS
-        
+
+        # TIMEPLOTS
+
         try:
-            self.firsttree = int(parser.get("TIMEPLOTS","firsttree"))
+            self.firsttree = int(parser.get("TIMEPLOTS", "firsttree"))
         except:
             pass
-        
-        ## SHOW
-        
+
+        # SHOW
+
         try:
-            self.showdump = int(parser.get("SHOW","showdump"))
+            self.showdump = int(parser.get("SHOW", "showdump"))
         except:
             pass
-        
+
         try:
-            self.showtime = int(parser.get("SHOW","showtime"))
+            self.showtime = int(parser.get("SHOW", "showtime"))
         except:
             pass
-        
+
         try:
-            self.showhighlevel = int(parser.get("SHOW","showhighlevel"))
+            self.showhighlevel = int(parser.get("SHOW", "showhighlevel"))
         except:
             pass
-        
+
         try:
-            self.showmodule = int(parser.get("SHOW","showmodule"))
+            self.showmodule = int(parser.get("SHOW", "showmodule"))
         except:
             pass
-        
+
         try:
-            self.showsubmodule = int(parser.get("SHOW","showsubmodule"))
+            self.showsubmodule = int(parser.get("SHOW", "showsubmodule"))
         except:
             pass
-                
+
         try:
-            self.showtex = int(parser.get("SHOW","showtex"))
+            self.showtex = int(parser.get("SHOW", "showtex"))
         except:
             pass
-                
+
         try:
-            self.showbeamer = int(parser.get("SHOW","showbeamer"))
+            self.showbeamer = int(parser.get("SHOW", "showbeamer"))
         except:
             pass
-        
+
         try:
-            self.showhtml = int(parser.get("SHOW","showhtml"))
+            self.showhtml = int(parser.get("SHOW", "showhtml"))
         except:
             pass
-        
 
     def parseParameter(self, args):
         # check if parameter is given and override the config data
         if (args.time != -1):
             self.jobTime = args.time
-            
+
         if (args.job != -1):
             self.jobNumber = args.job
-            
+
             # set jobDataPath
             if (self.jobNumber == 0):
                 self.jobDataPath = ".jobData/jobm"
             else:
                 self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)
-        
+
         if (args.message != ""):
             self.message = args.message
