@@ -106,17 +106,10 @@ def plot(MillePedeUser, geometryGetter, config):
 
         # count outlieres
         if (config.rangemodeHL == "given"):
-            for line in MillePedeUser:
-                if (line.ObjId != 1):
-                    for i in range(3):
-                        if (abs(line.Par[ big.data[i] ]) != 999999):
-                            # transform xyz data from cm to #mu m
-                            if (mode=="xyz"):
-                                if (abs(10000*line.Par[ big.data[i] ]) > big.usedRange[i]):
-                                    big.hiddenEntries[i] += 1
-                            else:
-                                if (abs(line.Par[ big.data[i] ]) > big.usedRange[i]):
-                                    big.hiddenEntries[i] += 1
+            for i in range(3):
+                for binNumber in range(1, big.numberOfBins[i]+1):
+                    if (abs(big.histo[i].GetBinContent(binNumber)) > big.usedRange[i]):
+                        big.hiddenEntries[i] += 1
 
             # add number of outlieres to text
             for i in range(3):
