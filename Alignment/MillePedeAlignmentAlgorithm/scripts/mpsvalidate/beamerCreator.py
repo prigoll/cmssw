@@ -148,6 +148,14 @@ def create(pedeDump, outputFile, config):
 
                             out.addSlide("Modules", text)
 
+    # plot taken from the millePedeMonitor_merge.root file
+
+    for plot in [x for x in config.outputList if x.plottype == "monitor"]:
+        text = "\\framesubtitle{{{0}}}\n".format(plot.name)
+        text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+            config.outputPath, plot.filename)
+        out.addSlide("Monitor", text)
+
     data = data.substitute(out=out.text)
 
     # TODO path

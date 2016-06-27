@@ -127,6 +127,15 @@ def create(pedeDump, outputFile, config):
                             out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                                 config.outputPath, plot.filename)
 
+    # plot taken from the millePedeMonitor_merge.root file
+
+    if any(x for x in config.outputList if x.plottype == "monitor"):
+        out += "\section{{Monitor}}\n"
+        for plot in [x for x in config.outputList if x.plottype == "monitor"]:
+            out += "\subsubsection{{{0}}}\n".format(plot.name)
+            out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+                config.outputPath, plot.filename)
+
     data = data.substitute(out=out)
 
     with open("{0}/{1}".format(config.outputPath, outputFile), "w") as output:

@@ -126,6 +126,15 @@ def create(pedeDump, outputFile, config):
                             out += "<a href='plots/pdf/{0}.pdf'><img src='plots/png/{0}.png'></a>\n".format(
                                 plot.filename)
 
+    # plot taken from the millePedeMonitor_merge.root file
+
+    if any(x for x in config.outputList if x.plottype == "monitor"):
+        out += "<h1>Monitor</h1>\n"
+        for plot in [x for x in config.outputList if x.plottype == "monitor"]:
+            out += "<h3>{0}</h3>\n".format(plot.name)
+            out += "<a href='plots/pdf/{0}.pdf'><img src='plots/png/{0}.png'></a>\n".format(
+                plot.filename)
+
     data = data.substitute(message=config.message, out=out)
 
     with open("{0}/{1}".format(config.outputPath, outputFile), "w") as output:
