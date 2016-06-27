@@ -24,6 +24,23 @@ def identification(config):
     return text
 
 ######################################################################
+# statistics size
+#
+
+def setstatsize(canvas, plot):
+    # statistics size
+    gStyle.SetStatW(0.3)
+    gStyle.SetStatH(0.3)
+    plot.Draw()
+    canvas.Update()
+
+    # set the size of the statistics box
+    stat = plot.FindObject("stats")
+    stat.SetX1NDC(0.7)
+    stat.SetY1NDC(0.7)
+
+
+######################################################################
 # set gstyle
 # by https://github.com/mschrode/AwesomePlots/blob/master/Style.cc
 #

@@ -4,9 +4,10 @@
 # Draw the plots saved in the millePedeMonitor_merge.root file
 #
 
-from ROOT import TH1F, gStyle, TCanvas, TFile, TImage
+from ROOT import TH1F, TCanvas, TFile, TImage, gStyle
 
 from mpsvalidate.classes import OutputData
+from mpsvalidate.style import setstatsize
 
 
 def plot(path, config):
@@ -32,6 +33,10 @@ def plot(path, config):
             plotName), "Parameter", 300, 0, 800, 600)
         canvas.cd()
 
+        # set statistics size
+        setstatsize(canvas, plot)
+
+        # draw
         plot.Draw()
 
         # save as pdf

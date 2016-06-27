@@ -11,7 +11,7 @@ from ROOT import (TH1F, TCanvas, TImage, TPaveLabel, TPaveText, TTree, gROOT,
 from mpsvalidate import subModule
 from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
                                  TreeData)
-from mpsvalidate.style import identification
+from mpsvalidate.style import identification, setstatsize
 
 
 def plot(MillePedeUser, geometryGetter, config):
@@ -253,6 +253,7 @@ def plot(MillePedeUser, geometryGetter, config):
                 if(plot.histo[i].GetEntries() > 0):
                     plotNumber += 1
                     canvas.cd(i + 2)
+                    setstatsize(canvas, plot.histo[i])
                     plot.histo[i].DrawCopy()
 
             if (plotNumber == 0):
