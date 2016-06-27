@@ -75,9 +75,9 @@ def main():
     # draw the plots of the millePedeMonitor_merge.root file
     #
 
-    # TODO if config
-    monitorPlot.plot(
-        "{0}/millePedeMonitor_merge.root".format(config.jobDataPath), config)
+    if (config.showmonitor == 1):
+        monitorPlot.plot(
+            "{0}/millePedeMonitor_merge.root".format(config.jobDataPath), config)
 
     ##########################################################################
     # parse the file pede.dump.gz and return a LogData Object

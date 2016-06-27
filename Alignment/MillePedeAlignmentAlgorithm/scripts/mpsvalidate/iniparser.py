@@ -34,6 +34,7 @@ class ConfigData:
         self.limit = {}
 
         # what should be created
+        self.showmonitor = -1
         self.showdump = -1
         self.showtime = -1
         self.showhighlevel = -1
@@ -215,6 +216,11 @@ class ConfigData:
             pass
 
         # SHOW
+
+        try:
+            self.showmonitor = int(parser.get("SHOW", "showmonitor"))
+        except:
+            pass
 
         try:
             self.showdump = int(parser.get("SHOW", "showdump"))
