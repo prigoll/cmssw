@@ -4,12 +4,17 @@
 # Draw the plots saved in the millePedeMonitor_merge.root file
 #
 
-from ROOT import TH1F, TCanvas, TFile, TImage
+from ROOT import TH1F, gStyle, TCanvas, TFile, TImage
 
 from mpsvalidate.classes import OutputData
 
 
 def plot(path, config):
+    # adjust the plot style
+    # show the skewness in the legend
+    gStyle.SetOptStat("emrs")
+    gStyle.SetPadLeftMargin(0.07)
+
     # open file
     rootfile = TFile("{0}".format(path))
 
@@ -43,3 +48,7 @@ def plot(path, config):
         output = OutputData(plottype="monitor", name=plotName,
                             filename="monitor_{0}".format(plotName))
         config.outputList.append(output)
+
+    # reset the plot style
+    gStyle.SetOptStat(0)
+    gStyle.SetPadLeftMargin(0.17)
