@@ -253,7 +253,7 @@ def plot(MillePedeUser, geometryGetter, config):
                 if(plot.histo[i].GetEntries() > 0):
                     plotNumber += 1
                     canvas.cd(i + 2)
-                    setstatsize(canvas, plot.histo[i])
+                    setstatsize(canvas, plot.histo[i], config)
                     plot.histo[i].DrawCopy()
 
             if (plotNumber == 0):

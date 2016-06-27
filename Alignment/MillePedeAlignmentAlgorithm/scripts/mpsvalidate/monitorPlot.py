@@ -34,7 +34,7 @@ def plot(path, config):
         canvas.cd()
 
         # set statistics size
-        setstatsize(canvas, plot)
+        setstatsize(canvas, plot, config)
 
         # draw
         plot.Draw()

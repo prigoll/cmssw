@@ -32,6 +32,8 @@ class ConfigData:
         # limits for warning dict with keys xyz, rot, dist
         # arguments must be given in this order
         self.limit = {}
+        # statboxsize
+        self.statboxsize = -1
 
         # what should be created
         self.showmonitor = -1
@@ -131,6 +133,11 @@ class ConfigData:
             self.limit = map(float, self.limit.replace(" ", "").split(","))
             # make a dict to lookup by mode
             self.limit = dict(zip(["xyz", "rot", "dist"], self.limit))
+        except:
+            pass
+
+        try:
+            self.statboxsize = float(parser.get("GENERAL", "statboxsize"))
         except:
             pass
 

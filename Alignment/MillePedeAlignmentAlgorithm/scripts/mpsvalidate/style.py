@@ -27,7 +27,8 @@ def identification(config):
 # statistics size
 #
 
-def setstatsize(canvas, plot):
+
+def setstatsize(canvas, plot, config):
     # statistics size
     gStyle.SetStatW(0.3)
     gStyle.SetStatH(0.3)
@@ -36,8 +37,8 @@ def setstatsize(canvas, plot):
 
     # set the size of the statistics box
     stat = plot.FindObject("stats")
-    stat.SetX1NDC(0.7)
-    stat.SetY1NDC(0.7)
+    stat.SetX1NDC(1 - config.statboxsize)
+    stat.SetY1NDC(1 - config.statboxsize)
 
 
 ######################################################################
