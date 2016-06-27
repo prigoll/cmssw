@@ -14,7 +14,7 @@ from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
 from mpsvalidate import (beamerCreator, bigModule, bigStructure, htmlCreator,
-                         pdfCreator, subModule, timeStructure)
+                         monitorPlot, pdfCreator, subModule, timeStructure)
 from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
                                  TreeData)
 from mpsvalidate.dumpparser import parse
@@ -70,6 +70,14 @@ def main():
 
     # set gStyle
     setgstyle()
+
+    ##########################################################################
+    # draw the plots of the millePedeMonitor_merge.root file
+    #
+
+    # TODO if config
+    monitorPlot.plot(
+        "{0}/millePedeMonitor_merge.root".format(config.jobDataPath), config)
 
     ##########################################################################
     # parse the file pede.dump.gz and return a LogData Object
