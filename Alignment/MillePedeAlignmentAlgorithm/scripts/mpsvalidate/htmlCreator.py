@@ -39,7 +39,7 @@ def create(pedeDump, outputFile, config):
 
     # pede.dump.gz
 
-    out += "<h1>pede.dump.gz</h1>\n"
+    out += "<h1>Pede monitoring information</h1>\n"
     if (pedeDump.sumValue != 0):
         out += r"Sum(Chi^2)/Sum(Ndf) &= {0}<br> &= {1}".format(
             pedeDump.sumSteps, pedeDump.sumValue)
@@ -62,17 +62,13 @@ def create(pedeDump, outputFile, config):
         if line.replace(r" ", r""):
             out += line
 
-    # humanreadable names
-    names = {"xyz": "Translation", "rot": "Rotation", "dist": "Deformation"}
-
     # high level structures
 
     big = [x for x in config.outputList if (x.plottype == "big")]
 
     if big:
-        out += "<h1>High level structures</h1>\n"
+        out += "<h1>High-level parameters</h1>\n"
         for i in big:
-            out += "<h2>{0}</h2>\n".format(names[i.parameter])
             out += "<a href='plots/pdf/{0}.pdf'><img src='plots/png/{0}.png'></a>\n".format(
                 i.filename)
 
@@ -81,12 +77,11 @@ def create(pedeDump, outputFile, config):
     time = [x for x in config.outputList if (x.plottype == "time")]
 
     if time:
-        out += "<h1>Time (IOV) dependent plots</h1>\n"
+        out += "<h1>High-level parameters versus time (IOV)</h1>\n"
         # get list with names of the structures
         for structure in [x.name for x in time if x.parameter == "xyz"]:
             out += "<h2>{0}<h2>\n".format(structure)
             for mode in ["xyz", "rot"]:
-                out += "<h3>{0}<h3>\n".format(names[mode])
                 filename = [x.filename for x in time if (
                     x.parameter == mode and x.name == structure)][0]
                 out += "<a href='plots/pdf/{0}.pdf'><img src='plots/png/{0}.png'></a>\n".format(
@@ -96,7 +91,7 @@ def create(pedeDump, outputFile, config):
 
     # check if there are module plots
     if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "")):
-        out += "<h1>Modules</h1>\n"
+        out += "<h1>Module-level parameters</h1>\n"
 
         # loop over all structures
         for moduleName in GeometryGetter.namebStruct:
@@ -117,7 +112,6 @@ def create(pedeDump, outputFile, config):
 
                     # check if plot there is a plot in this mode
                     if module:
-                        out += "<h3>{0}</h3>\n".format(names[mode])
                         out += "<a href='plots/pdf/{0}.pdf'><img src='plots/png/{0}.png'></a>\n".format(module[
                                                                                                         0].filename)
 

@@ -65,32 +65,28 @@ def create(pedeDump, outputFile, config):
     text += r"Number of records: {0}\\".format(pedeDump.nrec)
     text += r"Total number of parameters: {0}\\".format(pedeDump.ntgb)
     text += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
-    out.addSlide("pede.dump.gz", text)
+    out.addSlide("Pede monitoring information", text)
 
     text = r"Warning:\\"
     for line in pedeDump.warning:
 
         # check if line empty
         if line.replace(r" ", r""):
-            text += "\\begin{verbatim}"
+            text = "\\begin{verbatim}"
             text += line
             text += "\\end{verbatim}\n"
 
     out.addFragileSlide("Warning", text)
-
-    # humanreadable names
-    names = {"xyz": "Translation", "rot": "Rotation", "dist": "Deformation"}
 
     # big Structures
 
     big = [x for x in config.outputList if (x.plottype == "big")]
 
     for i in big:
-        text = "\\framesubtitle{{{0}}}\n".format(names[i.parameter])
-        text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+        text = "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
             config.outputPath, i.filename)
 
-        out.addSlide("High level structures", text)
+        out.addSlide("High-level parameters", text)
 
     # time (IOV) dependent plots
 
@@ -100,14 +96,13 @@ def create(pedeDump, outputFile, config):
         # get list with names of the structures
         for structure in [x.name for x in time if x.parameter == "xyz"]:
             for mode in ["xyz", "rot"]:
-                text = "\\framesubtitle{{{0}}}\n".format(
-                    structure + " " + names[mode])
+                text = "\\framesubtitle{{{0}}}\n".format(structure)
                 filename = [x.filename for x in time if (
                     x.parameter == mode and x.name == structure)][0]
                 text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                     config.outputPath, filename)
 
-                out.addSlide("Time (IOV) dependent plots", text)
+                out.addSlide("High-level parameters versus time (IOV)", text)
 
     # hole modules
 
@@ -132,21 +127,20 @@ def create(pedeDump, outputFile, config):
 
                     # check if plot there is a plot in this mode
                     if module:
-                        text = "\\framesubtitle{{{0}}}\n".format(
-                            moduleName + " " + names[mode])
+                        text = "\\framesubtitle{{{0}}}\n".format(moduleName)
                         text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                             config.outputPath, module[0].filename)
 
-                        out.addSlide("Modules", text)
+                        out.addSlide("Module-level parameters", text)
 
                         # loop over submodules
                         for plot in moduleSub:
                             text = "\\framesubtitle{{{0}}}\n".format(
-                                moduleName + str(plot.number) + " " + names[mode])
+                                moduleName)
                             text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                                 config.outputPath, plot.filename)
 
-                            out.addSlide("Modules", text)
+                            out.addSlide("Module-level parameters", text)
 
     # plot taken from the millePedeMonitor_merge.root file
 

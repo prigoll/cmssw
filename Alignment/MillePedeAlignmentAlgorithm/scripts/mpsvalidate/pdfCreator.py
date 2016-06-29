@@ -39,7 +39,7 @@ def create(pedeDump, outputFile, config):
 
     # pede.dump.gz
 
-    out += "\section{{pede.dump.gz}}\n"
+    out += "\section{{Pede monitoring information}}\n"
     if (pedeDump.sumValue != 0):
         out += r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(
             pedeDump.sumSteps, pedeDump.sumValue)
@@ -63,17 +63,15 @@ def create(pedeDump, outputFile, config):
             out += line
             out += "\\end{verbatim}\n"
 
-    # humanreadable names
-    names = {"xyz": "Translation", "rot": "Rotation", "dist": "Deformation"}
+    out += "\section{{Parameter plots}}\n"
 
     # high level structures
 
     big = [x for x in config.outputList if (x.plottype == "big")]
 
     if big:
-        out += "\section{{High level structures}}\n"
+        out += "\subsection{{High-level parameters}}\n"
         for i in big:
-            out += "\subsection{{{0}}}\n".format(names[i.parameter])
             out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                 config.outputPath, i.filename)
 
@@ -82,12 +80,10 @@ def create(pedeDump, outputFile, config):
     time = [x for x in config.outputList if (x.plottype == "time")]
 
     if time:
-        out += "\section{{Time (IOV) dependent plots}}\n"
+        out += "\subsection{{High-level parameters versus time (IOV)}}\n"
         # get list with names of the structures
         for structure in [x.name for x in time if x.parameter == "xyz"]:
-            out += "\subsection{{{0}}}\n".format(structure)
             for mode in ["xyz", "rot"]:
-                out += "\subsubsection{{{0}}}\n".format(names[mode])
                 filename = [x.filename for x in time if (
                     x.parameter == mode and x.name == structure)][0]
                 out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
@@ -97,14 +93,13 @@ def create(pedeDump, outputFile, config):
 
     # check if there are module plots
     if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "")):
-        out += "\section{{Modules}}\n"
+        out += "\subsection{{Module-level parameters}}\n"
 
         # loop over all structures
         for moduleName in GeometryGetter.namebStruct:
 
             # check if there is a plot for this module
             if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName)):
-                out += "\subsection{{{0}}}\n".format(moduleName)
 
                 # loop over modes
                 for mode in ["xyz", "rot", "dist"]:
@@ -118,7 +113,6 @@ def create(pedeDump, outputFile, config):
 
                     # check if plot there is a plot in this mode
                     if module:
-                        out += "\subsubsection{{{0}}}\n".format(names[mode])
                         out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                             config.outputPath, module[0].filename)
 
@@ -130,9 +124,8 @@ def create(pedeDump, outputFile, config):
     # plot taken from the millePedeMonitor_merge.root file
 
     if any(x for x in config.outputList if x.plottype == "monitor"):
-        out += "\section{{Monitor}}\n"
+        out += "\subsection{{Monitor}}\n"
         for plot in [x for x in config.outputList if x.plottype == "monitor"]:
-            out += "\subsubsection{{{0}}}\n".format(plot.name)
             out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                 config.outputPath, plot.filename)
 
