@@ -149,6 +149,17 @@ class LogData:
             print line
 
 
+class MonitorData:
+    """ information out of the monitor root files
+    """
+    monitors = []
+
+    def __init__(self, name, ntracks):
+        self.name = name
+        self.ntracks = ntracks
+        self.monitors.append(self)
+
+
 class OutputData:
     """ stores the information about the data which should be part of the Output
     """

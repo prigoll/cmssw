@@ -7,7 +7,7 @@
 import os
 import string
 
-from mpsvalidate.classes import GeometryGetter, LogData
+from mpsvalidate.classes import GeometryGetter, LogData, MonitorData
 
 
 # create class to have delimiter %% which is not used in latex
@@ -121,11 +121,32 @@ def create(pedeDump, outputFile, config):
                             out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                                 config.outputPath, plot.filename)
 
+    # table of input files with number of tracks
+    out += "\section{Datasets with tracks}\n"
+    out += """\\begin{table}
+        \centering
+        \caption{Datasets with tracks}
+        \\begin{tabular}{cc}
+        \hline
+        Dataset & Number of used tracks \\\\
+        \hline \n"""
+    for monitor in MonitorData.monitors:
+        out += "{0} & {1}\\\\\n".format(monitor.name, monitor.ntracks)
+    out += """\hline
+              \end{tabular}\n
+              \end{table}"""
+
     # plot taken from the millePedeMonitor_merge.root file
 
     if any(x for x in config.outputList if x.plottype == "monitor"):
-        out += "\subsection{{Monitor}}\n"
+        out += "\section{{Monitor plots}}\n"
+
+        lastdataset = ""
         for plot in [x for x in config.outputList if x.plottype == "monitor"]:
+            # all plots of a dataset together in one section
+            if (lastdataset != plot.name):
+                out += "\subsection{{{0}}}".format(plot.name)
+            lastdataset = plot.name
             out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                 config.outputPath, plot.filename)
 

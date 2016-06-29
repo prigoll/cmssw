@@ -76,8 +76,7 @@ def main():
     #
 
     if (config.showmonitor == 1):
-        monitorPlot.plot(
-            "{0}/millePedeMonitor_merge.root".format(config.jobDataPath), config)
+        monitorPlot.plot(config)
 
     ##########################################################################
     # parse the file pede.dump.gz and return a LogData Object

@@ -4,55 +4,69 @@
 # Draw the plots saved in the millePedeMonitor_merge.root file
 #
 
+import os
+
 from ROOT import TH1F, TCanvas, TFile, TImage, gStyle
 
-from mpsvalidate.classes import OutputData
+from mpsvalidate.classes import MonitorData, OutputData
 from mpsvalidate.style import setstatsize
 
 
-def plot(path, config):
+def plot(config):
     # adjust the plot style
     # show the skewness in the legend
     gStyle.SetOptStat("emrs")
     gStyle.SetPadLeftMargin(0.07)
 
-    # open file
-    rootfile = TFile("{0}".format(path))
+    # loop over all millepedemonitor_X.root files
+    for filename in os.listdir("{0}".format(config.jobDataPath)):
+        if (filename.endswith(".root") and filename.startswith("millepedemonitor_")):
+            # get X out of millepedemonitor_X.root files
+            inputname = filename[17:-5]
 
-    plotPaths = ["trackHists/r1Track", "trackHists/ptTrack",
-                 "trackHists/etaTrack", "usedTrackHists/usedptTrack"]
-    # loop over plots which should be plotted
-    for plotPath in plotPaths:
-        # get plotname
-        plotName = plotPath.split("/")[1]
-        # get plot
-        plot = rootfile.Get(plotPath)
+            # open file
+            rootfile = TFile("{0}/{1}".format(config.jobDataPath, filename))
 
-        # create canvas
-        canvas = TCanvas("canvasModules{0}".format(
-            plotName), "Parameter", 300, 0, 800, 600)
-        canvas.cd()
+            plotPaths = ["usedTrackHists/usedptTrack", "usedTrackHists/usedetaTrack",
+                         "usedTrackHists/usedphiTrack", "usedTrackHists/usednHitTrack"]
 
-        # set statistics size
-        setstatsize(canvas, plot, config)
+            # loop over plots which should be plotted
+            for plotNumber, plotPath in enumerate(plotPaths):
+                # get plotname
+                plotName = plotPath.split("/")[1]
+                # get plot
+                plot = rootfile.Get(plotPath)
 
-        # draw
-        plot.Draw()
+                if (plotNumber == 0):
+                    # get number of used tracks
+                    ntracks = int(plot.GetEntries())
+                    MonitorData(inputname.replace("_", " "), ntracks)
 
-        # save as pdf
-        canvas.Print(
-            "{0}/plots/pdf/monitor_{1}.pdf".format(config.outputPath, plotName))
+                # create canvas
+                canvas = TCanvas("canvas{0}_{1}".format(
+                    inputname, plotName), "Monitor", 300, 0, 800, 600)
+                canvas.cd()
 
-        # export as png
-        image = TImage.Create()
-        image.FromPad(canvas)
-        image.WriteImage(
-            "{0}/plots/png/monitor_{1}.png".format(config.outputPath, plotName))
+                # set statistics size
+                setstatsize(canvas, plot, config)
 
-        # add to output list
-        output = OutputData(plottype="monitor", name=plotName,
-                            filename="monitor_{0}".format(plotName))
-        config.outputList.append(output)
+                # draw
+                plot.Draw()
+
+                # save as pdf
+                canvas.Print(
+                    "{0}/plots/pdf/monitor_{1}_{2}.pdf".format(config.outputPath, inputname.replace(".","_"), plotName))
+
+                # export as png
+                image = TImage.Create()
+                image.FromPad(canvas)
+                image.WriteImage(
+                    "{0}/plots/png/monitor_{1}_{2}.png".format(config.outputPath, inputname.replace(".","_"), plotName))
+
+                # add to output list
+                output = OutputData(plottype="monitor", name=inputname.replace("_", " "), number=plotName, filename="monitor_{1}_{2}".format(
+                    config.outputPath, inputname.replace(".","_"), plotName))
+                config.outputList.append(output)
 
     # reset the plot style
     gStyle.SetOptStat(0)
