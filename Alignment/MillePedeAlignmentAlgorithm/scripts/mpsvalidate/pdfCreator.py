@@ -83,6 +83,7 @@ def create(pedeDump, outputFile, config):
         out += "\subsection{{High-level parameters versus time (IOV)}}\n"
         # get list with names of the structures
         for structure in [x.name for x in time if x.parameter == "xyz"]:
+            out += "\subsubsection{{{0}}}\n".format(structure)
             for mode in ["xyz", "rot"]:
                 filename = [x.filename for x in time if (
                     x.parameter == mode and x.name == structure)][0]
@@ -100,7 +101,7 @@ def create(pedeDump, outputFile, config):
 
             # check if there is a plot for this module
             if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName)):
-
+                out += "\subsubsection{{{0}}}\n".format(moduleName)
                 # loop over modes
                 for mode in ["xyz", "rot", "dist"]:
 
