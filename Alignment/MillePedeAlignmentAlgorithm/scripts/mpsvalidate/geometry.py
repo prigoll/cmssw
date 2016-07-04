@@ -4,7 +4,9 @@
 # Classes which provide the geometry information.
 ##
 
-from ROOT import (TFile, TTree)
+from ROOT import TFile, TTree
+from mpsvalidate import geometrydata
+
 
 class Alignables:
     """ Creates a list of the aligned strucutres. Get the signature out of the
@@ -15,19 +17,20 @@ class Alignables:
         self.structures = []
 
     def name_by_objid(self, objid):
-        pass
+        print geometrydata.data
 
     def get_discriminator(self, objid):
         pass
 
     def create_list(self, millepedeuser):
         for line in millepedeuser:
-            if (line.ObjId!=1 and 999999 not in map(abs, line.Par)):
+            if (line.ObjId != 1 and 999999 not in map(abs, line.Par)):
                 name = self.name_by_objid(line.ObjId)
                 signature = self.get_signature(line.DetId)
                 discriminator = self.get_discriminator(line.ObjId)
                 # TODO children
-                self.structure.append(Structure(name, signature, discriminator))
+                self.structure.append(
+                    Structure(name, signature, discriminator))
 
     def get_signature(self, detid):
         # open TrackerTree.root file
@@ -50,12 +53,13 @@ class Alignables:
                 detids.append(line.RawId)
         return detids
 
+
 class Signature:
     """ Signature to identify a DetId in the TrackerTree.root file
     """
 
     def __init__(self, layer=0, side=0, half=0, rod=0, ring=0, petal=0, blade=0,
-                panel=0, outerinner=0, module=0, rodal=0, bladeal=0, nstrips=0):
+                 panel=0, outerinner=0, module=0, rodal=0, bladeal=0, nstrips=0):
         # layer
         self.layer = layer
         self.side = side
