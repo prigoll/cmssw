@@ -14,25 +14,33 @@ class Alignables:
     """
 
     def __init__(self):
+        # list of Structure objects, contains structures which were aligned
         self.structures = []
 
     def name_by_objid(self, objid):
-        print geometrydata.data
+        return geometrydata.data[objid].name
 
     def get_discriminator(self, objid):
-        pass
+        return geometrydata.data[objid].discriminator
 
-    def create_list(self, millepedeuser):
-        for line in millepedeuser:
+    def create_list(self, MillePedeUser):
+        # loop over output TTree
+        for line in MillePedeUser:
+            # check which structures were aligned
             if (line.ObjId != 1 and 999999 not in map(abs, line.Par)):
+                # create new structure object
                 name = self.name_by_objid(line.ObjId)
-                signature = self.get_signature(line.DetId)
+                signature = self.get_signature(line.Id)
                 discriminator = self.get_discriminator(line.ObjId)
                 # TODO children
-                self.structure.append(
+                # create structure
+                self.structures.append(
                     Structure(name, signature, discriminator))
+                # add detids
+                self.structure[-1].detids = self.get_detids(signature, discriminator)
 
     def get_signature(self, detid):
+        # get the signature of a structure
         # open TrackerTree.root file
         treeFile = TFile("mpsvalidate/TrackerTree.root")
         tree = treeFile.Get("TrackerTreeGenerator/TrackerTree/TrackerTree")
@@ -40,15 +48,16 @@ class Alignables:
         for line in tree:
             if (line.RawId == detid):
                 return Signature(layer=line.Layer, side=line.Side, half=line.Half, rod=line.Rod, ring=line.Ring, petal=line.Petal, blade=line.Blade, panel=line.Panel, outerinner=line.OuterInner, module=line.Module, rodal=line.RodAl, bladeal=line.BladeAl, nstrips=line.NStrips)
-                break
 
     def get_detids(self, signature, discriminator):
+        # list of all detids in the structure
         detids = []
         # open TrackerTree.root file
         treeFile = TFile("mpsvalidate/TrackerTree.root")
         tree = treeFile.Get("TrackerTreeGenerator/TrackerTree/TrackerTree")
 
         for line in tree:
+            # check if line is part of the structure
             if (signature.compare(line, discriminator)):
                 detids.append(line.RawId)
         return detids
