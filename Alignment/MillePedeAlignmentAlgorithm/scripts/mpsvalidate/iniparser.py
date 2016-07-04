@@ -37,6 +37,7 @@ class ConfigData:
 
         # what should be created
         self.showmonitor = -1
+        self.showadditional = -1
         self.showdump = -1
         self.showtime = -1
         self.showhighlevel = -1
@@ -226,6 +227,11 @@ class ConfigData:
 
         try:
             self.showmonitor = int(parser.get("SHOW", "showmonitor"))
+        except:
+            pass
+
+        try:
+            self.showadditional = int(parser.get("SHOW", "showadditional"))
         except:
             pass
 

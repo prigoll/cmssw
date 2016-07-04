@@ -13,8 +13,9 @@ import os
 from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
-from mpsvalidate import (beamerCreator, bigModule, bigStructure, htmlCreator,
-                         monitorPlot, pdfCreator, subModule, timeStructure)
+from mpsvalidate import (additionalparser, beamerCreator, bigModule,
+                         bigStructure, htmlCreator, monitorPlot, pdfCreator,
+                         subModule, timeStructure)
 from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
                                  TreeData)
 from mpsvalidate.dumpparser import parse
@@ -77,6 +78,13 @@ def main():
 
     if (config.showmonitor == 1):
         monitorPlot.plot(config)
+
+    ##########################################################################
+    # parse the alignment_merge.py file
+    #
+
+    if (config.showadditional == 1):
+        additonalparser.parse(config)
 
     ##########################################################################
     # parse the file pede.dump.gz and return a LogData Object

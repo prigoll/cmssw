@@ -170,3 +170,10 @@ class OutputData:
         self.number = number
         self.parameter = parameter
         self.filename = filename
+
+class AdditionalData:
+    """ stores the additional information of the alignment_merge.py file
+    """
+
+    def __init__(self, ):
+        self.
