@@ -84,7 +84,7 @@ def main():
     #
 
     if (config.showadditional == 1):
-        additonalparser.parse(config)
+        additionalparser.parse(config)
 
     ##########################################################################
     # parse the file pede.dump.gz and return a LogData Object

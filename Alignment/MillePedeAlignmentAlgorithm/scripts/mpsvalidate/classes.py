@@ -174,6 +174,6 @@ class OutputData:
 class AdditionalData:
     """ stores the additional information of the alignment_merge.py file
     """
-
-    def __init__(self, ):
-        self.
+    # TODO
+    def __init__(self, test):
+        self.test = test
