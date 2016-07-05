@@ -35,17 +35,19 @@ class Alignables:
         for line in MillePedeUser:
             # check which structures were aligned
             if (line.ObjId != 1 and 999999 not in map(abs, line.Par)):
-                # create new structure object
-                name = self.get_name_by_objid(line.ObjId)
-                subdetid = self.get_subdetid(line.ObjId)
-                discriminator = self.get_discriminator(line.ObjId)
-                ndiscriminator = self.get_ndiscriminator(line.ObjId)
-                # TODO children
-                # create structure
-                self.structures.append(
-                    Structure(name, subdetid, discriminator, ndiscriminator))
-                # add detids which belong to this structure
-                self.structures[-1].detids = self.get_detids(subdetid)
+                # check if structure is not yet in the list
+                if not any(x.name == self.get_name_by_objid(line.ObjId) for x in self.structures):
+                    # create new structure object
+                    name = self.get_name_by_objid(line.ObjId)
+                    subdetid = self.get_subdetid(line.ObjId)
+                    discriminator = self.get_discriminator(line.ObjId)
+                    ndiscriminator = self.get_ndiscriminator(line.ObjId)
+                    # TODO children
+                    # create structure
+                    self.structures.append(
+                        Structure(name, subdetid, discriminator, ndiscriminator))
+                    # add detids which belong to this structure
+                    self.structures[-1].detids = self.get_detids(subdetid)
 
     def get_detids(self, subdetid):
         # list of all detids in the structure
