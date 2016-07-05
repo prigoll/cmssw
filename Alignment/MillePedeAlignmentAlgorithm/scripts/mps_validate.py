@@ -16,9 +16,9 @@ from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
 from mpsvalidate import (additionalparser, beamerCreator, bigModule,
                          bigStructure, htmlCreator, monitorPlot, pdfCreator,
                          subModule, timeStructure)
-from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
-                                 TreeData)
+from mpsvalidate.classes import LogData, OutputData, Struct, TreeData
 from mpsvalidate.dumpparser import parse
+from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.iniparser import ConfigData
 from mpsvalidate.style import setgstyle
 
@@ -30,8 +30,8 @@ def main():
 
     # run ROOT in batchmode
     gROOT.SetBatch()
-    # create GeometryGetter object
-    geometryGetter = GeometryGetter()
+    # create alignables object
+    alignables = Alignables()
 
     # ArgumentParser
     parser = argparse.ArgumentParser(description="Validate your Alignment.")
@@ -98,14 +98,14 @@ def main():
     #
 
     if (config.showtime == 1):
-        timeStructure.plot(treeFile, geometryGetter, config)
+        timeStructure.plot(treeFile, alignables, config)
 
     ##########################################################################
     # big structures
     #
 
     if (config.showhighlevel == 1):
-        big = bigStructure.plot(MillePedeUser, geometryGetter, config)
+        bigStructure.plot(MillePedeUser, alignables, config)
 
     ##########################################################################
     # modules of a hole structure
@@ -113,7 +113,7 @@ def main():
     #
 
     if (config.showmodule == 1):
-        bigModule.plot(MillePedeUser, geometryGetter, config)
+        bigModule.plot(MillePedeUser, alignables, config)
 
     ##########################################################################
     # create TEX, beamer

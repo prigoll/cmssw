@@ -78,3 +78,11 @@ class Structure:
         self.detids = []
         # fieldss of all parts of the structure
         self.children = []
+
+    def get_name(self):
+        return self.name
+
+    def contains_detid(self, detid):
+        if detid in self.detids:
+            return True
+        return False

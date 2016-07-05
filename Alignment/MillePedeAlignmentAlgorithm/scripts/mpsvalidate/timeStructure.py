@@ -9,12 +9,13 @@
 from ROOT import (TH1F, TCanvas, TGraph, TImage, TLegend, TPaveLabel,
                   TPaveText, TTree, gROOT, gStyle)
 
-from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
+from mpsvalidate.classes import (LogData, OutputData, Struct,
                                  TreeData)
+from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.style import identification
 
 
-def plot(treeFile, geometryGetter, config):
+def plot(treeFile, alignables, config):
 
     for mode in ["xyz", "rot"]:
 
@@ -82,7 +83,7 @@ def plot(treeFile, geometryGetter, config):
 
                 # initialize histograms
                 for i in range(3):
-                    plots[-1].histo.append(TH1F("Time Structure {0} {1} {2} {3}".format(mode, geometryGetter.name_by_objid(
+                    plots[-1].histo.append(TH1F("Time Structure {0} {1} {2} {3}".format(mode, alignables.get_name_by_objid(
                         line.ObjId), len(plots), i), "Parameter {0}".format(time.xyz[i]), len(listMillePedeUser), 0, len(listMillePedeUser)))
                     plots[-1].label = line.Id
                     plots[-1].objid = line.ObjId
@@ -143,12 +144,12 @@ def plot(treeFile, geometryGetter, config):
         for index, objid in enumerate(objids):
 
             canvas = TCanvas("canvasTimeBigStrucutres_{0}_{1}".format(
-                mode, geometryGetter.name_by_objid(objid)), "Parameter", 300, 0, 800, 600)
+                mode, alignables.get_name_by_objid(objid)), "Parameter", 300, 0, 800, 600)
             canvas.Divide(2, 2)
 
             # add text
             title = TPaveLabel(0.1, 0.8, 0.9, 0.9, "{0} over time {1}".format(
-                geometryGetter.name_by_objid(objid), mode))
+                alignables.get_name_by_objid(objid), mode))
 
             legend = TLegend(0.05, 0.1, 0.95, 0.75)
 
@@ -233,15 +234,15 @@ def plot(treeFile, geometryGetter, config):
 
             # save as pdf
             canvas.Print("{0}/plots/pdf/timeStructures_{1}_{2}.pdf".format(
-                config.outputPath, mode, geometryGetter.name_by_objid(objid)))
+                config.outputPath, mode, alignables.get_name_by_objid(objid)))
 
             # export as png
             image = TImage.Create()
             image.FromPad(canvas)
             image.WriteImage("{0}/plots/png/timeStructures_{1}_{2}.png".format(
-                config.outputPath, mode, geometryGetter.name_by_objid(objid)))
+                config.outputPath, mode, alignables.get_name_by_objid(objid)))
 
             # add to output list
-            output = OutputData(plottype="time", name=geometryGetter.name_by_objid(
-                objid), parameter=mode, filename="timeStructures_{0}_{1}".format(mode, geometryGetter.name_by_objid(objid)))
+            output = OutputData(plottype="time", name=alignables.get_name_by_objid(
+                objid), parameter=mode, filename="timeStructures_{0}_{1}".format(mode, alignables.get_name_by_objid(objid)))
             config.outputList.append(output)

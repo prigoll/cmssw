@@ -9,12 +9,14 @@ from ROOT import (TH1F, TCanvas, TImage, TPaveLabel, TPaveText, TTree, gROOT,
                   gStyle)
 
 from mpsvalidate import subModule
-from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
-                                 TreeData)
+from mpsvalidate.classes import LogData, OutputData, TreeData
+from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.style import identification, setstatsize
 
 
-def plot(MillePedeUser, geometryGetter, config):
+def plot(MillePedeUser, alignables, config):
+
+    alignables.create_list(MillePedeUser)
 
     # number of bins to start
     numberOfBins = 10000
@@ -29,21 +31,21 @@ def plot(MillePedeUser, geometryGetter, config):
     for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
         plots.append([])
         # loop over structures
-        for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+        for structNumber, struct in enumerate(alignables.structures):
             plots[modeNumber].append(TreeData(mode))
 
     # initialize histograms
     for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-        for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+        for structNumber, struct in enumerate(alignables.structures):
             # use a copy for shorter name
             plot = plots[modeNumber][structNumber]
 
             for i in range(3):
                 if (mode == "xyz"):
-                    plot.histo.append(TH1F("{0} {1} {2}".format(struct.getName(), plot.xyz[
+                    plot.histo.append(TH1F("{0} {1} {2}".format(struct.get_name(), plot.xyz[
                                       i], mode), "Parameter {0}".format(plot.xyz[i]), numberOfBins, -1000, 1000))
                 else:
-                    plot.histo.append(TH1F("{0} {1} {2}".format(struct.getName(), plot.xyz[
+                    plot.histo.append(TH1F("{0} {1} {2}".format(struct.get_name(), plot.xyz[
                                       i], mode), "Parameter {0}".format(plot.xyz[i]), numberOfBins, -0.1, 0.1))
 
                 plot.histo[i].SetXTitle(plot.unit)
@@ -51,7 +53,7 @@ def plot(MillePedeUser, geometryGetter, config):
 
             # add labels
             plot.title = TPaveLabel(
-                0.1, 0.8, 0.9, 0.9, "Module: {0} {1}".format(struct.getName(), mode))
+                0.1, 0.8, 0.9, 0.9, "Module: {0} {1}".format(struct.get_name(), mode))
             plot.text = TPaveText(0.05, 0.1, 0.95, 0.75)
             plot.text.SetTextAlign(12)
             plot.text.SetTextSizePixels(20)
@@ -67,12 +69,12 @@ def plot(MillePedeUser, geometryGetter, config):
         # is module ?
         if (line.ObjId == 1):
             for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-                for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+                for structNumber, struct in enumerate(alignables.structures):
                     # use a copy for shorter name
                     plot = plots[modeNumber][structNumber]
 
                     # module in struct ?
-                    if (struct.containLabel(line.Label)):
+                    if (struct.contains_detid(line.Id)):
                         for i in range(3):
                             if (abs(line.Par[plot.data[i]]) != 999999):
                                 # transform xyz data from cm to #mu m
@@ -90,7 +92,7 @@ def plot(MillePedeUser, geometryGetter, config):
     #
 
     for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-        for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+        for structNumber, struct in enumerate(alignables.structures):
             # use a copy for shorter name
             plot = plots[modeNumber][structNumber]
 
@@ -229,12 +231,12 @@ def plot(MillePedeUser, geometryGetter, config):
     gStyle.SetOptStat("emrs")
 
     for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-        for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+        for structNumber, struct in enumerate(alignables.structures):
             # use a copy for shorter name
             plot = plots[modeNumber][structNumber]
 
             canvas = TCanvas("canvasModules{0}_{1}".format(
-                struct.getName(), mode), "Parameter", 300, 0, 800, 600)
+                struct.get_name(), mode), "Parameter", 300, 0, 800, 600)
             canvas.Divide(2, 2)
 
             canvas.cd(1)
@@ -263,17 +265,17 @@ def plot(MillePedeUser, geometryGetter, config):
 
             # save as pdf
             canvas.Print(
-                "{0}/plots/pdf/modules_{1}_{2}.pdf".format(config.outputPath, mode, struct.getName()))
+                "{0}/plots/pdf/modules_{1}_{2}.pdf".format(config.outputPath, mode, struct.get_name()))
 
             # export as png
             image = TImage.Create()
             image.FromPad(canvas)
             image.WriteImage(
-                "{0}/plots/png/modules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
+                "{0}/plots/png/modules_{1}_{2}.png".format(config.outputPath, mode, struct.get_name()))
 
             # add to output list
-            output = OutputData(plottype="mod", name=struct.getName(
-            ), parameter=mode, filename="modules_{0}_{1}".format(mode, struct.getName()))
+            output = OutputData(plottype="mod", name=struct.get_name(),
+                                parameter=mode, filename="modules_{0}_{1}".format(mode, struct.get_name()))
             config.outputList.append(output)
 
     ######################################################################
@@ -282,9 +284,9 @@ def plot(MillePedeUser, geometryGetter, config):
 
     if (config.showsubmodule == 1):
         for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
-            for structNumber, struct in enumerate(geometryGetter.listbStructs()):
+            for structNumber, struct in enumerate(alignables.structures):
                 # use a copy for shorter name
                 plot = plots[modeNumber][structNumber]
 
-                subModule.plot(MillePedeUser, geometryGetter,
+                subModule.plot(MillePedeUser, alignables,
                                mode, struct, plot, config)

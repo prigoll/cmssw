@@ -8,12 +8,13 @@
 from ROOT import (TH1F, TCanvas, TGraph, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
-from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
+from mpsvalidate.classes import (LogData, OutputData, Struct,
                                  TreeData)
+from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.style import identification
 
 
-def plot(MillePedeUser, geometryGetter, config):
+def plot(MillePedeUser, alignables, config):
     # more space for labels
     gStyle.SetPadBottomMargin(0.25)
     gStyle.SetOptStat("emrs")
@@ -66,7 +67,7 @@ def plot(MillePedeUser, geometryGetter, config):
                     if (abs(line.Par[big.data[i]]) != 999999):
                         # set name of the structure
                         big.histoAxis[i].SetBinLabel(
-                            big.binPosition[i], geometryGetter.name_by_objid(line.ObjId))
+                            big.binPosition[i], alignables.get_name_by_objid(line.ObjId))
                         # fill with data, big.data[i] xyz or rot data
                         # transform xyz data from cm to #mu m
                         if (mode == "xyz"):
