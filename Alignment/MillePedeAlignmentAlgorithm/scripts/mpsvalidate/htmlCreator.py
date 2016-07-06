@@ -18,7 +18,7 @@ class TexTemplate(string.Template):
     delimiter = "%%"
 
 
-def create(alignabels, pedeDump, outputFile, config):
+def create(alignables, pedeDump, outputFile, config):
 
     # load template
     with open("./mpsvalidate/html_template.html", "r") as template:
