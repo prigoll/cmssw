@@ -4,6 +4,8 @@
 # Classes which provide the geometry information.
 ##
 
+import itertools
+
 from ROOT import TFile, TTree
 
 from mpsvalidate import geometrydata
@@ -52,12 +54,13 @@ class Alignables:
         for struct in self.structures:
             # loop over discriminators -> create patterns
             # pattern {"half": 2, "side": 2, "layer": 6, ...}
-            ranges = self.get_ndiscriminator(line.ObjId)
-            pranges = [range(x) for x in ranges]
-            # loop over all possible combinations of the values of the discriminators
+            ranges = struct.ndiscriminator
+            pranges = [range(1, x+1) for x in ranges]
+            # loop over all possible combinations of the values of the
+            # discriminators
             for number in itertools.product(*pranges):
                 # create pattern dict
-                pattern = dict(zip(self.get_discriminator, number))
+                pattern = dict(zip(struct.discriminator, number))
                 # name out of patten
                 name = " ".join("{0} {1}".format(key, value)
                                 for (key, value) in pattern.items())
@@ -143,6 +146,9 @@ class Structure:
 
     def get_name(self):
         return self.name
+
+    def get_children(self):
+        return self.children
 
     def contains_detid(self, detid):
         if detid in self.detids:

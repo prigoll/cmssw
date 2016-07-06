@@ -283,6 +283,7 @@ def plot(MillePedeUser, alignables, config):
     #
 
     if (config.showsubmodule == 1):
+        alignables.create_children_list()
         for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
             for structNumber, struct in enumerate(alignables.structures):
                 # use a copy for shorter name

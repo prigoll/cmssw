@@ -9,12 +9,11 @@
 from ROOT import (TH1F, TCanvas, TImage, TLegend, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
-from mpsvalidate.classes import (GeometryGetter, LogData, OutputData, Struct,
-                                 TreeData)
+from mpsvalidate.classes import LogData, OutputData, TreeData
 from mpsvalidate.style import identification
 
 
-def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
+def plot(MillePedeUser, alignables, mode, struct, parentPlot, config):
 
     # skip empty
     number = 0
@@ -35,7 +34,7 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
     plots = []
 
     # initialize histograms
-    for subStructNumber, subStruct in enumerate(struct.getChildren()):
+    for subStructNumber, subStruct in enumerate(struct.get_children()):
         plots.append(TreeData(mode))
 
         # use a copy for shorter name
@@ -43,10 +42,10 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
 
         for i in range(3):
             if (mode == "xyz"):
-                plot.histo.append(TH1F("{0} {1} {2}".format(subStruct.getName(), plot.xyz[
+                plot.histo.append(TH1F("{0} {1} {2}".format(struct.get_name() + " " + subStruct.get_name(), plot.xyz[
                                   i], mode), "Parameter {0}".format(plot.xyz[i]), numberOfBins, -1000, 1000))
             else:
-                plot.histo.append(TH1F("{0} {1} {2}".format(subStruct.getName(), plot.xyz[
+                plot.histo.append(TH1F("{0} {1} {2}".format(struct.get_name() + " " + subStruct.get_name(), plot.xyz[
                                   i], mode), "Parameter {0}".format(plot.xyz[i]), numberOfBins, -0.1, 0.1))
 
             plot.histo[i].SetXTitle(plot.unit)
@@ -55,7 +54,7 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
 
         # add labels
         plot.title = TPaveLabel(
-            0.1, 0.8, 0.9, 0.9, "Module: {0} {1}".format(subStruct.getName(), mode))
+            0.1, 0.8, 0.9, 0.9, "Module: {0} {1}".format(struct.get_name(), mode))
         plot.text = TPaveText(0.05, 0.1, 0.95, 0.75)
         plot.text.SetTextAlign(12)
         plot.text.SetTextSizePixels(20)
@@ -70,12 +69,12 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
     for line in MillePedeUser:
         # is module ?
         if (line.ObjId == 1):
-            for subStructNumber, subStruct in enumerate(struct.getChildren()):
+            for subStructNumber, subStruct in enumerate(struct.get_children()):
                 # use a copy for shorter name
                 plot = plots[subStructNumber]
 
                 # module in struct ?
-                if (subStruct.containLabel(line.Label)):
+                if (subStruct.contains_detid(line.Id)):
                     for i in range(3):
                         if (abs(line.Par[plot.data[i]]) != 999999):
                             # transform xyz data from cm to #mu m
@@ -91,7 +90,7 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
     ######################################################################
     # find the best range
     #
-    for subStructNumber, subStruct in enumerate(struct.getChildren()):
+    for subStructNumber, subStruct in enumerate(struct.get_children()):
         # use a copy for shorter name
         plot = plots[subStructNumber]
         for i in range(3):
@@ -138,7 +137,7 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
     #
 
     canvas = TCanvas("SubStruct_{0}_{1}".format(
-        struct.getName(), mode), "Parameter", 300, 0, 800, 600)
+        struct.get_name(), mode), "Parameter", 300, 0, 800, 600)
     canvas.Divide(2, 2)
 
     canvas.cd(1)
@@ -159,7 +158,7 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
         parentPlot.histo[i].Scale(1. / parentPlot.histo[i].Integral())
         maximum.append(parentPlot.histo[i].GetMaximum())
 
-        for subStructNumber, subStruct in enumerate(struct.getChildren()):
+        for subStructNumber, subStruct in enumerate(struct.get_children()):
             # use a copy for shorter name
             plot = plots[subStructNumber]
 
@@ -174,14 +173,14 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
         parentPlot.histo[i].GetYaxis().SetRangeUser(0., 1.1 * max(maximum))
         parentPlot.histo[i].Draw()
 
-        for subStructNumber, subStruct in enumerate(struct.getChildren()):
+        for subStructNumber, subStruct in enumerate(struct.get_children()):
             # use a copy for shorter name
             plot = plots[subStructNumber].histo[i]
 
             plot.SetLineColorAlpha(subStructNumber + 2, 0.5)
             plot.Draw("same")
             if (i == 0):
-                legend.AddEntry(plot, "{0}".format(subStructNumber), "l")
+                legend.AddEntry(plot, subStruct.get_name(), "l")
 
     canvas.cd(1)
 
@@ -194,15 +193,15 @@ def plot(MillePedeUser, geometryGetter, mode, struct, parentPlot, config):
 
     # save as pdf
     canvas.Print(
-        "{0}/plots/pdf/subModules_{1}_{2}.pdf".format(config.outputPath, mode, struct.getName()))
+        "{0}/plots/pdf/subModules_{1}_{2}.pdf".format(config.outputPath, mode, struct.get_name()))
 
     # export as png
     image = TImage.Create()
     image.FromPad(canvas)
     image.WriteImage(
-        "{0}/plots/png/subModules_{1}_{2}.png".format(config.outputPath, mode, struct.getName()))
+        "{0}/plots/png/subModules_{1}_{2}.png".format(config.outputPath, mode, struct.get_name()))
 
     # add to output list
-    output = OutputData(plottype="subMod", name=struct.getName(), number=subStructNumber + 1,
-                        parameter=mode, filename="subModules_{0}_{1}".format(mode, struct.getName()))
+    output = OutputData(plottype="subMod", name=struct.get_name(), number=subStructNumber + 1,
+                        parameter=mode, filename="subModules_{0}_{1}".format(mode, struct.get_name()))
     config.outputList.append(output)
