@@ -6,6 +6,8 @@
 # get a time dependent plot.
 ##
 
+import logging
+
 from ROOT import (TH1F, TCanvas, TGraph, TImage, TLegend, TPaveLabel,
                   TPaveText, TTree, gROOT, gStyle)
 
@@ -30,6 +32,10 @@ def plot(treeFile, alignables, config):
         # load MillePedeUser_X TTrees
         for i in listMillePedeUser:
             MillePedeUser.append(treeFile.Get("MillePedeUser_{0}".format(i)))
+
+        if not listMillePedeUser:
+            logging.error("Timeplots: no TTrees found")
+            return
 
         ######################################################################
         # remove TTrees without results
