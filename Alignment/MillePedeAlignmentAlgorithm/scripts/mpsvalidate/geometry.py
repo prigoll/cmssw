@@ -42,14 +42,32 @@ class Alignables:
                     subdetid = self.get_subdetid(line.ObjId)
                     discriminator = self.get_discriminator(line.ObjId)
                     ndiscriminator = self.get_ndiscriminator(line.ObjId)
-                    # TODO children
                     # create structure
                     self.structures.append(
                         Structure(name, subdetid, discriminator, ndiscriminator))
                     # add detids which belong to this structure
                     self.structures[-1].detids = self.get_detids(subdetid)
 
-    def get_detids(self, subdetid):
+    def create_children_list(self):
+        for struct in self.structures:
+            # loop over discriminators -> create patterns
+            # pattern {"half": 2, "side": 2, "layer": 6, ...}
+            ranges = self.get_ndiscriminator(line.ObjId)
+            pranges = [range(x) for x in ranges]
+            # loop over all possible combinations of the values of the discriminators
+            for number in itertools.product(*pranges):
+                # create pattern dict
+                pattern = dict(zip(self.get_discriminator, number))
+                # name out of patten
+                name = " ".join("{0} {1}".format(key, value)
+                                for (key, value) in pattern.items())
+                # get detids of child
+                detids = self.get_detids(struct.subdetid, pattern)
+                # create child and add it to parent
+                child = Structure(name, struct.subdetid, detids=detids)
+                struct.children.append(child)
+
+    def get_detids(self, subdetid, pattern={}):
         # list of all detids in the structure
         detids = []
         # open TrackerTree.root file
@@ -59,6 +77,48 @@ class Alignables:
         for line in tree:
             # check if line is part of the structure
             if (line.SubdetId == subdetid):
+
+                # to create a child also check the pattern
+                if ("half" in pattern):
+                    if (line.Half != pattern["half"]):
+                        break
+
+                if ("side" in pattern):
+                    if (line.Side != pattern["side"]):
+                        break
+
+                if ("layer" in pattern):
+                    if (line.Layer != pattern["layer"]):
+                        break
+
+                if ("rod" in pattern):
+                    if (line.Rod != pattern["rod"]):
+                        break
+
+                if ("ring" in pattern):
+                    if (line.Ring != pattern["ring"]):
+                        break
+
+                if ("petal" in pattern):
+                    if (line.Petal != pattern["petal"]):
+                        break
+
+                if ("blade" in pattern):
+                    if (line.Blade != pattern["blade"]):
+                        break
+
+                if ("panel" in pattern):
+                    if (line.Panel != pattern["panel"]):
+                        break
+
+                if ("outerinner" in pattern):
+                    if (line.OuterInner != pattern["outerinner"]):
+                        break
+
+                if ("module" in pattern):
+                    if (line.Module != pattern["module"]):
+                        break
+
                 detids.append(line.RawId)
         return detids
 
@@ -67,7 +127,7 @@ class Structure:
     """ A object represents a physical strucutre
     """
 
-    def __init__(self, name, subdetid, discriminator, ndiscriminator):
+    def __init__(self, name, subdetid, discriminator=[], ndiscriminator=[], detids=[]):
         # name of the structure
         self.name = name
         # fields to identify the DetIds which belong to the structure
@@ -77,7 +137,7 @@ class Structure:
         # number per discriminator
         self.ndiscriminator = ndiscriminator
         # all DetIds which belong to this structure
-        self.detids = []
+        self.detids = detids
         # fieldss of all parts of the structure
         self.children = []
 
