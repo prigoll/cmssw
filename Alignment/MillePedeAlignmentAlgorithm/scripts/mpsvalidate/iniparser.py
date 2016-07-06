@@ -113,14 +113,18 @@ class ConfigData:
         if (configBuffer.jobDataPath != ""):
             self.jobDataPath = configBuffer.jobDataPath
 
-        # data which could be stored directly
+        # set outputpath
         try:
-            self.jobTime = int(parser.get("GENERAL", "time"))
+            self.outputPath = parser.get("GENERAL", "outputpath")
         except:
             pass
 
+        if (self.outputPath == ""):
+            self.outputPath = self.jobDataPath + "/validation_output"
+
+        # data which could be stored directly
         try:
-            self.outputPath = parser.get("GENERAL", "outputpath")
+            self.jobTime = int(parser.get("GENERAL", "time"))
         except:
             pass
 

@@ -7,7 +7,7 @@
 import os
 import string
 
-from mpsvalidate.classes import LogData
+from mpsvalidate.classes import PedeDumpData
 from mpsvalidate.geometry import Alignables, Structure
 
 

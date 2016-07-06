@@ -16,7 +16,7 @@ from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
 from mpsvalidate import (additionalparser, beamerCreator, bigModule,
                          bigStructure, htmlCreator, monitorPlot, pdfCreator,
                          subModule, timeStructure)
-from mpsvalidate.classes import LogData, OutputData, TreeData
+from mpsvalidate.classes import PedeDumpData, OutputData, PlotData
 from mpsvalidate.dumpparser import parse
 from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.iniparser import ConfigData
@@ -42,7 +42,7 @@ def main():
         "-t", "--time", help="chose MillePedeUser_X Tree (default: ini-file)", default=-1, type=int)
     parser.add_argument("-i", "--ini", help="specify a ini file", default="-1")
     parser.add_argument("-m", "--message",
-                        help="identification on every plot", default="mpXXXX")
+                        help="identification on every plot", default="")
     args = parser.parse_args()
 
     # create config object
@@ -87,7 +87,7 @@ def main():
         additionalparser.parse(config)
 
     ##########################################################################
-    # parse the file pede.dump.gz and return a LogData Object
+    # parse the file pede.dump.gz and return a PedeDumpData Object
     #
 
     if (config.showdump == 1):
@@ -119,13 +119,13 @@ def main():
     # create TEX, beamer
     #
 
-    if (config.showdump == 1 and config.showtime == 1 and config.showhighlevel == 1 and config.showmodule == 1 and config.showbeamer == 1 and config.showsubmodule):
-        if (config.showtex == 1):
-            pdfCreator.create(alignables, pedeDump, config.latexfile, config)
-        if (config.showbeamer == 1):
-            beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
-        if (config.showhtml == 1):
-            htmlCreator.create(alignables, pedeDump, "html_file.html", config)
+
+    if (config.showtex == 1):
+        pdfCreator.create(alignables, pedeDump, config.latexfile, config)
+    if (config.showbeamer == 1):
+        beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
+    if (config.showhtml == 1):
+        htmlCreator.create(alignables, pedeDump, "html_file.html", config)
 
 if __name__ == "__main__":
     main()

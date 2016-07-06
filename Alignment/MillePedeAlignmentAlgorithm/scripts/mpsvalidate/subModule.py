@@ -3,13 +3,13 @@
 ##########################################################################
 # Creates histograms of the modules of a part of a structure and combines it
 # with a plot of the modules of the hole structure. Returns a nested
-# list with the TreeData of the histograms
+# list with the PlotData of the histograms
 ##
 
 from ROOT import (TH1F, TCanvas, TImage, TLegend, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
-from mpsvalidate.classes import LogData, OutputData, TreeData
+from mpsvalidate.classes import PedeDumpData, OutputData, PlotData
 from mpsvalidate.style import identification
 
 
@@ -35,7 +35,7 @@ def plot(MillePedeUser, alignables, mode, struct, parentPlot, config):
 
     # initialize histograms
     for subStructNumber, subStruct in enumerate(struct.get_children()):
-        plots.append(TreeData(mode))
+        plots.append(PlotData(mode))
 
         # use a copy for shorter name
         plot = plots[subStructNumber]

@@ -4,7 +4,7 @@
 # Classes which are needed by the mps_validate.py file.
 ##
 
-class TreeData:
+class PlotData:
     """ Hold information about XYZ
     """
 
@@ -40,7 +40,7 @@ class TreeData:
             self.unit = ""
 
 
-class LogData:
+class PedeDumpData:
     """ information out of the pede.dump.gz file
     """
 

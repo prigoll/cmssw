@@ -11,7 +11,7 @@ import logging
 from ROOT import (TH1F, TCanvas, TGraph, TImage, TLegend, TPaveLabel,
                   TPaveText, TTree, gROOT, gStyle)
 
-from mpsvalidate.classes import LogData, OutputData, TreeData
+from mpsvalidate.classes import PedeDumpData, OutputData, PlotData
 from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.style import identification
 
@@ -20,7 +20,7 @@ def plot(treeFile, alignables, config):
 
     for mode in ["xyz", "rot"]:
 
-        time = TreeData(mode)
+        time = PlotData(mode)
 
         # list of all avaible TTrees
         listMillePedeUser = []
@@ -80,7 +80,7 @@ def plot(treeFile, alignables, config):
         # loop over first tree to initialize
         for line in MillePedeUser[0]:
             if (line.ObjId != 1 and any(abs(line.Par[time.data[i]]) != 999999 for i in [0, 1, 2])):
-                plots.append(TreeData(mode))
+                plots.append(PlotData(mode))
 
                 # new objid?
                 if (line.ObjId not in objids):

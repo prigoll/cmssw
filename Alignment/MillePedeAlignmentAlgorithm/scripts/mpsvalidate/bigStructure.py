@@ -8,7 +8,7 @@
 from ROOT import (TH1F, TCanvas, TGraph, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
-from mpsvalidate.classes import LogData, OutputData, TreeData
+from mpsvalidate.classes import OutputData, PlotData
 from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.style import identification
 
@@ -19,7 +19,7 @@ def plot(MillePedeUser, alignables, config):
     gStyle.SetOptStat("emrs")
 
     for mode in ["xyz", "rot"]:
-        big = TreeData(mode)
+        big = PlotData(mode)
 
         # count number of needed bins and max shift
         for line in MillePedeUser:

@@ -2,14 +2,14 @@
 
 ##########################################################################
 # Creates histograms of the modules of one structure. and returns them as
-# a list of TreeData objects.
+# a list of PlotData objects.
 ##
 
 from ROOT import (TH1F, TCanvas, TImage, TPaveLabel, TPaveText, TTree, gROOT,
                   gStyle)
 
 from mpsvalidate import subModule
-from mpsvalidate.classes import LogData, OutputData, TreeData
+from mpsvalidate.classes import PedeDumpData, OutputData, PlotData
 from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.style import identification, setstatsize
 
@@ -32,7 +32,7 @@ def plot(MillePedeUser, alignables, config):
         plots.append([])
         # loop over structures
         for structNumber, struct in enumerate(alignables.structures):
-            plots[modeNumber].append(TreeData(mode))
+            plots[modeNumber].append(PlotData(mode))
 
     # initialize histograms
     for modeNumber, mode in enumerate(["xyz", "rot", "dist"]):
