@@ -18,7 +18,7 @@ class TexTemplate(string.Template):
     delimiter = "%%"
 
 
-def create(alignables, pedeDump, outputFile, config):
+def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # load template
     with open("./mpsvalidate/tex_template.tex", "r") as template:
@@ -39,6 +39,32 @@ def create(alignables, pedeDump, outputFile, config):
         out += "Project: {{{0}}}\\\\\n".format(config.message)
     out += "Input-Path: {{{0}}}\n".format(config.jobDataPath)
 
+    # alignment_merge.py
+    out += "\subsection{Alignment Configuration}\n"
+    out += "PedeSteerer method: {0}\\\\\n".format(additionalData.pedeSteererMethod)
+    out += "PedeSteerer options:\\\\\n"
+    for line in additionalData.pedeSteererOptions:
+        out += "{0}\\\\\n".format(line)
+    out += "PedeSteerer command: {0}\\\\\n".format(additionalData.pedeSteererpedeCommand)
+
+    out += "SelectorRigid:\\\\\n"
+    for line in additionalData.selectorRigid:
+        out += "{0}\\\\\n".format(line)
+    for line in additionalData.selectorRigidThird:
+        out += "{0}\\\\\n".format(line)
+
+    out += "SelectorBowed:\\\\\n"
+    for line in additionalData.selectorBowed:
+        out += "{0}\\\\\n".format(line)
+    for line in additionalData.selectorBowedThird:
+        out += "{0}\\\\\n".format(line)
+
+    out += "SelectorTwoBowed\\\\\n"
+    for line in additionalData.selectorTwoBowed:
+        out += "{0}\\\\\n".format(line)
+    for line in additionalData.selectorTwoBowedThird:
+        out += "{0}\\\\\n".format(line)
+
     # table of input files with number of tracks
     if (config.showmonitor):
         out += "\section{Datasets with tracks}\n"
@@ -54,6 +80,7 @@ def create(alignables, pedeDump, outputFile, config):
         out += """\hline
                   \end{tabular}\n
                   \end{table}\n"""
+
 
     # pede.dump.gz
     if (config.showdump == 1):

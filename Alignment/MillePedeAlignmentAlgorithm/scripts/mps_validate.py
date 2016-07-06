@@ -14,10 +14,9 @@ from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
 from mpsvalidate import (additionalparser, beamerCreator, bigModule,
-                         bigStructure, htmlCreator, monitorPlot, pdfCreator,
-                         subModule, timeStructure)
-from mpsvalidate.classes import PedeDumpData, OutputData, PlotData
-from mpsvalidate.dumpparser import parse
+                         bigStructure, dumpparser, htmlCreator, monitorPlot,
+                         pdfCreator, subModule, timeStructure)
+from mpsvalidate.classes import OutputData, PedeDumpData, PlotData
 from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.iniparser import ConfigData
 from mpsvalidate.style import setgstyle
@@ -84,14 +83,16 @@ def main():
     #
 
     if (config.showadditional == 1):
-        additionalparser.parse(config)
+        additionalData = additionalparser.parse(
+            config, "{0}/alignment_merge.py".format(config.jobDataPath))
 
     ##########################################################################
     # parse the file pede.dump.gz and return a PedeDumpData Object
     #
 
     if (config.showdump == 1):
-        pedeDump = parse("{0}/pede.dump.gz".format(config.jobDataPath), config)
+        pedeDump = dumpparser.parse(
+            "{0}/pede.dump.gz".format(config.jobDataPath), config)
 
     ##########################################################################
     # time dependend big structures
@@ -119,9 +120,8 @@ def main():
     # create TEX, beamer
     #
 
-
     if (config.showtex == 1):
-        pdfCreator.create(alignables, pedeDump, config.latexfile, config)
+        pdfCreator.create(alignables, pedeDump, additionalData, config.latexfile, config)
     if (config.showbeamer == 1):
         beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
     if (config.showhtml == 1):

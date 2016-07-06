@@ -101,5 +101,13 @@ class AdditionalData:
     """ stores the additional information of the alignment_merge.py file
     """
     # TODO
-    def __init__(self, test):
-        self.test = test
+    def __init__(self):
+        self.selectorRigid = []
+        self.selectorBowed = []
+        self.selectorTwoBowed = []
+        self.selectorRigidThird = []
+        self.selectorBowedThird = []
+        self.selectorTwoBowedThird = []
+        self.pedeSteererMethod = ""
+        self.pedeSteererOptions = []
+        self.pedeSteererpedeCommand = ""
