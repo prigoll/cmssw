@@ -16,7 +16,7 @@ from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
 from mpsvalidate import (additionalparser, beamerCreator, bigModule,
                          bigStructure, htmlCreator, monitorPlot, pdfCreator,
                          subModule, timeStructure)
-from mpsvalidate.classes import LogData, OutputData, Struct, TreeData
+from mpsvalidate.classes import LogData, OutputData, TreeData
 from mpsvalidate.dumpparser import parse
 from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.iniparser import ConfigData
@@ -121,11 +121,11 @@ def main():
 
     if (config.showdump == 1 and config.showtime == 1 and config.showhighlevel == 1 and config.showmodule == 1 and config.showbeamer == 1 and config.showsubmodule):
         if (config.showtex == 1):
-            pdfCreator.create(pedeDump, config.latexfile, config)
+            pdfCreator.create(alignables, pedeDump, config.latexfile, config)
         if (config.showbeamer == 1):
-            beamerCreator.create(pedeDump, "beamer.tex", config)
+            beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
         if (config.showhtml == 1):
-            htmlCreator.create(pedeDump, "html_file.html", config)
+            htmlCreator.create(alignables, pedeDump, "html_file.html", config)
 
 if __name__ == "__main__":
     main()

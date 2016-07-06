@@ -7,7 +7,8 @@
 import os
 import string
 
-from mpsvalidate.classes import GeometryGetter, LogData
+from mpsvalidate.classes import LogData
+from mpsvalidate.geometry import Alignables, Structure
 
 
 # create class to have delimiter %% which is not used in latex
@@ -34,7 +35,7 @@ class Out:
         self.text += "\\end{frame}\n"
 
 
-def create(pedeDump, outputFile, config):
+def create(alignables, pedeDump, outputFile, config):
 
     # load template
     with open("./mpsvalidate/beamer_template.tex", "r") as template:
@@ -110,7 +111,7 @@ def create(pedeDump, outputFile, config):
     if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "")):
 
         # loop over all structures
-        for moduleName in GeometryGetter.namebStruct:
+        for moduleName in [x.name for x in alignables.structures]:
 
             # check if there is a plot for this module
             if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName)):

@@ -7,7 +7,8 @@
 import os
 import string
 
-from mpsvalidate.classes import GeometryGetter, LogData
+from mpsvalidate.classes import LogData
+from mpsvalidate.geometry import Alignables, Structure
 
 
 # create class to have delimiter %% which is not used in latex
@@ -17,7 +18,7 @@ class TexTemplate(string.Template):
     delimiter = "%%"
 
 
-def create(pedeDump, outputFile, config):
+def create(alignabels, pedeDump, outputFile, config):
 
     # load template
     with open("./mpsvalidate/html_template.html", "r") as template:
@@ -94,7 +95,7 @@ def create(pedeDump, outputFile, config):
         out += "<h1>Module-level parameters</h1>\n"
 
         # loop over all structures
-        for moduleName in GeometryGetter.namebStruct:
+        for moduleName in [x.name for x in alignables.structures]:
 
             # check if there is a plot for this module
             if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "" and x.name == moduleName)):

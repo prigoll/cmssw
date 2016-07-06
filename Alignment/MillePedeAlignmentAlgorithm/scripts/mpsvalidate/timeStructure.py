@@ -9,8 +9,7 @@
 from ROOT import (TH1F, TCanvas, TGraph, TImage, TLegend, TPaveLabel,
                   TPaveText, TTree, gROOT, gStyle)
 
-from mpsvalidate.classes import (LogData, OutputData, Struct,
-                                 TreeData)
+from mpsvalidate.classes import LogData, OutputData, TreeData
 from mpsvalidate.geometry import Alignables, Structure
 from mpsvalidate.style import identification
 
