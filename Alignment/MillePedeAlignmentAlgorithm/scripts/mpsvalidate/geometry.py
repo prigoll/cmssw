@@ -84,43 +84,43 @@ class Alignables:
                 # to create a child also check the pattern
                 if ("half" in pattern):
                     if (line.Half != pattern["half"]):
-                        break
+                        continue
 
                 if ("side" in pattern):
                     if (line.Side != pattern["side"]):
-                        break
+                        continue
 
                 if ("layer" in pattern):
                     if (line.Layer != pattern["layer"]):
-                        break
+                        continue
 
                 if ("rod" in pattern):
                     if (line.Rod != pattern["rod"]):
-                        break
+                        continue
 
                 if ("ring" in pattern):
                     if (line.Ring != pattern["ring"]):
-                        break
+                        continue
 
                 if ("petal" in pattern):
                     if (line.Petal != pattern["petal"]):
-                        break
+                        continue
 
                 if ("blade" in pattern):
                     if (line.Blade != pattern["blade"]):
-                        break
+                        continue
 
                 if ("panel" in pattern):
                     if (line.Panel != pattern["panel"]):
-                        break
+                        continue
 
                 if ("outerinner" in pattern):
                     if (line.OuterInner != pattern["outerinner"]):
-                        break
+                        continue
 
                 if ("module" in pattern):
                     if (line.Module != pattern["module"]):
-                        break
+                        continue
 
                 detids.append(line.RawId)
         return detids
