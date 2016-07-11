@@ -109,16 +109,6 @@ def setgstyle():
     gStyle.SetLabelSize(0.045, "XYZ")
     gStyle.SetTitleFont(42, "XYZ")
     gStyle.SetTitleSize(0.06, "XYZ")
-#    gStyle.SetTitleXOffset(0.9)
-#    gStyle.SetTitleYOffset(0.001)
 
     # For the legend
     gStyle.SetLegendBorderSize(0)
-
-
-######################################################################
-# sets style of histogram
-#
-
-def histostyle(histo):
-    pass
