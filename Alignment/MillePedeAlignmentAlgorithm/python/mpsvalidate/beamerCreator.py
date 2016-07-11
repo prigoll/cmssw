@@ -7,8 +7,8 @@
 import os
 import string
 
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidateclasses import PedeDumpData
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidategeometry import Alignables, Structure
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import PedeDumpData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import Alignables, Structure
 
 
 # create class to have delimiter %% which is not used in latex

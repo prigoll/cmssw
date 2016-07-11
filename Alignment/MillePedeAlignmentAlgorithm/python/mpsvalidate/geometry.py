@@ -8,7 +8,7 @@ import itertools
 
 from ROOT import TFile, TTree
 
-from mpsvalidate import geometrydata
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import geometrydata
 
 
 class Alignables:

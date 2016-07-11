@@ -8,10 +8,10 @@
 from ROOT import (TH1F, TCanvas, TImage, TPaveLabel, TPaveText, TTree, gROOT,
                   gStyle)
 
-from mpsvalidate import subModule
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidateclasses import PedeDumpData, OutputData, PlotData
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidategeometry import Alignables, Structure
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidatestyle import identification, setstatsize
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import subModule
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import PedeDumpData, OutputData, PlotData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import Alignables, Structure
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import identification, setstatsize
 
 
 def plot(MillePedeUser, alignables, config):

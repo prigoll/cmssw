@@ -9,8 +9,8 @@
 from ROOT import (TH1F, TCanvas, TImage, TLegend, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidateclasses import PedeDumpData, OutputData, PlotData
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidatestyle import identification
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import PedeDumpData, OutputData, PlotData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import identification
 
 
 def plot(MillePedeUser, alignables, mode, struct, parentPlot, config):
