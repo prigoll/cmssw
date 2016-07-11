@@ -58,7 +58,6 @@ def main():
 
     # override ini configs with consol parameter
     config.parseParameter(args)
-    print config.jobDataPath
 
     # create output directories
     if not os.path.exists("{0}/plots/pdf".format(config.outputPath)):

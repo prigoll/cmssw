@@ -37,6 +37,9 @@ def plot(treeFile, alignables, config):
             logging.error("Timeplots: no TTrees found")
             return
 
+        if not MillePedeUser:
+            logging.error("Timeplots: no TTree could be opened")
+
         ######################################################################
         # remove TTrees without results
         #

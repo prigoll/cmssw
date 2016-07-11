@@ -60,11 +60,11 @@ class AdditionalData:
                             self.pattern[string][2].append(line.strip(" \n"))
 
             # search for pedeSteererMethod
-            if ("process.AlignmentProducer.algoConfig.pedeSteerer.method" in line):
+            if ("process.AlignmentProducer.algoConfig.pedeSteerer.method" in line and "#" not in line):
                 self.pedeSteererMethod = line.split("'")[1]
 
             # search for pedeSteererOptions
-            if ("process.AlignmentProducer.algoConfig.pedeSteerer.options" in line):
+            if ("process.AlignmentProducer.algoConfig.pedeSteerer.options" in line and "#" not in line):
                 for lineNumber in range(index + 1, index + 15):
                     if ("]" in mergeFile[lineNumber]):
                         break
@@ -72,5 +72,5 @@ class AdditionalData:
                         mergeFile[lineNumber].strip("', \n"))
 
             # search for pedeSteererCommand
-            if ("process.AlignmentProducer.algoConfig.pedeSteerer.pedeCommand" in line):
+            if ("process.AlignmentProducer.algoConfig.pedeSteerer.pedeCommand" in line and "#" not in line):
                 self.pedeSteererCommand = line.split("'")[1]

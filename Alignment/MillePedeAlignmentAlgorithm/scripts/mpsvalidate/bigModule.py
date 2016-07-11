@@ -49,6 +49,7 @@ def plot(MillePedeUser, alignables, config):
                                       i], mode), "Parameter {0}".format(plot.xyz[i]), numberOfBins, -0.1, 0.1))
 
                 plot.histo[i].SetXTitle(plot.unit)
+                plot.histo[i].GetXaxis().SetTitleOffset(0.85)
                 plot.histoAxis.append(plot.histo[i].GetXaxis())
 
             # add labels
