@@ -16,10 +16,10 @@ from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
 from mpsvalidate import (additionalparser, beamerCreator, bigModule,
                          bigStructure, dumpparser, htmlCreator, monitorPlot,
                          pdfCreator, subModule, timeStructure)
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidateclasses import OutputData, PedeDumpData, PlotData
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidategeometry import Alignables, Structure
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidateiniparser import ConfigData
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidatestyle import setgstyle
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import OutputData, PedeDumpData, PlotData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import Alignables, Structure
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.iniparser import ConfigData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import setgstyle
 
 
 def main():
