@@ -13,6 +13,16 @@ import os
 from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import (additionalparser,
+                                                               beamerCreator,
+                                                               bigModule,
+                                                               bigStructure,
+                                                               dumpparser,
+                                                               htmlCreator,
+                                                               monitorPlot,
+                                                               pdfCreator,
+                                                               subModule,
+                                                               timeStructure)
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import (OutputData,
                                                                        PedeDumpData,
                                                                        PlotData)
@@ -20,16 +30,6 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import (Alignabl
                                                                         Structure)
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.iniparser import \
     ConfigData
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.mpsvalidate import (additionalparser,
-                                                                           beamerCreator,
-                                                                           bigModule,
-                                                                           bigStructure,
-                                                                           dumpparser,
-                                                                           htmlCreator,
-                                                                           monitorPlot,
-                                                                           pdfCreator,
-                                                                           subModule,
-                                                                           timeStructure)
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import setgstyle
 
 
