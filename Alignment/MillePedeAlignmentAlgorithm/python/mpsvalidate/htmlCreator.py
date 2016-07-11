@@ -7,7 +7,7 @@
 import os
 import string
 
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import PedeDumpData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import MonitorData, PedeDumpData
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import Alignables, Structure
 
 
@@ -18,7 +18,7 @@ class TexTemplate(string.Template):
     delimiter = "%%"
 
 
-def create(alignables, pedeDump, outputFile, config):
+def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # load template
     with open(os.path.join(config.mpspath, "html_template.html"), "r") as template:
@@ -36,32 +36,68 @@ def create(alignables, pedeDump, outputFile, config):
     out += "<h1>General information</h1>\n"
 
     if (config.message):
-        out += "Project: {0}\n".format(config.message)
+        out += "Project: {0}\n<br>".format(config.message)
+    out += "Input-Path: {0}\n<br>".format(config.jobDataPath)
+    
+    # alignment_merge.py
+    out += "<h2>Alignment Configuration</h2>\n"
+    out += "<b>PedeSteerer method:</b> {0}<br>\n".format(
+        additionalData.pedeSteererMethod)
+    out += "<b>PedeSteerer options:</b>\n"
+    for line in additionalData.pedeSteererOptions:
+        out += "{0}<br>\n".format(line)
+    out += "<b>PedeSteerer command:</b> {0}<br>\n".format(
+        additionalData.pedeSteererCommand)
+
+    for selector in additionalData.pattern:
+        out += "<b>{0}:</b><br>\n".format(additionalData.pattern[selector][3])
+        for line in additionalData.pattern[selector][0]:
+            for i in line:
+                out += "{0} ".format(i)
+            out += "<br>\n"
+        for line in additionalData.pattern[selector][2]:
+            out += "{0} \n".format(line)
+            out += "<br>\n"
+            
+    # table of input files with number of tracks
+    if (config.showmonitor):
+        out += "<h2>Datasets with tracks</h2>\n"
+        out += """<table border="1">
+            <tr>
+               <th>Dataset</th>
+               <th>Number of used tracks</th>
+            <tr>"""
+        for monitor in MonitorData.monitors:
+            out += """<tr>
+                <th>{0}</th>
+                <th>{1}</th>
+                </tr>""".format(monitor.name, monitor.ntracks)
+        out += """</table>"""
 
     # pede.dump.gz
 
-    out += "<h1>Pede monitoring information</h1>\n"
+    out += "<h2>Pede monitoring information</h2>\n"
     if (pedeDump.sumValue != 0):
-        out += r"Sum(Chi^2)/Sum(Ndf) &= {0}<br> &= {1}".format(
+        out += r"<b>Sum(Chi^2)/Sum(Ndf)</b> &= {0}<br> &= {1}".format(
             pedeDump.sumSteps, pedeDump.sumValue)
     else:
-        out += r"Sum(W*Chi^2)/Sum(Ndf)/<W> &= {0}<br> &= {1}".format(
+        out += r"<b>Sum(W*Chi^2)/Sum(Ndf)/<W></b> &= {0}<br> &= {1}".format(
             pedeDump.sumSteps, pedeDump.sumWValue)
-    out += r"with correction for down-weighting: {0}<br>".format(
+    out += r"<b>with correction for down-weighting:</b> {0}<br>".format(
         pedeDump.correction)
-    out += r"Peak dynamic memory allocation: {0} GB<br>".format(
+    out += r"<b>Peak dynamic memory allocation:</b> {0} GB<br>".format(
         pedeDump.memory)
-    out += r"Total time: {0} h {1} m {2} s<br>".format(
+    out += r"<b>Total time:</b> {0} h {1} m {2} s<br>".format(
         pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
-    out += r"Number of records: {0}<br>".format(pedeDump.nrec)
-    out += r"Total number of parameters: {0}<br>".format(pedeDump.ntgb)
-    out += r"Number of variable parameters: {0}<br>".format(pedeDump.nvgb)
-    out += r"Warning:<br>"
+    out += r"<b>Number of records:</b> {0}<br>".format(pedeDump.nrec)
+    out += r"<b>Total number of parameters:</b> {0}<br>".format(pedeDump.ntgb)
+    out += r"<b>Number of variable parameters:</b> {0}<br>".format(pedeDump.nvgb)
+    out += r"<b>Warning:</b><br>"
     for line in pedeDump.warning:
 
         # check if line empty
         if line.replace(r" ", r""):
-            out += line
+            out += "{0}<br>\n".format(line)
 
     # high level structures
 

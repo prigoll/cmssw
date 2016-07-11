@@ -132,7 +132,7 @@ def main():
     if (config.showbeamer == 1):
         beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
     if (config.showhtml == 1):
-        htmlCreator.create(alignables, pedeDump, "html_file.html", config)
+        htmlCreator.create(alignables, pedeDump, additionalData, "html_file.html", config)
 
 if __name__ == "__main__":
     main()
