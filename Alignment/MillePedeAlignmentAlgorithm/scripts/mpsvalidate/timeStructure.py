@@ -33,14 +33,6 @@ def plot(treeFile, alignables, config):
         for i in listMillePedeUser:
             MillePedeUser.append(treeFile.Get("MillePedeUser_{0}".format(i)))
 
-        if not listMillePedeUser:
-            logging.error("Timeplots: no TTrees found")
-            return
-
-        if not MillePedeUser:
-            logging.error("Timeplots: no TTree could be opened")
-            return
-
         ######################################################################
         # remove TTrees without results
         #
@@ -72,6 +64,14 @@ def plot(treeFile, alignables, config):
         MillePedeUser = []
         for i in listMillePedeUser:
             MillePedeUser.append(treeFile.Get("MillePedeUser_{0}".format(i)))
+
+        if not listMillePedeUser:
+            logging.error("Timeplots: no TTrees found")
+            return
+
+        if not MillePedeUser:
+            logging.error("Timeplots: no TTree could be opened")
+            return
 
         ######################################################################
         # initialize data hierarchy
