@@ -6,6 +6,7 @@
 ##
 
 import gzip
+import logging
 import re
 
 from mpsvalidate.classes import PedeDumpData
@@ -20,8 +21,12 @@ def parse(path, config):
     warningBool = False
 
     # save lines in list
-    with gzip.open(path) as gzipFile:
-        dumpFile = gzipFile.readlines()
+    try:
+        with gzip.open(path) as gzipFile:
+            dumpFile = gzipFile.readlines()
+    except IOError:
+        logging.error("PedeDump: {0} does not exist".format(path))
+        return
 
     for i, line in enumerate(dumpFile):
         # Sum(Chi^2)/Sum(Ndf)

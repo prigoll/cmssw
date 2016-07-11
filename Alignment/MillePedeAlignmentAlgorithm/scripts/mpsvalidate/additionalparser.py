@@ -4,6 +4,8 @@
 # Parse the alignment_merge.py file for additional information
 #
 
+import logging
+
 
 class AdditionalData:
     """ stores the additional information of the alignment_merge.py file
@@ -31,8 +33,12 @@ class AdditionalData:
     def parse(self, config, path):
 
         # open aligment_merge.py file
-        with open(path) as inputFile:
-            mergeFile = inputFile.readlines()
+        try:
+            with open(path) as inputFile:
+                mergeFile = inputFile.readlines()
+        except IOError:
+            logging.error("AdditionalData: {0} does not exist".format(path))
+            return
 
         # search pattern
 

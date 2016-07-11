@@ -69,6 +69,10 @@ def main():
     # open root file and get TTree MillePedeUser_X
     treeFile = TFile("{0}/treeFile_merge.root".format(config.jobDataPath))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
+    if not MillePedeUser:
+        logging.error("Error: Could not open TTree File MillePedeUser_{0} in {1}.treeFile_merge.root".format(
+            config.jobTime, config.jobDataPath))
+        return
 
     # set gStyle
     setgstyle()
@@ -124,7 +128,8 @@ def main():
     #
 
     if (config.showtex == 1):
-        pdfCreator.create(alignables, pedeDump, additionalData, config.latexfile, config)
+        pdfCreator.create(alignables, pedeDump,
+                          additionalData, config.latexfile, config)
     if (config.showbeamer == 1):
         beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
     if (config.showhtml == 1):
