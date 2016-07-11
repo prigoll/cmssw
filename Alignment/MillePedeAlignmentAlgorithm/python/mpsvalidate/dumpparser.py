@@ -9,7 +9,7 @@ import gzip
 import logging
 import re
 
-from mpsvalidate.classes import PedeDumpData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidateclasses import PedeDumpData
 
 
 def parse(path, config):

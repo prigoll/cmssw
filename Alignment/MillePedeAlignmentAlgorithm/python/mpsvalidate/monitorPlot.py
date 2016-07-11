@@ -8,8 +8,8 @@ import os
 
 from ROOT import TH1F, TCanvas, TFile, TImage, gStyle
 
-from mpsvalidate.classes import MonitorData, OutputData
-from mpsvalidate.style import setstatsize
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidateclasses import MonitorData, OutputData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidatestyle import setstatsize
 
 
 def plot(config):
