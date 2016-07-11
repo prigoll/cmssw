@@ -21,7 +21,7 @@ class TexTemplate(string.Template):
 def create(alignables, pedeDump, outputFile, config):
 
     # load template
-    with open("./mpsvalidate/html_template.html", "r") as template:
+    with open(os.path.join(config.mpspath, "html_template.html"), "r") as template:
         data = template.read()
         template.close()
 
@@ -132,6 +132,6 @@ def create(alignables, pedeDump, outputFile, config):
 
     data = data.substitute(message=config.message, out=out)
 
-    with open("{0}/{1}".format(config.outputPath, outputFile), "w") as output:
+    with open(os.path.join(config.outputPath, outputFile), "w") as output:
         output.write(data)
         output.close()

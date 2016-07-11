@@ -50,7 +50,7 @@ def main():
     config = ConfigData()
 
     # parse default ini file
-    config.parseConfig("./mpsvalidate/default.ini")
+    config.parseConfig(os.path.join(config.mpspath, "default.ini"))
 
     # parse user ini file
     if (args.ini != "-1"):
@@ -60,14 +60,14 @@ def main():
     config.parseParameter(args)
 
     # create output directories
-    if not os.path.exists("{0}/plots/pdf".format(config.outputPath)):
-        os.makedirs("{0}/plots/pdf".format(config.outputPath))
-    if not os.path.exists("{0}/plots/png".format(config.outputPath)):
-        os.makedirs("{0}/plots/png".format(config.outputPath))
+    if not os.path.exists(os.path.join(config.outputPath, "plots/pdf")):
+        os.makedirs(os.path.join(config.outputPath, "plots/pdf"))
+    if not os.path.exists(os.path.join(config.outputPath, "plots/png")):
+        os.makedirs(os.path.join(config.outputPath, "plots/png"))
 
     # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
-    treeFile = TFile("{0}/treeFile_merge.root".format(config.jobDataPath))
+    treeFile = TFile(os.path.join(config.jobDataPath, "treeFile_merge.root"))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
     if not MillePedeUser:
         logging.error("Error: Could not open TTree File MillePedeUser_{0} in {1}.treeFile_merge.root".format(
@@ -91,7 +91,7 @@ def main():
     if (config.showadditional == 1):
         additionalData = additionalparser.AdditionalData()
         additionalData.parse(
-            config, "{0}/alignment_merge.py".format(config.jobDataPath))
+            config, os.path.join(config.jobDataPath, "alignment_merge.py"))
 
     ##########################################################################
     # parse the file pede.dump.gz and return a PedeDumpData Object
@@ -99,7 +99,7 @@ def main():
 
     if (config.showdump == 1):
         pedeDump = dumpparser.parse(
-            "{0}/pede.dump.gz".format(config.jobDataPath), config)
+            os.path.join(config.jobDataPath, "pede.dump.gz"), config)
 
     ##########################################################################
     # time dependend big structures

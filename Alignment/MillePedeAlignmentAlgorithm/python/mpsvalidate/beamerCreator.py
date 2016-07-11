@@ -38,7 +38,7 @@ class Out:
 def create(alignables, pedeDump, outputFile, config):
 
     # load template
-    with open("./mpsvalidate/beamer_template.tex", "r") as template:
+    with open(os.path.join(config.mpspath, "beamer_template.tex"), "r") as template:
         data = template.read()
         template.close()
 
@@ -154,7 +154,7 @@ def create(alignables, pedeDump, outputFile, config):
     data = data.substitute(out=out.text)
 
     # TODO path
-    with open("{0}/{1}".format(config.outputPath, outputFile), "w") as output:
+    with open(os.path.join(config.outputPath, outputFile), "w") as output:
         output.write(data)
         output.close()
 

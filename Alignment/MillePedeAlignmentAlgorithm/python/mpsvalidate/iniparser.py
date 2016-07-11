@@ -9,6 +9,7 @@
 
 import ConfigParser
 import logging
+import os
 
 
 class ConfigData:
@@ -16,6 +17,10 @@ class ConfigData:
     """
 
     def __init__(self):
+        # get path to modules, defaut ini and templates
+        print os.path.join(os.path.dirname(__file__), "mpsvalidate")
+        self.mpspath = os.path.join(os.path.dirname(__file__), "mpsvalidate")
+        
         # General
         # jobmX dir
         self.jobNumber = -1
