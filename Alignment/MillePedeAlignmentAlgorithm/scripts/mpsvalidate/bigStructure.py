@@ -54,7 +54,7 @@ def plot(MillePedeUser, alignables, config):
         limit = config.limit[mode]
         for i in range(3):
             big.text.AddText("max. shift {0}: {1:.2}".format(
-                big.xyz[i], big.maxShift[i]))
+                big.xyz[i], float(big.maxShift[i])))
             if (abs(big.maxShift[i]) > limit):
                 big.text.AddText(
                     "! {0} shift bigger than {1} !".format(big.xyz[i], limit))
