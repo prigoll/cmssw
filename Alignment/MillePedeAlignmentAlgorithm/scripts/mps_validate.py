@@ -42,6 +42,8 @@ def main():
     parser.add_argument("-i", "--ini", help="specify a ini file", default="-1")
     parser.add_argument("-m", "--message",
                         help="identification on every plot", default="")
+    parser.add_argument("-p", "--jobdatapath",
+                        help="path to the input files", default="")
     args = parser.parse_args()
 
     # create config object
@@ -56,6 +58,7 @@ def main():
 
     # override ini configs with consol parameter
     config.parseParameter(args)
+    print config.jobDataPath
 
     # create output directories
     if not os.path.exists("{0}/plots/pdf".format(config.outputPath)):

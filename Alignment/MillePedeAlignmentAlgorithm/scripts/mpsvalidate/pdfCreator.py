@@ -61,7 +61,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # table of input files with number of tracks
     if (config.showmonitor):
-        out += "\section{Datasets with tracks}\n"
+        out += "\subsection{Datasets with tracks}\n"
         out += """\\begin{table}[h]
             \centering
             \caption{Datasets with tracks}
@@ -77,7 +77,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # pede.dump.gz
     if (config.showdump == 1):
-        out += "\section{{Pede monitoring information}}\n"
+        out += "\subsection{{Pede monitoring information}}\n"
         if (pedeDump.sumValue != 0):
             out += r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(
                 pedeDump.sumSteps, pedeDump.sumValue)

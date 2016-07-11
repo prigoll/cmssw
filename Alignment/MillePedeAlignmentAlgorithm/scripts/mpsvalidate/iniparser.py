@@ -119,9 +119,6 @@ class ConfigData:
         except:
             pass
 
-        if (self.outputPath == ""):
-            self.outputPath = self.jobDataPath + "/validation_output"
-
         # data which could be stored directly
         try:
             self.jobTime = int(parser.get("GENERAL", "time"))
@@ -293,5 +290,11 @@ class ConfigData:
             else:
                 self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)
 
+        if (args.jobdatapath != ""):
+            self.jobDataPath = args.jobdatapath
+
         if (args.message != ""):
             self.message = args.message
+
+        if (self.outputPath == ""):
+            self.outputPath = self.jobDataPath + "/validation_output"
