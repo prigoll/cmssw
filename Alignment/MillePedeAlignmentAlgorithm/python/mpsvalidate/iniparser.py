@@ -109,9 +109,9 @@ class ConfigData:
         if (configBuffer.jobNumber != -1 and configBuffer.jobDataPath == ""):
             self.jobNumber = configBuffer.jobNumber
             if (self.jobNumber == 0):
-                self.jobDataPath = ".jobData/jobm"
+                self.jobDataPath = "jobData/jobm"
             else:
-                self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)
+                self.jobDataPath = "jobData/jobm{0}".format(self.jobNumber)
 
         # if jobData path is given
         if (configBuffer.jobDataPath != ""):
@@ -290,9 +290,9 @@ class ConfigData:
 
             # set jobDataPath
             if (self.jobNumber == 0):
-                self.jobDataPath = ".jobData/jobm"
+                self.jobDataPath = "jobData/jobm"
             else:
-                self.jobDataPath = "./jobData/jobm{0}".format(self.jobNumber)
+                self.jobDataPath = "jobData/jobm{0}".format(self.jobNumber)
 
         if (args.jobdatapath != ""):
             self.jobDataPath = args.jobdatapath
@@ -301,4 +301,4 @@ class ConfigData:
             self.message = args.message
 
         if (self.outputPath == ""):
-            self.outputPath = self.jobDataPath + "/validation_output"
+            self.outputPath = os.path.join(self.jobDataPath, "validation_output")

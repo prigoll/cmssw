@@ -13,23 +13,12 @@ import os
 from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import (additionalparser,
-                                                               beamerCreator,
-                                                               bigModule,
-                                                               bigStructure,
-                                                               dumpparser,
-                                                               htmlCreator,
-                                                               monitorPlot,
-                                                               pdfCreator,
-                                                               subModule,
-                                                               timeStructure)
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import (OutputData,
-                                                                       PedeDumpData,
-                                                                       PlotData)
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import (Alignables,
-                                                                        Structure)
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.iniparser import \
-    ConfigData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import (additionalparser, beamerCreator, bigModule,
+                         bigStructure, dumpparser, htmlCreator, monitorPlot,
+                         pdfCreator, subModule, timeStructure)
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import OutputData, PedeDumpData, PlotData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import Alignables, Structure
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.iniparser import ConfigData
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import setgstyle
 
 
@@ -40,12 +29,9 @@ def main():
 
     # run ROOT in batchmode
     gROOT.SetBatch()
-    # create alignables object
-    alignables = Alignables()
 
     # ArgumentParser
     parser = argparse.ArgumentParser(description="Validate your Alignment.")
-    # TODO set default -> 0
     parser.add_argument(
         "-j", "--job", help="chose jobmX directory (default: ini-file)", default=-1, type=int)
     parser.add_argument(
@@ -76,17 +62,19 @@ def main():
     if not os.path.exists(os.path.join(config.outputPath, "plots/png")):
         os.makedirs(os.path.join(config.outputPath, "plots/png"))
 
-    # TODO check if there is a file and a TTree
     # open root file and get TTree MillePedeUser_X
     treeFile = TFile(os.path.join(config.jobDataPath, "treeFile_merge.root"))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
     if not MillePedeUser:
-        logging.error("Error: Could not open TTree File MillePedeUser_{0} in {1}.treeFile_merge.root".format(
-            config.jobTime, config.jobDataPath))
+        logging.error("Error: Could not open TTree File MillePedeUser_{0} in {1}".format(
+            config.jobTime, os.path.join(config.jobDataPath, "treeFile_merge.root")))
         return
 
     # set gStyle
     setgstyle()
+    
+    # create alignables object
+    alignables = Alignables(config)
 
     ##########################################################################
     # draw the plots of the millePedeMonitor_merge.root file

@@ -5,6 +5,7 @@
 ##
 
 import itertools
+import os
 
 from ROOT import TFile, TTree
 
@@ -16,9 +17,10 @@ class Alignables:
     TrackerTree.root file.
     """
 
-    def __init__(self):
+    def __init__(self, config):
         # list of Structure objects, contains structures which were aligned
         self.structures = []
+        self.config = config
 
     def get_name_by_objid(self, objid):
         return geometrydata.data[objid].name
@@ -74,7 +76,7 @@ class Alignables:
         # list of all detids in the structure
         detids = []
         # open TrackerTree.root file
-        treeFile = TFile("mpsvalidate/TrackerTree.root")
+        treeFile = TFile(os.path.join(self.config.mpspath, "TrackerTree.root"))
         tree = treeFile.Get("TrackerTreeGenerator/TrackerTree/TrackerTree")
 
         for line in tree:

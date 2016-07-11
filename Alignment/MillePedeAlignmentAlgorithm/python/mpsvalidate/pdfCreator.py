@@ -21,6 +21,7 @@ class TexTemplate(string.Template):
 def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # load template
+    print "###################"+config.mpspath
     with open(os.path.join(config.mpspath, "tex_template.tex"), "r") as template:
         data = template.read()
         template.close()
