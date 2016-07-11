@@ -83,7 +83,8 @@ def main():
     #
 
     if (config.showadditional == 1):
-        additionalData = additionalparser.parse(
+        additionalData = additionalparser.AdditionalData()
+        additionalData.parse(
             config, "{0}/alignment_merge.py".format(config.jobDataPath))
 
     ##########################################################################

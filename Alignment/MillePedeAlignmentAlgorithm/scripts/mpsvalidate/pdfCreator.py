@@ -41,29 +41,23 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # alignment_merge.py
     out += "\subsection{Alignment Configuration}\n"
-    out += "PedeSteerer method: {0}\\\\\n".format(additionalData.pedeSteererMethod)
-    out += "PedeSteerer options:\\\\\n"
+    out += "\\textbf{{PedeSteerer method:}} {{{0}}}\\\\\n".format(
+        additionalData.pedeSteererMethod)
+    out += "\\textbf{{PedeSteerer options:}}\\\\\n"
     for line in additionalData.pedeSteererOptions:
-        out += "{0}\\\\\n".format(line)
-    out += "PedeSteerer command: {0}\\\\\n".format(additionalData.pedeSteererpedeCommand)
+        out += "{{{0}}}\\\\\n".format(line)
+    out += "\\textbf{{PedeSteerer command:}} {0}\\\\\n".format(
+        additionalData.pedeSteererCommand)
 
-    out += "SelectorRigid:\\\\\n"
-    for line in additionalData.selectorRigid:
-        out += "{0}\\\\\n".format(line)
-    for line in additionalData.selectorRigidThird:
-        out += "{0}\\\\\n".format(line)
-
-    out += "SelectorBowed:\\\\\n"
-    for line in additionalData.selectorBowed:
-        out += "{0}\\\\\n".format(line)
-    for line in additionalData.selectorBowedThird:
-        out += "{0}\\\\\n".format(line)
-
-    out += "SelectorTwoBowed\\\\\n"
-    for line in additionalData.selectorTwoBowed:
-        out += "{0}\\\\\n".format(line)
-    for line in additionalData.selectorTwoBowedThird:
-        out += "{0}\\\\\n".format(line)
+    for selector in additionalData.pattern:
+        out += "\\textbf{{{0}:}}\\\\\n".format(additionalData.pattern[selector][3])
+        for line in additionalData.pattern[selector][0]:
+            for i in line:
+                out += "{0}  ".format(i)
+            out += "\\\\\n"
+        for line in additionalData.pattern[selector][2]:
+            out += "{0}\\\\n".format(line)
+            out += "\\\\\n"
 
     # table of input files with number of tracks
     if (config.showmonitor):
@@ -81,7 +75,6 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
                   \end{tabular}\n
                   \end{table}\n"""
 
-
     # pede.dump.gz
     if (config.showdump == 1):
         out += "\section{{Pede monitoring information}}\n"
@@ -93,7 +86,8 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
                 pedeDump.sumSteps, pedeDump.sumWValue)
         out += r"with correction for down-weighting: {0}\\".format(
             pedeDump.correction)
-        out += r"Peak dynamic memory allocation: {0} GB\\".format(pedeDump.memory)
+        out += r"Peak dynamic memory allocation: {0} GB\\".format(
+            pedeDump.memory)
         out += r"Total time: {0} h {1} m {2} s\\".format(
             pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
         out += r"Number of records: {0}\\".format(pedeDump.nrec)
@@ -105,7 +99,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
             # check if line empty
             if line.replace(r" ", r""):
                 out += "\\begin{verbatim}\n"
-                out += line+"\n"
+                out += line + "\n"
                 out += "\\end{verbatim}\n"
 
         out += "\section{{Parameter plots}}\n"
@@ -166,8 +160,6 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
                                 for plot in moduleSub:
                                     out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                                         config.outputPath, plot.filename)
-
-
 
     # plot taken from the millePedeMonitor_merge.root file
     if (config.showmonitor):
