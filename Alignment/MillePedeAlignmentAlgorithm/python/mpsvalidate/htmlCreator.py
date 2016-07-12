@@ -4,6 +4,7 @@
 # Creates html out of the histograms, parsed data and a given template.
 ##
 
+import logging
 import os
 import string
 
@@ -40,24 +41,27 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
     out += "Input-Path: {0}\n<br>".format(config.jobDataPath)
     
     # alignment_merge.py
-    out += "<h2>Alignment Configuration</h2>\n"
-    out += "<b>PedeSteerer method:</b> {0}<br>\n".format(
-        additionalData.pedeSteererMethod)
-    out += "<b>PedeSteerer options:</b>\n"
-    for line in additionalData.pedeSteererOptions:
-        out += "{0}<br>\n".format(line)
-    out += "<b>PedeSteerer command:</b> {0}<br>\n".format(
-        additionalData.pedeSteererCommand)
+    try:
+        out += "<h2>Alignment Configuration</h2>\n"
+        out += "<b>PedeSteerer method:</b> {0}<br>\n".format(
+            additionalData.pedeSteererMethod)
+        out += "<b>PedeSteerer options:</b>\n"
+        for line in additionalData.pedeSteererOptions:
+            out += "{0}<br>\n".format(line)
+        out += "<b>PedeSteerer command:</b> {0}<br>\n".format(
+            additionalData.pedeSteererCommand)
 
-    for selector in additionalData.pattern:
-        out += "<b>{0}:</b><br>\n".format(additionalData.pattern[selector][3])
-        for line in additionalData.pattern[selector][0]:
-            for i in line:
-                out += "{0} ".format(i)
-            out += "<br>\n"
-        for line in additionalData.pattern[selector][2]:
-            out += "{0} \n".format(line)
-            out += "<br>\n"
+        for selector in additionalData.pattern:
+            out += "<b>{0}:</b><br>\n".format(additionalData.pattern[selector][3])
+            for line in additionalData.pattern[selector][0]:
+                for i in line:
+                    out += "{0} ".format(i)
+                out += "<br>\n"
+            for line in additionalData.pattern[selector][2]:
+                out += "{0} \n".format(line)
+                out += "<br>\n"
+    except Exception as e:
+        logging.error("HTML Creator: alignemnt_merge.py data not found - {0}".format(e))
             
     # table of input files with number of tracks
     if (config.showmonitor):
@@ -75,29 +79,31 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
         out += """</table>"""
 
     # pede.dump.gz
+    try:
+        out += "<h2>Pede monitoring information</h2>\n"
+        if (pedeDump.sumValue != 0):
+            out += r"<b>Sum(Chi^2)/Sum(Ndf)</b> &= {0}<br> &= {1}".format(
+                pedeDump.sumSteps, pedeDump.sumValue)
+        else:
+            out += r"<b>Sum(W*Chi^2)/Sum(Ndf)/<W></b> &= {0}<br> &= {1}".format(
+                pedeDump.sumSteps, pedeDump.sumWValue)
+        out += r"<b>with correction for down-weighting:</b> {0}<br>".format(
+            pedeDump.correction)
+        out += r"<b>Peak dynamic memory allocation:</b> {0} GB<br>".format(
+            pedeDump.memory)
+        out += r"<b>Total time:</b> {0} h {1} m {2} s<br>".format(
+            pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
+        out += r"<b>Number of records:</b> {0}<br>".format(pedeDump.nrec)
+        out += r"<b>Total number of parameters:</b> {0}<br>".format(pedeDump.ntgb)
+        out += r"<b>Number of variable parameters:</b> {0}<br>".format(pedeDump.nvgb)
+        out += r"<b>Warning:</b><br>"
+        for line in pedeDump.warning:
 
-    out += "<h2>Pede monitoring information</h2>\n"
-    if (pedeDump.sumValue != 0):
-        out += r"<b>Sum(Chi^2)/Sum(Ndf)</b> &= {0}<br> &= {1}".format(
-            pedeDump.sumSteps, pedeDump.sumValue)
-    else:
-        out += r"<b>Sum(W*Chi^2)/Sum(Ndf)/<W></b> &= {0}<br> &= {1}".format(
-            pedeDump.sumSteps, pedeDump.sumWValue)
-    out += r"<b>with correction for down-weighting:</b> {0}<br>".format(
-        pedeDump.correction)
-    out += r"<b>Peak dynamic memory allocation:</b> {0} GB<br>".format(
-        pedeDump.memory)
-    out += r"<b>Total time:</b> {0} h {1} m {2} s<br>".format(
-        pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
-    out += r"<b>Number of records:</b> {0}<br>".format(pedeDump.nrec)
-    out += r"<b>Total number of parameters:</b> {0}<br>".format(pedeDump.ntgb)
-    out += r"<b>Number of variable parameters:</b> {0}<br>".format(pedeDump.nvgb)
-    out += r"<b>Warning:</b><br>"
-    for line in pedeDump.warning:
-
-        # check if line empty
-        if line.replace(r" ", r""):
-            out += "{0}<br>\n".format(line)
+            # check if line empty
+            if line.replace(r" ", r""):
+                out += "{0}<br>\n".format(line)
+    except Exception as e:
+        logging.error("HTML Creator: pede.dump.gz data not found - {0}".format(e))
 
     # high level structures
 

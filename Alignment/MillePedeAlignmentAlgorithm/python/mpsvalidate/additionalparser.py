@@ -67,7 +67,10 @@ class AdditionalData:
 
             # search for pedeSteererMethod
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.method" in line and "#" not in line):
-                self.pedeSteererMethod = line.split("'")[1]
+                try:
+                    self.pedeSteererMethod = line.split("'")[1]
+                except Exception as e:
+                    logging.error("AdditionalParser: pedeSteererMethod not found - {0}".format(e))
 
             # search for pedeSteererOptions
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.options" in line and "#" not in line):
@@ -79,4 +82,7 @@ class AdditionalData:
 
             # search for pedeSteererCommand
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.pedeCommand" in line and "#" not in line):
-                self.pedeSteererCommand = line.split("'")[1]
+                try:
+                    self.pedeSteererCommand = line.split("'")[1]
+                except Exception as e:
+                    logging.error("AdditionalParser: pedeSteererCommand not found - {0}".format(e))

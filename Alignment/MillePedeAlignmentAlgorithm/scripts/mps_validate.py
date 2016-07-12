@@ -40,7 +40,7 @@ def main():
     parser.add_argument("-m", "--message",
                         help="identification on every plot", default="")
     parser.add_argument("-p", "--jobdatapath",
-                        help="path to the input files", default="")
+                        help="path to the jobm directory", default="")
     args = parser.parse_args()
 
     # create config object

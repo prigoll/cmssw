@@ -4,6 +4,7 @@
 # Creates beamer out of the histograms, parsed data and a given template.
 ##
 
+import logging
 import os
 import string
 
@@ -52,21 +53,24 @@ def create(alignables, pedeDump, outputFile, config):
     out.addSlide("General information", "Project: " + config.message)
 
     # pede.dump.gz
-    if (pedeDump.sumValue != 0):
-        text = r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(
-            pedeDump.sumSteps, pedeDump.sumValue)
-    else:
-        text = r"\begin{{align*}}Sum(W*Chi^2)/Sum(Ndf)/<W> &= {0}\\ &= {1}\end{{align*}}".format(
-            pedeDump.sumSteps, pedeDump.sumWValue)
-    text += r"with correction for down-weighting: {0}\\".format(
-        pedeDump.correction)
-    text += r"Peak dynamic memory allocation: {0} GB\\".format(pedeDump.memory)
-    text += r"Total time: {0} h {1} m {2} s\\".format(
-        pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
-    text += r"Number of records: {0}\\".format(pedeDump.nrec)
-    text += r"Total number of parameters: {0}\\".format(pedeDump.ntgb)
-    text += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
-    out.addSlide("Pede monitoring information", text)
+    try:
+        if (pedeDump.sumValue != 0):
+            text = r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(
+                pedeDump.sumSteps, pedeDump.sumValue)
+        else:
+            text = r"\begin{{align*}}Sum(W*Chi^2)/Sum(Ndf)/<W> &= {0}\\ &= {1}\end{{align*}}".format(
+                pedeDump.sumSteps, pedeDump.sumWValue)
+        text += r"with correction for down-weighting: {0}\\".format(
+            pedeDump.correction)
+        text += r"Peak dynamic memory allocation: {0} GB\\".format(pedeDump.memory)
+        text += r"Total time: {0} h {1} m {2} s\\".format(
+            pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
+        text += r"Number of records: {0}\\".format(pedeDump.nrec)
+        text += r"Total number of parameters: {0}\\".format(pedeDump.ntgb)
+        text += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
+        out.addSlide("Pede monitoring information", text)
+    except Exception as e:
+        logging.error("Beamer Creator: pede.dump.gz data not found - {0}".format(e))
 
     text = r"Warning:\\"
     for line in pedeDump.warning:
@@ -153,7 +157,6 @@ def create(alignables, pedeDump, outputFile, config):
 
     data = data.substitute(out=out.text)
 
-    # TODO path
     with open(os.path.join(config.outputPath, outputFile), "w") as output:
         output.write(data)
         output.close()

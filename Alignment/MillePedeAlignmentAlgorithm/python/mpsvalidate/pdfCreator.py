@@ -41,24 +41,27 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
     out += "Input-Path: {{{0}}}\n".format(config.jobDataPath)
 
     # alignment_merge.py
-    out += "\subsection{Alignment Configuration}\n"
-    out += "\\textbf{{PedeSteerer method:}} {{{0}}}\\\\\n".format(
-        additionalData.pedeSteererMethod)
-    out += "\\textbf{{PedeSteerer options:}}\\\\\n"
-    for line in additionalData.pedeSteererOptions:
-        out += "{{{0}}}\\\\\n".format(line)
-    out += "\\textbf{{PedeSteerer command:}} {0}\\\\\n".format(
-        additionalData.pedeSteererCommand)
+    try:
+        out += "\subsection{Alignment Configuration}\n"
+        out += "\\textbf{{PedeSteerer method:}} {{{0}}}\\\\\n".format(
+            additionalData.pedeSteererMethod)
+        out += "\\textbf{{PedeSteerer options:}}\\\\\n"
+        for line in additionalData.pedeSteererOptions:
+            out += "{{{0}}}\\\\\n".format(line)
+        out += "\\textbf{{PedeSteerer command:}} {0}\\\\\n".format(
+            additionalData.pedeSteererCommand)
 
-    for selector in additionalData.pattern:
-        out += "\\textbf{{{0}:}}\\\\\n".format(additionalData.pattern[selector][3])
-        for line in additionalData.pattern[selector][0]:
-            for i in line:
-                out += "{0}  ".format(i)
+        for selector in additionalData.pattern:
+            out += "\\textbf{{{0}:}}\\\\\n".format(additionalData.pattern[selector][3])
+            for line in additionalData.pattern[selector][0]:
+                for i in line:
+                    out += "{0}  ".format(i)
+                out += "\\\\\n"
+            for line in additionalData.pattern[selector][2]:
+                out += "{0}\\\\n".format(line)
             out += "\\\\\n"
-        for line in additionalData.pattern[selector][2]:
-            out += "{0}\\\\n".format(line)
-            out += "\\\\\n"
+    except Exception as e:
+        logging.error("PDF Creator: alignment_merge.py data not found - {0}".format(e))
 
     # table of input files with number of tracks
     if (config.showmonitor):
@@ -105,7 +108,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
 
             out += "\section{{Parameter plots}}\n"
     except Exception as e:
-        logging.error("PDF Creator: pede.dump.gz - {0}".format(e))
+        logging.error("PDF Creator: pede.dump.gz data not found - {0}".format(e))
 
     # high level structures
     if (config.showhighlevel == 1):
