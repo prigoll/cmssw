@@ -301,4 +301,4 @@ class ConfigData:
             self.message = args.message
 
         if (self.outputPath == ""):
-            self.outputPath = os.path.join(self.jobDataPath, "validation_output")
+            self.outputPath = os.path.join("./", "validation_output")

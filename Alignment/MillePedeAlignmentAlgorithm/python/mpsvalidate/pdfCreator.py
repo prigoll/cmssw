@@ -4,6 +4,7 @@
 # Creates pdf out of the histograms, parsed data and a given template.
 ##
 
+import logging
 import os
 import string
 
@@ -74,35 +75,37 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
         out += """\hline
                   \end{tabular}\n
                   \end{table}\n"""
+    try:
+        # pede.dump.gz
+        if (config.showdump == 1):
+            out += "\subsection{{Pede monitoring information}}\n"
+            if (pedeDump.sumValue != 0):
+                out += r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(
+                    pedeDump.sumSteps, pedeDump.sumValue)
+            else:
+                out += r"\begin{{align*}}Sum(W*Chi^2)/Sum(Ndf)/<W> &= {0}\\ &= {1}\end{{align*}}".format(
+                    pedeDump.sumSteps, pedeDump.sumWValue)
+            out += r"with correction for down-weighting: {0}\\".format(
+                pedeDump.correction)
+            out += r"Peak dynamic memory allocation: {0} GB\\".format(
+                pedeDump.memory)
+            out += r"Total time: {0} h {1} m {2} s\\".format(
+                pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
+            out += r"Number of records: {0}\\".format(pedeDump.nrec)
+            out += r"Total number of parameters: {0}\\".format(pedeDump.ntgb)
+            out += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
+            out += r"Warning:\\"
+            for line in pedeDump.warning:
 
-    # pede.dump.gz
-    if (config.showdump == 1):
-        out += "\subsection{{Pede monitoring information}}\n"
-        if (pedeDump.sumValue != 0):
-            out += r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(
-                pedeDump.sumSteps, pedeDump.sumValue)
-        else:
-            out += r"\begin{{align*}}Sum(W*Chi^2)/Sum(Ndf)/<W> &= {0}\\ &= {1}\end{{align*}}".format(
-                pedeDump.sumSteps, pedeDump.sumWValue)
-        out += r"with correction for down-weighting: {0}\\".format(
-            pedeDump.correction)
-        out += r"Peak dynamic memory allocation: {0} GB\\".format(
-            pedeDump.memory)
-        out += r"Total time: {0} h {1} m {2} s\\".format(
-            pedeDump.time[0], pedeDump.time[1], pedeDump.time[2])
-        out += r"Number of records: {0}\\".format(pedeDump.nrec)
-        out += r"Total number of parameters: {0}\\".format(pedeDump.ntgb)
-        out += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
-        out += r"Warning:\\"
-        for line in pedeDump.warning:
+                # check if line empty
+                if line.replace(r" ", r""):
+                    out += "\\begin{verbatim}\n"
+                    out += line + "\n"
+                    out += "\\end{verbatim}\n"
 
-            # check if line empty
-            if line.replace(r" ", r""):
-                out += "\\begin{verbatim}\n"
-                out += line + "\n"
-                out += "\\end{verbatim}\n"
-
-        out += "\section{{Parameter plots}}\n"
+            out += "\section{{Parameter plots}}\n"
+    except Exception as e:
+        logging.error("PDF Creator: pede.dump.gz - {0}".format(e))
 
     # high level structures
     if (config.showhighlevel == 1):
