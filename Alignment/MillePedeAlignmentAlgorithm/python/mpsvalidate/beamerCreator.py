@@ -70,7 +70,7 @@ def create(alignables, pedeDump, outputFile, config):
         text += r"Number of variable parameters: {0}\\".format(pedeDump.nvgb)
         out.addSlide("Pede monitoring information", text)
     except Exception as e:
-        logging.error("Beamer Creator: pede.dump.gz data not found - {0}".format(e))
+        logger.error("data not found - {0} {1}".format(type(e), e))
 
     text = r"Warning:\\"
     for line in pedeDump.warning:

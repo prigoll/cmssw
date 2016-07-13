@@ -52,7 +52,8 @@ def main():
     if(args.logging):
         handler = logging.FileHandler("validation.log", mode="w")
         handler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter("%(levelname)s %(asctime)s (%(pathname)s line %(lineno)d): %(message)s")
+        formatter = logging.Formatter("%(levelname)s %(asctime)s (%(pathname)s line %(lineno)d): %(message)s",
+                                      datefmt="%H:%M:%S")
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
@@ -80,7 +81,7 @@ def main():
     treeFile = TFile(os.path.join(config.jobDataPath, "treeFile_merge.root"))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
     if not MillePedeUser:
-        logger.error("Error: Could not open TTree File MillePedeUser_{0} in {1}".format(
+        logger.error("Could not open TTree File MillePedeUser_{0} in {1}".format(
             config.jobTime, os.path.join(config.jobDataPath, "treeFile_merge.root")))
         return
 
@@ -95,8 +96,11 @@ def main():
     #
 
     if (config.showmonitor == 1):
-        logger.info("start to collect the plots of the millePedeMonitor_merge.root file")
-        monitorPlot.plot(config)
+        try:
+            logger.info("start to collect the plots of the millePedeMonitor_merge.root file")
+            monitorPlot.plot(config)
+        except Exception as e:
+            logging.error("millePedeMonitor_merge.root failure - {0} {1}".format(type(e), e))
 
     ##########################################################################
     # parse the alignment_merge.py file
@@ -104,35 +108,46 @@ def main():
 
     if (config.showadditional == 1):
         logger.info("start to parse the alignment_merge.py file")
-        additionalData = additionalparser.AdditionalData()
-        additionalData.parse(
-            config, os.path.join(config.jobDataPath, "alignment_merge.py"))
+        try:
+            additionalData = additionalparser.AdditionalData()
+            additionalData.parse(
+                config, os.path.join(config.jobDataPath, "alignment_merge.py"))
+        except Exception as e:
+            logging.error("alignment_merge.py parser failure - {0} {1}".format(type(e), e))
 
     ##########################################################################
     # parse the file pede.dump.gz and return a PedeDumpData Object
     #
 
-    
     if (config.showdump == 1):
-        logger.info("start to parse the pede.dump.gz file")
-        pedeDump = dumpparser.parse(
-            os.path.join(config.jobDataPath, "pede.dump.gz"), config)
+        try:
+            logger.info("start to parse the pede.dump.gz file")
+            pedeDump = dumpparser.parse(
+                os.path.join(config.jobDataPath, "pede.dump.gz"), config)
+        except Exception as e:
+            logging.error("pede.dump.gz parser failure - {0} {1}".format(type(e), e))
 
     ##########################################################################
     # time dependend big structures
     #
 
     if (config.showtime == 1):
-        logger.info("create the time dependend plots")
-        timeStructure.plot(treeFile, alignables, config)
+        try:
+            logger.info("create the time dependent plots")
+            timeStructure.plot(treeFile, alignables, config)
+        except Exception as e:
+            logging.error("time dependent plots failure - {0} {1}".format(type(e), e))
 
     ##########################################################################
     # big structures
     #
 
     if (config.showhighlevel == 1):
-        logger.info("create the high level plots")
-        bigStructure.plot(MillePedeUser, alignables, config)
+        try:
+            logger.info("create the high level plots")
+            bigStructure.plot(MillePedeUser, alignables, config)
+        except Exception as e:
+            logging.error("high level plots failure - {0} {1}".format(type(e), e))
 
     ##########################################################################
     # modules of a hole structure
@@ -140,23 +155,35 @@ def main():
     #
 
     if (config.showmodule == 1):
-        logger.info("create the module plots")
-        bigModule.plot(MillePedeUser, alignables, config)
+        try:
+            logger.info("create the module plots")
+            bigModule.plot(MillePedeUser, alignables, config)
+        except Exception as e:
+            logging.error("module plots failure - {0} {1}".format(type(e), e))
 
     ##########################################################################
     # create TEX, beamer
     #
 
     if (config.showtex == 1):
-        logger.info("create the latex file")
-        pdfCreator.create(alignables, pedeDump,
-                          additionalData, config.latexfile, config)
+        try:
+            logger.info("create the latex file")
+            pdfCreator.create(alignables, pedeDump,
+                            additionalData, config.latexfile, config)
+        except Exception as e:
+            logging.error("latex creation failure - {0} {1}".format(type(e), e))
     if (config.showbeamer == 1):
-        logger.info("create the latex beamer file")
-        beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
+        try:
+            logger.info("create the latex beamer file")
+            beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
+        except Exception as e:
+            logging.error("beamer latex failure - {0} {1}".format(type(e), e))
     if (config.showhtml == 1):
-        logger.info("create the HTML file")
-        htmlCreator.create(alignables, pedeDump, additionalData, "html_file.html", config)
+        try:
+            logger.info("create the HTML file")
+            htmlCreator.create(alignables, pedeDump, additionalData, "html_file.html", config)
+        except Exception as e:
+            logging.error("HTML creation failure - {0} {1}".format(type(e), e))
 
 if __name__ == "__main__":
     main()

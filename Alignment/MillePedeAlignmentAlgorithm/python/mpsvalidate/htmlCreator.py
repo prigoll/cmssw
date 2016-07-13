@@ -61,7 +61,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
                 out += "{0} \n".format(line)
                 out += "<br>\n"
     except Exception as e:
-        logging.error("HTML Creator: alignemnt_merge.py data not found - {0}".format(e))
+        logger.error("data not found - {0} {1}".format(type(e), e))
             
     # table of input files with number of tracks
     if (config.showmonitor):
@@ -103,7 +103,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
             if line.replace(r" ", r""):
                 out += "{0}<br>\n".format(line)
     except Exception as e:
-        logging.error("HTML Creator: pede.dump.gz data not found - {0}".format(e))
+        logger.error("data not found - {0} {1}".format(type(e), e))
 
     # high level structures
 
