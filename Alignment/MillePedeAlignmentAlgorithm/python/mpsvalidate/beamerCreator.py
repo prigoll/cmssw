@@ -36,7 +36,7 @@ class Out:
         self.text += text + "\n"
 
 
-def create(alignables, pedeDump, outputFile, config):
+def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # load template
     with open(os.path.join(config.mpspath, "beamer_template.tex"), "r") as template:
@@ -48,10 +48,44 @@ def create(alignables, pedeDump, outputFile, config):
 
     # output string
     out = Out()
+    text = ""
 
     # general information
     out.add("\section{General information}")
-    out.addSlide("General information", "Project: " + config.message)
+    if (config.message):
+        text = "Project: {{{0}}}\\\\\n".format(config.message)
+    text += "Input-Path: {{{0}}}\n".format(config.jobDataPath)
+    out.addSlide("General information", text)
+    
+    # alignment_merge.py
+    try:
+        out.add("\subsection{Alignment Configuration}")
+        text = "\\textbf{{PedeSteerer method:}} {{{0}}}\\\\\n".format(
+            additionalData.pedeSteererMethod)
+        text += "\\textbf{{PedeSteerer options:}}\\\\\n"
+        for line in additionalData.pedeSteererOptions:
+            text += "{{{0}}}\\\\\n".format(line)
+        text += "\\textbf{{PedeSteerer command:}} {0}\\\\\n".format(
+            additionalData.pedeSteererCommand)
+    except Exception as e:
+        logger.error("data not found - {0} {1}".format(type(e), e))
+    
+    # table of input files with number of tracks
+    if (config.showmonitor):
+        out.add("\subsection{Datasets with tracks}")
+        text = """\\begin{table}[h]
+            \centering
+            \caption{Datasets with tracks}
+            \\begin{tabular}{cc}
+            \hline
+            Dataset & Number of used tracks \\\\
+            \hline \n"""
+        for monitor in MonitorData.monitors:
+            text += "{0} & {1}\\\\\n".format(monitor.name, monitor.ntracks)
+        text += """\hline
+                  \end{tabular}\n
+                  \end{table}\n"""
+        out.addSlide("Datasets with tracks", text)
 
     # pede.dump.gz
     out.add("\subsection{Pede monitoring information}")
@@ -73,10 +107,11 @@ def create(alignables, pedeDump, outputFile, config):
         out.addSlide("Pede monitoring information", text)
     except Exception as e:
         logger.error("data not found - {0} {1}".format(type(e), e))
-
+        
+    # Parameter plots
     out.add("\section{Parameter plots}")
     
-    # big Structures
+    # high level Structures
     out.add("\subsection{High-level parameters}")
     big = [x for x in config.outputList if (x.plottype == "big")]
 

@@ -101,6 +101,7 @@ def main():
             monitorPlot.plot(config)
         except Exception as e:
             logging.error("millePedeMonitor_merge.root failure - {0} {1}".format(type(e), e))
+            raise
 
     ##########################################################################
     # parse the alignment_merge.py file
@@ -114,6 +115,7 @@ def main():
                 config, os.path.join(config.jobDataPath, "alignment_merge.py"))
         except Exception as e:
             logging.error("alignment_merge.py parser failure - {0} {1}".format(type(e), e))
+            raise
 
     ##########################################################################
     # parse the file pede.dump.gz and return a PedeDumpData Object
@@ -126,6 +128,7 @@ def main():
                 os.path.join(config.jobDataPath, "pede.dump.gz"), config)
         except Exception as e:
             logging.error("pede.dump.gz parser failure - {0} {1}".format(type(e), e))
+            raise
 
     ##########################################################################
     # time dependend big structures
@@ -137,6 +140,7 @@ def main():
             timeStructure.plot(treeFile, alignables, config)
         except Exception as e:
             logging.error("time dependent plots failure - {0} {1}".format(type(e), e))
+            raise
 
     ##########################################################################
     # big structures
@@ -148,6 +152,7 @@ def main():
             bigStructure.plot(MillePedeUser, alignables, config)
         except Exception as e:
             logging.error("high level plots failure - {0} {1}".format(type(e), e))
+            raise
 
     ##########################################################################
     # modules of a hole structure
@@ -160,6 +165,7 @@ def main():
             bigModule.plot(MillePedeUser, alignables, config)
         except Exception as e:
             logging.error("module plots failure - {0} {1}".format(type(e), e))
+            raise
 
     ##########################################################################
     # create TEX, beamer
@@ -172,18 +178,23 @@ def main():
                             additionalData, config.latexfile, config)
         except Exception as e:
             logging.error("latex creation failure - {0} {1}".format(type(e), e))
+            raise
+        
     if (config.showbeamer == 1):
         try:
             logger.info("create the latex beamer file")
-            beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
+            beamerCreator.create(alignables, pedeDump, additionalData, "beamer.tex", config)
         except Exception as e:
             logging.error("beamer latex failure - {0} {1}".format(type(e), e))
+            raise
+        
     if (config.showhtml == 1):
         try:
             logger.info("create the HTML file")
             htmlCreator.create(alignables, pedeDump, additionalData, "html_file.html", config)
         except Exception as e:
             logging.error("HTML creation failure - {0} {1}".format(type(e), e))
+            raise
 
 if __name__ == "__main__":
     main()
