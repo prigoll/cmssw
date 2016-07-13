@@ -66,11 +66,11 @@ def plot(treeFile, alignables, config):
             MillePedeUser.append(treeFile.Get("MillePedeUser_{0}".format(i)))
 
         if not listMillePedeUser:
-            logging.error("Timeplots: no TTrees found")
+            logger.error("Timeplots: no TTrees found")
             return
 
         if not MillePedeUser:
-            logging.error("Timeplots: no TTree could be opened")
+            logger.error("Timeplots: no TTree could be opened")
             return
 
         ######################################################################

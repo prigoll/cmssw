@@ -89,7 +89,7 @@ class ConfigData:
 
         # read ini file
         if (parser.read(path) == []):
-            logging.error("Could not open ini-file: {0}".format(path))
+            logger.error("Could not open ini-file: {0}".format(path))
 
         # buffer object
         configBuffer = ConfigData()
