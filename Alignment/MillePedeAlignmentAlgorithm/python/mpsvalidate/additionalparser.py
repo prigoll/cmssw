@@ -45,35 +45,37 @@ class AdditionalData:
 
         # loop over lines
         for index, line in enumerate(mergeFile):
-
-            # search for SelectorRigid, SelectorBowed and SelectorTwoBowed
-            for string in self.pattern:
-                if ("#" not in line and string in line):
-                    # extract data
-                    for lineNumber in range(index + 2, index + 8):
-                        # break at the end of the SelectorRigid
-                        if (")" in mergeFile[lineNumber]):
-                            break
-                        self.pattern[string][0].append(
-                            mergeFile[lineNumber].replace("\"", "'").strip("', \n").split(","))
-                        # check if third argument
-                        if (len(self.pattern[string][0][-1]) > 2):
-                            self.pattern[string][1].append(
-                                self.pattern[string][0][-1][2])
-                # check for third arguments
-                if ("'" not in line.replace("\"", "'")):
-                    for tag in self.pattern[string][1]:
-                        if tag in line:
-                            self.pattern[string][2].append(line.strip("\n").replace("#", ""))
-                            # add following lines
-                            for lineNumber in range(index + 1, index + 5):
-                                # new process or blank line
-                                if ("process" in mergeFile[lineNumber] or "\n" == mergeFile[lineNumber]):
-                                    break
-                                # different tag
-                                if (any(x in mergeFile[lineNumber] for x in self.pattern[string][1])):
-                                    break
-                                self.pattern[string][2].append(mergeFile[lineNumber].strip("\n").replace("#", ""))
+            try:
+                # search for SelectorRigid, SelectorBowed and SelectorTwoBowed
+                for string in self.pattern:
+                    if ("#" not in line and string in line):
+                        # extract data
+                        for lineNumber in range(index + 2, index + 8):
+                            # break at the end of the SelectorRigid
+                            if (")" in mergeFile[lineNumber]):
+                                break
+                            self.pattern[string][0].append(
+                                mergeFile[lineNumber].replace("\"", "'").strip("', \n").split(","))
+                            # check if third argument
+                            if (len(self.pattern[string][0][-1]) > 2):
+                                self.pattern[string][1].append(
+                                    self.pattern[string][0][-1][2])
+                    # check for third arguments
+                    if ("'" not in line.replace("\"", "'")):
+                        for tag in self.pattern[string][1]:
+                            if tag in line:
+                                self.pattern[string][2].append(line.strip("\n").replace("#", ""))
+                                # add following lines
+                                for lineNumber in range(index + 1, index + 5):
+                                    # new process or blank line
+                                    if ("process" in mergeFile[lineNumber] or "\n" == mergeFile[lineNumber]):
+                                        break
+                                    # different tag
+                                    if (any(x in mergeFile[lineNumber] for x in self.pattern[string][1])):
+                                        break
+                                    self.pattern[string][2].append(mergeFile[lineNumber].strip("\n").replace("#", ""))
+            except Exception as e:
+                logging.error("Selector Parsing error")
 
             # search for pedeSteererMethod
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.method" in line and "#" not in line):

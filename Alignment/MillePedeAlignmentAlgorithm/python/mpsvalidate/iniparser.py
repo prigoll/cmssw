@@ -305,4 +305,9 @@ class ConfigData:
             self.message = args.message
 
         if (self.outputPath == ""):
-            self.outputPath = os.path.join("./", "validation_output")
+            # if path is given put the output in the current directory
+            # else put the output in the jobm directory
+            if (args.jobdatapath):
+                self.outputPath = os.path.join("./", "validation_output")
+            else:
+                self.outputPath = os.path.join(self.jobDataPath, "validation_output")
