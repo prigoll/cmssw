@@ -54,7 +54,7 @@ class AdditionalData:
                         if (")" in mergeFile[lineNumber]):
                             break
                         self.pattern[string][0].append(
-                            mergeFile[lineNumber].strip("', \n").split(","))
+                            mergeFile[lineNumber].replace("\"", "'").strip("', \n").split(","))
                         # check if third argument
                         if (len(self.pattern[string][0][-1]) > 2):
                             self.pattern[string][1].append(
@@ -68,7 +68,7 @@ class AdditionalData:
             # search for pedeSteererMethod
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.method" in line and "#" not in line):
                 try:
-                    self.pedeSteererMethod = line.split("'")[1]
+                    self.pedeSteererMethod = line.replace("\"", "'").split("'")[1]
                 except Exception as e:
                     logging.error("AdditionalParser: pedeSteererMethod not found - {0}".format(e))
 
@@ -78,11 +78,11 @@ class AdditionalData:
                     if ("]" in mergeFile[lineNumber]):
                         break
                     self.pedeSteererOptions.append(
-                        mergeFile[lineNumber].strip("', \n"))
+                        mergeFile[lineNumber].replace("\"", "'").strip("', \n"))
 
             # search for pedeSteererCommand
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.pedeCommand" in line and "#" not in line):
                 try:
-                    self.pedeSteererCommand = line.split("'")[1]
+                    self.pedeSteererCommand = line.replace("\"", "'").split("'")[1]
                 except Exception as e:
                     logging.error("AdditionalParser: pedeSteererCommand not found - {0}".format(e))

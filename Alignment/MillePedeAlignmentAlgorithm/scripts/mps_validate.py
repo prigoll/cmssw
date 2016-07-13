@@ -11,7 +11,7 @@ import logging
 import os
 
 from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
-                  gROOT, gStyle)
+                  gROOT, gStyle, PyConfig)
 
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import (additionalparser, beamerCreator, bigModule,
                          bigStructure, dumpparser, htmlCreator, monitorPlot,
