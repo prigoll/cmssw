@@ -8,7 +8,7 @@ import logging
 import os
 import string
 
-from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import PedeDumpData
+from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import MonitorData, PedeDumpData
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import Alignables, Structure
 
 
@@ -67,6 +67,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
             text += "{{{0}}}\\\\\n".format(line)
         text += "\\textbf{{PedeSteerer command:}} {0}\\\\\n".format(
             additionalData.pedeSteererCommand)
+        out.addSlide("Alignment Configuration", text)
     except Exception as e:
         logger.error("data not found - {0} {1}".format(type(e), e))
     
