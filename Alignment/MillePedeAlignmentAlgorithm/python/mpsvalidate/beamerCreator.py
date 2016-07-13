@@ -37,7 +37,8 @@ class Out:
 
 
 def create(alignables, pedeDump, additionalData, outputFile, config):
-
+    logger = logging.getLogger("mpsvalidate")
+    
     # load template
     with open(os.path.join(config.mpspath, "beamer_template.tex"), "r") as template:
         data = template.read()

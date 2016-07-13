@@ -6,6 +6,8 @@
 # list with the PlotData of the histograms
 ##
 
+import logging
+
 from ROOT import (TH1F, TCanvas, TImage, TLegend, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
@@ -14,7 +16,8 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import identificati
 
 
 def plot(MillePedeUser, alignables, mode, struct, parentPlot, config):
-
+    logger = logging.getLogger("mpsvalidate")
+    
     # skip empty
     number = 0
     for i in range(3):

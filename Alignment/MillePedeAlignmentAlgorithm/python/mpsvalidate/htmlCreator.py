@@ -20,6 +20,7 @@ class TexTemplate(string.Template):
 
 
 def create(alignables, pedeDump, additionalData, outputFile, config):
+    logger = logging.getLogger("mpsvalidate")
 
     # load template
     with open(os.path.join(config.mpspath, "html_template.html"), "r") as template:

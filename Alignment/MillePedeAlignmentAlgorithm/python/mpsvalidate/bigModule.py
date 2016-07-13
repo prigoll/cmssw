@@ -5,6 +5,8 @@
 # a list of PlotData objects.
 ##
 
+import logging
+
 from ROOT import (TH1F, TCanvas, TImage, TPaveLabel, TPaveText, TTree, gROOT,
                   gStyle)
 
@@ -15,6 +17,7 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import identificati
 
 
 def plot(MillePedeUser, alignables, config):
+    logger = logging.getLogger("mpsvalidate")
 
     alignables.create_list(MillePedeUser)
 

@@ -5,6 +5,8 @@
 # as humanreadable text.
 ##
 
+import logging
+
 from ROOT import (TH1F, TCanvas, TGraph, TImage, TPaveLabel, TPaveText, TTree,
                   gROOT, gStyle)
 
@@ -14,6 +16,8 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import identificati
 
 
 def plot(MillePedeUser, alignables, config):
+    logger = logging.getLogger("mpsvalidate")
+    
     # more space for labels
     gStyle.SetPadBottomMargin(0.25)
     gStyle.SetOptStat("emrs")

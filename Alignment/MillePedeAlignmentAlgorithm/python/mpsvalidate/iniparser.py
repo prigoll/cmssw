@@ -84,6 +84,8 @@ class ConfigData:
         self.outputList = []
 
     def parseConfig(self, path):
+        logger = logging.getLogger("mpsvalidate")
+        
         # create ConfigParser object
         parser = ConfigParser.ConfigParser()
 
@@ -281,6 +283,8 @@ class ConfigData:
             pass
 
     def parseParameter(self, args):
+        logger = logging.getLogger("mpsvalidate")
+        
         # check if parameter is given and override the config data
         if (args.time != -1):
             self.jobTime = args.time

@@ -31,7 +31,8 @@ class AdditionalData:
         }
 
     def parse(self, config, path):
-
+        logger = logging.getLogger("mpsvalidate")
+        
         # open aligment_merge.py file
         try:
             with open(path) as inputFile:
@@ -63,16 +64,16 @@ class AdditionalData:
                 if ("'" not in line.replace("\"", "'")):
                     for tag in self.pattern[string][1]:
                         if tag in line:
-                            self.pattern[string][2].append(line.strip(" \n"))
+                            self.pattern[string][2].append(line.strip("\n").replace("#", ""))
                             # add following lines
                             for lineNumber in range(index + 1, index + 5):
                                 # new process or blank line
-                                if ("process" in mergeFile[lineNumber] or "" == mergeFile[lineNumber]):
+                                if ("process" in mergeFile[lineNumber] or "\n" == mergeFile[lineNumber]):
                                     break
                                 # different tag
-                                if (any(tag in line for tag in self.pattern[string][1])):
+                                if (any(x in mergeFile[lineNumber] for x in self.pattern[string][1])):
                                     break
-                                self.pattern[string][2].append(mergeFile[lineNumber].strip(" \n"))
+                                self.pattern[string][2].append(mergeFile[lineNumber].strip("\n").replace("#", ""))
 
             # search for pedeSteererMethod
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.method" in line and "#" not in line):

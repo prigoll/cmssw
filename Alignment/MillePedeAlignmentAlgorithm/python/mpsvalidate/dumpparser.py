@@ -13,6 +13,8 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import PedeDumpDa
 
 
 def parse(path, config):
+    logger = logging.getLogger("mpsvalidate")
+    
     # parse pede.dump.gz
 
     pedeDump = PedeDumpData()
@@ -25,7 +27,7 @@ def parse(path, config):
         with gzip.open(path) as gzipFile:
             dumpFile = gzipFile.readlines()
     except IOError:
-        logging.error("PedeDump: {0} does not exist".format(path))
+        logger.error("PedeDump: {0} does not exist".format(path))
         return
 
     for i, line in enumerate(dumpFile):

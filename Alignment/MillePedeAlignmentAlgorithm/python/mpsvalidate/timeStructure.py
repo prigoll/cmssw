@@ -17,6 +17,7 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import identificati
 
 
 def plot(treeFile, alignables, config):
+    logger = logging.getLogger("mpsvalidate")
 
     for mode in ["xyz", "rot"]:
 

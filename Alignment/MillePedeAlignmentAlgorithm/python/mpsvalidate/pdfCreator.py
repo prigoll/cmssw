@@ -20,6 +20,7 @@ class TexTemplate(string.Template):
 
 
 def create(alignables, pedeDump, additionalData, outputFile, config):
+    logger = logging.getLogger("mpsvalidate")
 
     # load template
     with open(os.path.join(config.mpspath, "tex_template.tex"), "r") as template:
@@ -58,7 +59,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
                     out += "{0}  ".format(i)
                 out += "\\\\\n"
             for line in additionalData.pattern[selector][2]:
-                out += "{0}\\\\n".format(line)
+                out += "{0}\\\\\n".format(line)
             out += "\\\\\n"
     except Exception as e:
         logger.error("data not found - {0} {1}".format(type(e), e))

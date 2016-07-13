@@ -4,6 +4,7 @@
 # Draw the plots saved in the millePedeMonitor_merge.root file
 #
 
+import logging
 import os
 
 from ROOT import TH1F, TCanvas, TFile, TImage, gStyle
@@ -13,6 +14,8 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import setstatsize
 
 
 def plot(config):
+    logger = logging.getLogger("mpsvalidate")
+    
     # adjust the plot style
     # show the skewness in the legend
     gStyle.SetOptStat("emrs")

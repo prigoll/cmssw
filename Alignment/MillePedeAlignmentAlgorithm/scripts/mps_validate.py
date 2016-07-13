@@ -25,7 +25,7 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import setgstyle
 def main():
     # config logging module
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(asctime)s (%(pathname)s line %(lineno)d): %(message)s", datefmt="%H:%M:%S")
-    logger = logging.getLogger("logging")
+    logger = logging.getLogger("mpsvalidate")
     
     # run ROOT in batchmode
     gROOT.SetBatch()
