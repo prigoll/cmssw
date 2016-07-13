@@ -24,9 +24,9 @@ from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.style import setgstyle
 
 def main():
     # config logging module
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s",
-                        datefmt="%d.%m.%Y %H:%M:%S")
-
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(asctime)s (%(pathname)s line %(lineno)d): %(message)s", datefmt="%H:%M:%S")
+    logger = logging.getLogger("logging")
+    
     # run ROOT in batchmode
     gROOT.SetBatch()
 
@@ -41,28 +41,39 @@ def main():
                         help="identification on every plot", default="")
     parser.add_argument("-p", "--jobdatapath",
                         help="path to the jobm directory", default="")
+    parser.add_argument("-l", "--logging",
+                        help="if this argument is given a logging file (validation.log) is saved in the current directory", action="store_true")
     args = parser.parse_args()
 
     # create config object
     config = ConfigData()
+    
+    # create logging handler
+    if(args.logging):
+        handler = logging.FileHandler("validation.log")
+        logger.addHandler(handler)
 
     # parse default ini file
+    logging.info("start to parse the default.ini")
     config.parseConfig(os.path.join(config.mpspath, "default.ini"))
 
     # parse user ini file
     if (args.ini != "-1"):
+        logging.info("start to parse the user ini: {0}".format(args.ini))
         config.parseConfig(args.ini)
 
     # override ini configs with consol parameter
     config.parseParameter(args)
 
     # create output directories
+    logging.info("create the output directories")
     if not os.path.exists(os.path.join(config.outputPath, "plots/pdf")):
         os.makedirs(os.path.join(config.outputPath, "plots/pdf"))
     if not os.path.exists(os.path.join(config.outputPath, "plots/png")):
         os.makedirs(os.path.join(config.outputPath, "plots/png"))
 
     # open root file and get TTree MillePedeUser_X
+    logging.info("try to open the root file: {0}".format(os.path.join(config.jobDataPath, "treeFile_merge.root")))
     treeFile = TFile(os.path.join(config.jobDataPath, "treeFile_merge.root"))
     MillePedeUser = treeFile.Get("MillePedeUser_{0}".format(config.jobTime))
     if not MillePedeUser:
@@ -81,6 +92,7 @@ def main():
     #
 
     if (config.showmonitor == 1):
+        logging.info("start to collect the plots of the millePedeMonitor_merge.root file")
         monitorPlot.plot(config)
 
     ##########################################################################
@@ -88,6 +100,7 @@ def main():
     #
 
     if (config.showadditional == 1):
+        logging.info("start to parse the alignment_merge.py file")
         additionalData = additionalparser.AdditionalData()
         additionalData.parse(
             config, os.path.join(config.jobDataPath, "alignment_merge.py"))
@@ -96,7 +109,9 @@ def main():
     # parse the file pede.dump.gz and return a PedeDumpData Object
     #
 
+    
     if (config.showdump == 1):
+        logging.info("start to parse the pede.dump.gz file")
         pedeDump = dumpparser.parse(
             os.path.join(config.jobDataPath, "pede.dump.gz"), config)
 
@@ -105,6 +120,7 @@ def main():
     #
 
     if (config.showtime == 1):
+        logging.info("create the time dependend plots")
         timeStructure.plot(treeFile, alignables, config)
 
     ##########################################################################
@@ -112,6 +128,7 @@ def main():
     #
 
     if (config.showhighlevel == 1):
+        logging.info("create the high level plots")
         bigStructure.plot(MillePedeUser, alignables, config)
 
     ##########################################################################
@@ -120,6 +137,7 @@ def main():
     #
 
     if (config.showmodule == 1):
+        logging.info("create the module plots")
         bigModule.plot(MillePedeUser, alignables, config)
 
     ##########################################################################
@@ -127,11 +145,14 @@ def main():
     #
 
     if (config.showtex == 1):
+        logging.info("create the latex file")
         pdfCreator.create(alignables, pedeDump,
                           additionalData, config.latexfile, config)
     if (config.showbeamer == 1):
+        logging.info("create the latex beamer file")
         beamerCreator.create(alignables, pedeDump, "beamer.tex", config)
     if (config.showhtml == 1):
+        logging.info("create the HTML file")
         htmlCreator.create(alignables, pedeDump, additionalData, "html_file.html", config)
 
 if __name__ == "__main__":
