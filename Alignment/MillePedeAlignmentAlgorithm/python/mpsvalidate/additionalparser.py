@@ -37,7 +37,7 @@ class AdditionalData:
             with open(path) as inputFile:
                 mergeFile = inputFile.readlines()
         except IOError:
-            logging.error("AdditionalData: {0} does not exist".format(path))
+            logger.error("AdditionalData: {0} does not exist".format(path))
             return
 
         # search pattern
@@ -60,17 +60,26 @@ class AdditionalData:
                             self.pattern[string][1].append(
                                 self.pattern[string][0][-1][2])
                 # check for third arguments
-                if ("'" not in line):
+                if ("'" not in line.replace("\"", "'")):
                     for tag in self.pattern[string][1]:
                         if tag in line:
                             self.pattern[string][2].append(line.strip(" \n"))
+                            # add following lines
+                            for lineNumber in range(index + 1, index + 5):
+                                # new process or blank line
+                                if ("process" in mergeFile[lineNumber] or "" == mergeFile[lineNumber]):
+                                    break
+                                # different tag
+                                if (any(tag in line for tag in self.pattern[string][1])):
+                                    break
+                                self.pattern[string][2].append(mergeFile[lineNumber].strip(" \n"))
 
             # search for pedeSteererMethod
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.method" in line and "#" not in line):
                 try:
                     self.pedeSteererMethod = line.replace("\"", "'").split("'")[1]
                 except Exception as e:
-                    logging.error("AdditionalParser: pedeSteererMethod not found - {0}".format(e))
+                    logger.error("AdditionalParser: pedeSteererMethod not found - {0}".format(e))
 
             # search for pedeSteererOptions
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.options" in line and "#" not in line):
@@ -85,4 +94,4 @@ class AdditionalData:
                 try:
                     self.pedeSteererCommand = line.replace("\"", "'").split("'")[1]
                 except Exception as e:
-                    logging.error("AdditionalParser: pedeSteererCommand not found - {0}".format(e))
+                    logger.error("AdditionalParser: pedeSteererCommand not found - {0}".format(e))

@@ -27,13 +27,13 @@ class Out:
     def addSlide(self, head, text):
         self.text += "\\begin{{frame}}[t]{{{0}}}\n".format(head)
         self.text += text
-        self.text += "\\end{frame}\n"
-
-    def addFragileSlide(self, head, text):
-        self.text += "\\begin{{frame}}[fragile=singleslide]{{{0}}}\n".format(
-            head)
-        self.text += text
-        self.text += "\\end{frame}\n"
+        self.text += """\\vfill
+                        \\rule{0.9\paperwidth}{1pt}
+                        \insertnavigation{0.89\paperwidth}
+                        \\end{frame}\n"""
+                        
+    def add(self, text):
+        self.text += text + "\n"
 
 
 def create(alignables, pedeDump, outputFile, config):
@@ -50,9 +50,11 @@ def create(alignables, pedeDump, outputFile, config):
     out = Out()
 
     # general information
+    out.add("\section{General information}")
     out.addSlide("General information", "Project: " + config.message)
 
     # pede.dump.gz
+    out.add("\subsection{Pede monitoring information}")
     try:
         if (pedeDump.sumValue != 0):
             text = r"\begin{{align*}}Sum(Chi^2)/Sum(Ndf) &= {0}\\ &= {1}\end{{align*}}".format(
@@ -72,29 +74,20 @@ def create(alignables, pedeDump, outputFile, config):
     except Exception as e:
         logger.error("data not found - {0} {1}".format(type(e), e))
 
-    text = r"Warning:\\"
-    for line in pedeDump.warning:
-
-        # check if line empty
-        if line.replace(r" ", r""):
-            text = "\\begin{verbatim}"
-            text += line
-            text += "\\end{verbatim}\n"
-
-    out.addFragileSlide("Warning", text)
-
+    out.add("\section{Parameter plots}")
+    
     # big Structures
-
+    out.add("\subsection{High-level parameters}")
     big = [x for x in config.outputList if (x.plottype == "big")]
 
     for i in big:
-        text = "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+        text = "\includegraphics[height=0.85\\textheight]{{{0}/plots/pdf/{1}.pdf}}\n".format(
             config.outputPath, i.filename)
 
         out.addSlide("High-level parameters", text)
 
     # time (IOV) dependent plots
-
+    out.add("\subsection{High-level parameters versus time (IOV)}")
     time = [x for x in config.outputList if (x.plottype == "time")]
 
     if time:
@@ -104,13 +97,13 @@ def create(alignables, pedeDump, outputFile, config):
                 text = "\\framesubtitle{{{0}}}\n".format(structure)
                 filename = [x.filename for x in time if (
                     x.parameter == mode and x.name == structure)][0]
-                text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+                text += "\includegraphics[height=0.85\\textheight]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                     config.outputPath, filename)
 
                 out.addSlide("High-level parameters versus time (IOV)", text)
 
     # hole modules
-
+    out.add("\subsection{Module-level parameters}")
     # check if there are module plots
     if any(x for x in config.outputList if (x.plottype == "mod" and x.number == "")):
 
@@ -133,7 +126,7 @@ def create(alignables, pedeDump, outputFile, config):
                     # check if plot there is a plot in this mode
                     if module:
                         text = "\\framesubtitle{{{0}}}\n".format(moduleName)
-                        text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+                        text += "\includegraphics[height=0.85\\textheight]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                             config.outputPath, module[0].filename)
 
                         out.addSlide("Module-level parameters", text)
@@ -142,16 +135,16 @@ def create(alignables, pedeDump, outputFile, config):
                         for plot in moduleSub:
                             text = "\\framesubtitle{{{0}}}\n".format(
                                 moduleName)
-                            text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+                            text += "\includegraphics[height=0.85\\textheight]{{{0}/plots/pdf/{1}.pdf}}\n".format(
                                 config.outputPath, plot.filename)
 
                             out.addSlide("Module-level parameters", text)
 
     # plot taken from the millePedeMonitor_merge.root file
-
+    out.add("\section{Monitor plots}")
     for plot in [x for x in config.outputList if x.plottype == "monitor"]:
         text = "\\framesubtitle{{{0}}}\n".format(plot.name)
-        text += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+        text += "\includegraphics[height=0.85\\textheight]{{{0}/plots/pdf/{1}.pdf}}\n".format(
             config.outputPath, plot.filename)
         out.addSlide("Monitor", text)
 
@@ -162,5 +155,6 @@ def create(alignables, pedeDump, outputFile, config):
         output.close()
 
     # TODO run pdflatex
-    os.system("pdflatex -output-directory={0}  {1}/{2}".format(
-        config.outputPath, config.outputPath, outputFile))
+    for i in range(2):
+        os.system("pdflatex -output-directory={0}  {1}/{2}".format(
+            config.outputPath, config.outputPath, outputFile))
