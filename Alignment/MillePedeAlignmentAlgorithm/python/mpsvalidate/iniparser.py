@@ -114,16 +114,20 @@ class ConfigData:
                 self.jobDataPath = "jobData/jobm"
             else:
                 self.jobDataPath = "jobData/jobm{0}".format(self.jobNumber)
-
+            self.outputPath = os.path.join(self.jobDataPath, "validation_output")
+                
         # if jobData path is given
         if (configBuffer.jobDataPath != ""):
             self.jobDataPath = configBuffer.jobDataPath
+            self.outputPath = "validation_output"
 
         # set outputpath
         try:
-            self.outputPath = parser.get("GENERAL", "outputpath")
+            if (parser.get("GENERAL", "outputpath")):
+                self.outputPath = parser.get("GENERAL", "outputpath")
         except:
             pass
+                
 
         # data which could be stored directly
         try:
@@ -304,10 +308,6 @@ class ConfigData:
         if (args.message != ""):
             self.message = args.message
 
-        if (self.outputPath == ""):
-            # if path is given put the output in the current directory
-            # else put the output in the jobm directory
-            if (args.jobdatapath):
-                self.outputPath = os.path.join("./", "validation_output")
-            else:
-                self.outputPath = os.path.join(self.jobDataPath, "validation_output")
+        # if path is given put the output in the current directory
+        if (args.jobdatapath):
+            self.outputPath = "validation_output"
