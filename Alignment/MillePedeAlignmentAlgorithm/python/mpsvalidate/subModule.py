@@ -155,7 +155,7 @@ def plot(MillePedeUser, alignables, mode, struct, parentPlot, config):
         maximum = []
 
         if (parentPlot.histo[i].GetEntries() == 0):
-            break
+            continue
 
         # normalize parent
         parentPlot.histo[i].Scale(1. / parentPlot.histo[i].Integral())
