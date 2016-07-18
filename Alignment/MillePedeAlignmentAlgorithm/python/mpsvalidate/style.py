@@ -81,7 +81,7 @@ def setgstyle():
     gStyle.SetPadTopMargin(0.08)
     gStyle.SetPadBottomMargin(0.19)
     gStyle.SetPadLeftMargin(0.17)
-    gStyle.SetPadRightMargin(0.07)
+    #gStyle.SetPadRightMargin(0.07)
 
     # For the histo:
     gStyle.SetHistLineColor(1)
