@@ -301,6 +301,7 @@ class ConfigData:
                 self.jobDataPath = "jobData/jobm"
             else:
                 self.jobDataPath = "jobData/jobm{0}".format(self.jobNumber)
+            self.outputPath = os.path.join(self.jobDataPath, "validation_output")
 
         if (args.jobdatapath != ""):
             self.jobDataPath = args.jobdatapath
