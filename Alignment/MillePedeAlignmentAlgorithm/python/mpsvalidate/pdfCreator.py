@@ -39,7 +39,10 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
 
     if (config.message):
         out += "Project: {{{0}}}\\\\\n".format(config.message)
-    out += "Input-Path: {{{0}}}\n".format(config.jobDataPath)
+    out += "Input-Path:\n"
+    out += "\\begin{verbatim}\n"
+    out += config.jobDataPath+"\n"
+    out += "\\end{verbatim}\n"
 
     # alignment_merge.py
     try:
@@ -131,10 +134,10 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
             for structure in [x.name for x in time if x.parameter == "xyz"]:
                 out += "\subsubsection{{{0}}}\n".format(structure)
                 for mode in ["xyz", "rot"]:
-                    filename = [x.filename for x in time if (
-                        x.parameter == mode and x.name == structure)][0]
-                    out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
-                        config.outputPath, filename)
+                    if any([x.filename for x in time if (x.parameter == mode and x.name == structure)]):
+                        filename = [x.filename for x in time if (x.parameter == mode and x.name == structure)][0]
+                        out += "\includegraphics[width=\linewidth]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+                            config.outputPath, filename)
 
     # hole modules
     if (config.showmodule == 1):

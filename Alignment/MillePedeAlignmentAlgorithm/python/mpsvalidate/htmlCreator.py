@@ -126,10 +126,10 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
         for structure in [x.name for x in time if x.parameter == "xyz"]:
             out += "<h2>{0}<h2>\n".format(structure)
             for mode in ["xyz", "rot"]:
-                filename = [x.filename for x in time if (
-                    x.parameter == mode and x.name == structure)][0]
-                out += "<a href='plots/pdf/{0}.pdf'><img src='plots/png/{0}.png'></a>\n".format(
-                    filename)
+                if any([x.filename for x in time if (x.parameter == mode and x.name == structure)]):
+                    filename = [x.filename for x in time if (x.parameter == mode and x.name == structure)][0]
+                    out += "<a href='plots/pdf/{0}.pdf'><img src='plots/png/{0}.png'></a>\n".format(
+                        filename)
 
     # hole modules
 

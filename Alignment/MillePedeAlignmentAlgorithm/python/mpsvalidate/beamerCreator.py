@@ -32,6 +32,14 @@ class Out:
                         \insertnavigation{0.89\paperwidth}
                         \\end{frame}\n"""
                         
+    def addSlide_fragile(self, head, text):
+        self.text += "\\begin{{frame}}[fragile=singleslide]{{{0}}}\n".format(head)
+        self.text += text
+        self.text += """\\vfill
+                        \\rule{0.9\paperwidth}{1pt}
+                        \insertnavigation{0.89\paperwidth}
+                        \\end{frame}\n"""
+                        
     def add(self, text):
         self.text += text + "\n"
 
@@ -55,8 +63,11 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
     out.add("\section{General information}")
     if (config.message):
         text = "Project: {{{0}}}\\\\\n".format(config.message)
-    text += "Input-Path: {{{0}}}\n".format(config.jobDataPath)
-    out.addSlide("General information", text)
+    text += "Input-Path:\n"
+    text += "\\begin{verbatim}\n"
+    text += config.jobDataPath+"\n"
+    text += "\\end{verbatim}\n"
+    out.addSlide_fragile("General information", text)
     
     # alignment_merge.py
     try:
@@ -132,10 +143,10 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
         for structure in [x.name for x in time if x.parameter == "xyz"]:
             for mode in ["xyz", "rot"]:
                 text = "\\framesubtitle{{{0}}}\n".format(structure)
-                filename = [x.filename for x in time if (
-                    x.parameter == mode and x.name == structure)][0]
-                text += "\includegraphics[height=0.85\\textheight]{{{0}/plots/pdf/{1}.pdf}}\n".format(
-                    config.outputPath, filename)
+                if any([x.filename for x in time if (x.parameter == mode and x.name == structure)]):
+                    filename = [x.filename for x in time if (x.parameter == mode and x.name == structure)][0]
+                    text += "\includegraphics[height=0.85\\textheight]{{{0}/plots/pdf/{1}.pdf}}\n".format(
+                        config.outputPath, filename)
 
                 out.addSlide("High-level parameters versus time (IOV)", text)
 
