@@ -192,6 +192,10 @@ conddb --db alignments_MP.db list SiStripBackPlaneCorrection
 #split the IOVs
 aligncond_split_iov.sh alignments_MP.db alignments_split_MP.db
 
+# run mps_validate.py
+campaign=`basename $MSSDIR`
+mps_validate.py -m $campaign -p ./
+
 echo "\nDirectory content after running cmsRun, zipping log file and merging histogram files:"
 ls -lh
 # Copy everything you need to MPS directory of your job
@@ -200,6 +204,7 @@ cp -p *.root $RUNDIR
 cp -p *.gz $RUNDIR
 cp -p *.db $RUNDIR
 cp -p *.end $RUNDIR
+cp -pr validation_output $RUNDIR
 
 if [ -f chi2ndfperbinary.eps ]; then
     gzip -f chi2ndfperbinary.eps
