@@ -82,6 +82,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
         out += """\hline
                   \end{tabular}\n
                   \end{table}\n"""
+        out += "The information in this table is based on the monitor root files. Note that the number of tracks which where used in the pede step can differ from this table.\n"
     try:
         # pede.dump.gz
         if (config.showdump == 1):
