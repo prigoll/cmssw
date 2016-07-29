@@ -7,6 +7,7 @@
 ##
 
 import argparse
+import glob
 import logging
 import os
 
@@ -188,6 +189,13 @@ def main():
         except Exception as e:
             logging.error("beamer latex failure - {0} {1}".format(type(e), e))
             raise
+        
+    # delete latex temporary files
+    for extension in ["aux", "log", "nav", "out", "snm", "toc"]:
+        extension = "*." + extension
+        pattern = os.path.join(config.outputPath, extension)
+        logger.info("Remove temporary latex files: "+pattern)
+        map(os.remove, glob.glob(pattern))
         
     if (config.showhtml == 1):
         try:
