@@ -10,6 +10,8 @@ import argparse
 import glob
 import logging
 import os
+import shutil
+import sys
 
 # ArgumentParser
 # must be parsed before pyRoot is imported because pyRoot takes over sys.argv
@@ -25,6 +27,8 @@ parser.add_argument("-p", "--jobdatapath",
                     help="path to the jobm directory", default="")
 parser.add_argument("-l", "--logging",
                     help="if this argument is given a logging file (validation.log) is saved in the current directory", action="store_true")
+parser.add_argument("-c", "--copy",
+                    help="creates a copy of the validation_user.ini file in the current directory", action="store_true")
 args = parser.parse_args()
 
 from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
@@ -62,6 +66,13 @@ def main():
     # parse default ini file
     logger.info("start to parse the default.ini")
     config.parseConfig(os.path.join(config.mpspath, "default.ini"))
+    
+    # copy of ini file in current directory
+    if (args.copy):
+        logger.info("create copy of validation_user.ini in current directory")
+        shutil.copy2(os.path.join(config.mpspath, "default.ini"), "validation_user.ini")
+        sys.exit()
+        
 
     # parse user ini file
     if (args.ini != "-1"):
