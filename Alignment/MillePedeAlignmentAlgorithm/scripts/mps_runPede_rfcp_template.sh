@@ -212,10 +212,9 @@ if [ -f chi2ndfperbinary.C ]; then
 fi
 
 # copy aligment_merge.py for mps_validate.py
-cp -p the.cfg $RUNDIR
+cp -p $RUNDIR/alignment_merge.py alignment_merge.py
 # run mps_validate.py
 campaign=`basename $MSSDIR`
 mps_validate.py -m $campaign -p ./
 
 cp -pr validation_output $RUNDIR
-
