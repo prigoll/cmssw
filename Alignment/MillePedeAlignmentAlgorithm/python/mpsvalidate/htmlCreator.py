@@ -78,6 +78,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
                 <th>{1}</th>
                 </tr>""".format(monitor.name, monitor.ntracks)
         out += """</table>"""
+        out += "The information in this table is based on the monitor root files. Note that the number of tracks which where used in the pede step can differ from this table."
 
     # pede.dump.gz
     try:

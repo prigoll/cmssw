@@ -98,6 +98,7 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
         text += """\hline
                   \end{tabular}\n
                   \end{table}\n"""
+        text += "The information in this table is based on the monitor root files. Note that the number of tracks which where used in the pede step can differ from this table.\n"
         out.addSlide("Datasets with tracks", text)
 
     # pede.dump.gz
