@@ -152,7 +152,8 @@ def plot(MillePedeUser, alignables, config):
         for i in range(3):
             cBig.cd(i + 2)
             # option "AXIS" to only draw the axis
-            big.histo[i].Draw("AXIS")
+            big.histo[i].SetLineColor(0)
+            big.histo[i].Draw()
             # set new range
             big.histo[i].GetYaxis().SetRangeUser(-1.1 *
                                                  abs(big.usedRange[i]), 1.1 * abs(big.usedRange[i]))

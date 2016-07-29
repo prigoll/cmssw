@@ -222,7 +222,8 @@ def plot(treeFile, alignables, config):
                         plot.histo[i].SetMarkerColorAlpha(number + 2, 1)
 
                         # option "AXIS" to only draw the axis
-                        plot.histo[i].Draw("AXISSAME")
+                        plot.histo[i].SetLineColor(0)
+                        plot.histo[i].Draw("SAME")
 
                         # TGraph object to hide outlier
                         copy.append(TGraph(plot.histo[i]))
