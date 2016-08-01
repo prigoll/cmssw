@@ -58,9 +58,31 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
     # output string
     out = Out()
     text = ""
+    
+    # title page
+    if (config.message):
+        text += """\centering
+                    \\vspace*{{4cm}}
+                    \Huge\\bfseries Alignment Validation\par
+                    \\vspace{{2cm}}	
+                    \scshape\huge Alignment Campaign\\\\ {{{0}}}\par
+                    \\vfill
+                    \large \\today\par""".format(config.message)
+    else:
+        text += """\centering
+                    \\vspace*{4cm}
+                    \Huge\\bfseries Alignment Validation\par
+                    \\vfill
+                    \large \\today\par"""
+    out.addSlide("", text)
+    
+    # table of contents
+    text = "\\tableofcontents"
+    out.addSlide("Overview", text)
 
     # general information
     out.add("\section{General information}")
+    text = ""
     if (config.message):
         text = "Project: {{{0}}}\\\\\n".format(config.message)
     text += "Input-Path:\n"

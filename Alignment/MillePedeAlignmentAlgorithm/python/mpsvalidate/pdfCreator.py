@@ -32,6 +32,30 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
 
     # output string
     out = ""
+    
+    # title page
+    if (config.message):
+        out += """\\begin{{titlepage}}
+                    \centering
+                    \\vspace*{{4cm}}
+                    \Huge\\bfseries Alignment Validation\par
+                    \\vspace{{2cm}}	
+                    \scshape\huge Alignment Campaign\\\\ {{{0}}}\par
+                    \\vfill
+                    \large \\today\par
+                    \\end{{titlepage}}
+                    \\tableofcontents
+                    \\newpage""".format(config.message)
+    else:
+        out += """\\begin{titlepage}
+                    \centering
+                    \\vspace*{4cm}
+                    \Huge\\bfseries Alignment Validation\par
+                    \\vfill
+                    \large \\today\par
+                    \\end{titlepage}
+                    \\tableofcontents
+                    \\newpage"""
 
     # general information
 
