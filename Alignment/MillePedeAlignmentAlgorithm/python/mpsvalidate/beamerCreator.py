@@ -93,8 +93,13 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
             \hline
             Dataset & Number of used tracks \\\\
             \hline \n"""
-        for monitor in MonitorData.monitors:
-            text += "{0} & {1}\\\\\n".format(monitor.name, monitor.ntracks)
+        try:
+            for monitor in MonitorData.monitors:
+                text += "{0} & {1}\\\\\n".format(monitor.name, monitor.ntracks)
+        except Exception as e:
+            logger.error("data not found - {0} {1}".format(type(e), e))
+        if (pedeDump.nrec):
+            text += "Number of records & {0}\\\\\n".format(pedeDump.nrec)
         text += """\hline
                   \end{tabular}\n
                   \end{table}\n"""

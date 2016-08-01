@@ -79,6 +79,11 @@ def create(alignables, pedeDump, additionalData, outputFile, config):
             \hline \n"""
         for monitor in MonitorData.monitors:
             out += "{0} & {1}\\\\\n".format(monitor.name, monitor.ntracks)
+        try:
+            if (pedeDump.nrec):
+                out += "Number of records & {0}\\\\\n".format(pedeDump.nrec)
+        except Exception as e:
+            logger.error("data not found - {0} {1}".format(type(e), e))
         out += """\hline
                   \end{tabular}\n
                   \end{table}\n"""
