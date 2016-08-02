@@ -224,7 +224,7 @@ def plot(treeFile, alignables, config):
 
                         # option "AXIS" to only draw the axis
                         plot.histo[i].SetLineColor(0)
-                        plot.histo[i].Draw("SAME")
+                        plot.histo[i].Draw("PSAME")
 
                         # TGraph object to hide outlier
                         copy.append(TGraph(plot.histo[i]))
