@@ -99,6 +99,7 @@ def plot(treeFile, alignables, config):
                     plots[-1].objid = line.ObjId
 
                     plots[-1].histo[i].SetYTitle(time.unit)
+                    plots[-1].histo[i].SetXTitle("IOV")
                     plots[-1].histo[i].SetStats(0)
                     plots[-1].histo[i].SetMarkerStyle(21)
                     # bigger labels for the text
@@ -231,6 +232,7 @@ def plot(treeFile, alignables, config):
                         copy[-1].SetMaximum(1.2 * abs(plot.usedRange[i]))
                         copy[-1].SetMinimum(-1.2 * abs(plot.usedRange[i]))
                         # draw the data
+                        copy[-1].SetLineColorAlpha(number + 2, 0.5)
                         copy[-1].Draw("LPSAME")
 
                         if (i == 0):
