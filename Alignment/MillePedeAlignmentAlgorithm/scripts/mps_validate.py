@@ -13,26 +13,12 @@ import os
 import shutil
 import sys
 
-# ArgumentParser
-# must be parsed before pyRoot is imported because pyRoot takes over sys.argv
-parser = argparse.ArgumentParser(description="Validate your Alignment.")
-parser.add_argument(
-    "-j", "--job", help="chose jobmX directory (default: ini-file)", default=-1, type=int)
-parser.add_argument(
-    "-t", "--time", help="chose MillePedeUser_X Tree (default: ini-file)", default=-1, type=int)
-parser.add_argument("-i", "--ini", help="specify a ini file", default="-1")
-parser.add_argument("-m", "--message",
-                    help="identification on every plot", default="")
-parser.add_argument("-p", "--jobdatapath",
-                    help="path to the jobm directory", default="")
-parser.add_argument("-l", "--logging",
-                    help="if this argument is given a logging file (validation.log) is saved in the current directory", action="store_true")
-parser.add_argument("-c", "--copy",
-                    help="creates a copy of the validation_user.ini file in the current directory", action="store_true")
-args = parser.parse_args()
+from ROOT import PyConfig
+PyConfig.IgnoreCommandLineOptions = True
 
 from ROOT import (TH1F, TCanvas, TFile, TImage, TPaveLabel, TPaveText, TTree,
-                  gROOT, gStyle, PyConfig)
+                  gROOT, gStyle)
+PyConfig.IgnoreCommandLineOptions = True
 
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import (additionalparser, beamerCreator, bigModule,
                          bigStructure, dumpparser, htmlCreator, monitorPlot,
@@ -50,6 +36,23 @@ def main():
     
     # run ROOT in batchmode
     gROOT.SetBatch()
+    
+    # ArgumentParser
+    parser = argparse.ArgumentParser(description="Validate your Alignment.")
+    parser.add_argument(
+        "-j", "--job", help="chose jobmX directory (default: ini-file)", default=-1, type=int)
+    parser.add_argument(
+        "-t", "--time", help="chose MillePedeUser_X Tree (default: ini-file)", default=-1, type=int)
+    parser.add_argument("-i", "--ini", help="specify a ini file", default="-1")
+    parser.add_argument("-m", "--message",
+                        help="identification on every plot", default="")
+    parser.add_argument("-p", "--jobdatapath",
+                        help="path to the jobm directory", default="")
+    parser.add_argument("-l", "--logging",
+                        help="if this argument is given a logging file (validation.log) is saved in the current directory", action="store_true")
+    parser.add_argument("-c", "--copy",
+                        help="creates a copy of the validation_user.ini file in the current directory", action="store_true")
+    args = parser.parse_args()
 
     # create config object
     config = ConfigData()

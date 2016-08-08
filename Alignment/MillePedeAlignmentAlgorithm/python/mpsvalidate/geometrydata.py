@@ -14,6 +14,7 @@ class GeometryData:
         self.discriminator = discriminator
         self.ndiscriminator = ndiscriminator
 
+# ObjId names from http://cmslxr.fnal.gov/lxr/source/Alignment/CommonAlignment/interface/StructureType.h
 data = {-1: GeometryData("notfound", 0, [], []),
         0: GeometryData("invalid", 0, [], []),
         1: GeometryData("AlignableDetUnit", 0, [], []),

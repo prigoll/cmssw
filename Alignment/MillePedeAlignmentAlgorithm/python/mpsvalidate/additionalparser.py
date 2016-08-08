@@ -48,7 +48,8 @@ class AdditionalData:
             try:
                 # search for SelectorRigid, SelectorBowed and SelectorTwoBowed
                 for string in self.pattern:
-                    if ("#" not in line and string in line):
+                    if (string in line):
+                        line = line.split("#", 1)[0]
                         # extract data
                         for lineNumber in range(index + 2, index + 8):
                             # break at the end of the SelectorRigid
