@@ -312,3 +312,7 @@ class ConfigData:
         # if path is given put the output in the current directory
         if (args.jobdatapath):
             self.outputPath = "validation_output"
+        
+        if (args.outputpath):
+            self.outputPath = args.outputpath
+            

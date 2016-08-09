@@ -48,6 +48,8 @@ def main():
                         help="identification on every plot", default="")
     parser.add_argument("-p", "--jobdatapath",
                         help="path to the jobm directory", default="")
+    parser.add_argument("-o", "--outputpath",
+                        help="outputpath", default="")
     parser.add_argument("-l", "--logging",
                         help="if this argument is given a logging file (validation.log) is saved in the current directory", action="store_true")
     parser.add_argument("-c", "--copy",
