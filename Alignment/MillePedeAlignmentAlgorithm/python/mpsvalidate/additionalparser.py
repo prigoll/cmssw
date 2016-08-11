@@ -49,9 +49,9 @@ class AdditionalData:
                 # search for SelectorRigid, SelectorBowed and SelectorTwoBowed
                 for string in self.pattern:
                     if (string in line):
-                        line = line.split("#", 1)[0]
                         # extract data
                         for lineNumber in range(index + 2, index + 8):
+                            mergeFile[lineNumber] = mergeFile[lineNumber].split("#", 1)[0]
                             # break at the end of the SelectorRigid
                             if (")" in mergeFile[lineNumber]):
                                 break
