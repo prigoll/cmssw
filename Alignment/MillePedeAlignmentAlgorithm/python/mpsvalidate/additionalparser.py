@@ -88,10 +88,11 @@ class AdditionalData:
             # search for pedeSteererOptions
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.options" in line and "#" not in line):
                 for lineNumber in range(index + 1, index + 15):
-                    if ("]" in mergeFile[lineNumber]):
-                        break
-                    self.pedeSteererOptions.append(
-                        mergeFile[lineNumber].replace("\"", "'").strip("', \n"))
+                    if (lineNumber<len(mergeFile)):
+                        if ("]" in mergeFile[lineNumber]):
+                            break
+                        self.pedeSteererOptions.append(
+                            mergeFile[lineNumber].replace("\"", "'").strip("', \n"))
 
             # search for pedeSteererCommand
             if ("process.AlignmentProducer.algoConfig.pedeSteerer.pedeCommand" in line and "#" not in line):
