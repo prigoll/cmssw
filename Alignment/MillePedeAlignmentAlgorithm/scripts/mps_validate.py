@@ -22,7 +22,7 @@ PyConfig.IgnoreCommandLineOptions = True
 
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate import (additionalparser, beamerCreator, bigModule,
                          bigStructure, dumpparser, htmlCreator, monitorPlot,
-                         pdfCreator, subModule, timeStructure)
+                         pdfCreator, subModule, timeStructure, trackerTree)
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.classes import OutputData, PedeDumpData, PlotData
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.geometry import Alignables, Structure
 from Alignment.MillePedeAlignmentAlgorithm.mpsvalidate.iniparser import ConfigData
@@ -108,6 +108,9 @@ def main():
     
     # create alignables object
     alignables = Alignables(config)
+    
+    # check if there is the TrackerTree.root file and if not create it
+    trackerTree.check(config)
 
     ##########################################################################
     # draw the plots of the millePedeMonitor_merge.root file
