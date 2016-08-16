@@ -6,6 +6,12 @@
 import FWCore.ParameterSet.Config as cms
 import os
 
+from FWCore.ParameterSet.VarParsing import VarParsing
+
+# argument parsing
+options = VarParsing ("analysis")
+options.register("outputpath", False, VarParsing.multiplicity.singleton, VarParsing.varType.string, "Path where the root file should be saved")
+options.parseArguments()
 
 # Process definition
 process = cms.Process("TrackerTreeGeneration")
@@ -45,7 +51,7 @@ process.load("Alignment.TrackerAlignment.TrackerTreeGenerator_cfi")
 
 # Output File Configuration
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string(os.environ['CMSSW_BASE'] + '/src/Alignment/MillePedeAlignmentAlgorithm/python/mpsvalidate/TrackerTree.root')
+    fileName = cms.string(options.outputpath)
 )
 
 # Path
