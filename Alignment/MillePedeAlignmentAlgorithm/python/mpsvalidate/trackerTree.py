@@ -17,4 +17,4 @@ def check(config):
     if (not os.path.isfile(os.path.join(config.mpspath, "TrackerTree.root"))):
         logger.info("TrackerTree.root file does not exist. It will be created now.")
         
-        os.system("cmsRun {0}".format(os.path.join(config.mpspath, "trackerTree_cff.py")))
+        os.system("cmsRun {0}".format(os.path.join(config.mpspath, "trackerTree_cfg.py")))
