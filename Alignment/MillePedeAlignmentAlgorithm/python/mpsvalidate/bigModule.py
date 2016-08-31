@@ -46,12 +46,16 @@ def plot(MillePedeUser, alignables, config):
             for i in range(3):
                 if (mode == "xyz"):
                     plot.histo.append(TH1F("{0} {1} {2}".format(struct.get_name(), plot.xyz[
-                                      i], mode), "Parameter {0}".format(plot.xyz[i]), numberOfBins, -1000, 1000))
+                                      i], mode), "", numberOfBins, -1000, 1000))
                 else:
                     plot.histo.append(TH1F("{0} {1} {2}".format(struct.get_name(), plot.xyz[
-                                      i], mode), "Parameter {0}".format(plot.xyz[i]), numberOfBins, -0.1, 0.1))
+                                      i], mode), "", numberOfBins, -0.1, 0.1))
 
-                plot.histo[i].SetXTitle(plot.unit)
+                if (plot.unit!=""):
+                    plot.histo[i].SetXTitle("#Delta"+plot.xyz[i]+" ["+plot.unit+"]")
+                else:
+                    plot.histo[i].SetXTitle("#Delta"+plot.xyz[i])
+                plot.histo[i].SetYTitle("number of alignables")
                 plot.histo[i].GetXaxis().SetTitleOffset(0.85)
                 plot.histoAxis.append(plot.histo[i].GetXaxis())
 

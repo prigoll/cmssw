@@ -38,9 +38,11 @@ def plot(MillePedeUser, alignables, config):
 
         # initialize histograms
         for i in range(3):
-            big.histo.append(TH1F("Big Structure {0} {1}".format(big.xyz[i], mode), "Parameter {0}".format(
-                big.xyz[i]), big.numberOfBins[i], 0, big.numberOfBins[i]))
-            big.histo[i].SetYTitle(big.unit)
+            big.histo.append(TH1F("Big Structure {0} {1}".format(big.xyz[i], mode), "", big.numberOfBins[i], 0, big.numberOfBins[i]))
+            if (big.unit!=""):
+                big.histo[i].SetYTitle("#Delta"+big.xyz[i]+" ["+big.unit+"]")
+            else:
+                big.histo[i].SetYTitle("#Delta"+big.xyz[i])
             big.histo[i].SetStats(0)
             big.histo[i].SetMarkerStyle(21)
             big.histoAxis.append(big.histo[i].GetXaxis())
