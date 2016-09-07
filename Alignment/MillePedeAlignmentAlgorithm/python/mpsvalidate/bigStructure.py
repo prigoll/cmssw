@@ -59,8 +59,10 @@ def plot(MillePedeUser, alignables, config):
         # error if shift is bigger than limit
         limit = config.limit[mode]
         for i in range(3):
-            big.text.AddText("max. shift {0}: {1:.2}".format(
-                big.xyz[i], float(big.maxShift[i])))
+            if (big.unit!=""):
+                big.text.AddText("max. shift {0}: {1:.2} {2}".format(big.xyz[i], float(big.maxShift[i]), big.unit))
+            else:
+                big.text.AddText("max. shift {0}: {1:.2}".format(big.xyz[i], float(big.maxShift[i])))
             if (abs(big.maxShift[i]) > limit):
                 big.text.AddText(
                     "! {0} shift bigger than {1} !".format(big.xyz[i], limit))
@@ -130,7 +132,7 @@ def plot(MillePedeUser, alignables, config):
             # add number of outlieres to text
             for i in range(3):
                 if (big.hiddenEntries[i] != 0):
-                    big.text.AddText("! {0} {1} outlier !".format(
+                    big.text.AddText("! {0}: {1} outlier !".format(
                         big.xyz[i], int(big.hiddenEntries[i])))
 
         # create canvas

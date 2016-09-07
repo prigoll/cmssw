@@ -56,7 +56,7 @@ def plot(MillePedeUser, alignables, config):
                 else:
                     plot.histo[i].SetXTitle("#Delta"+plot.xyz[i])
                 plot.histo[i].SetYTitle("number of alignables")
-                plot.histo[i].GetXaxis().SetTitleOffset(0.85)
+                plot.histo[i].GetXaxis().SetTitleOffset(0.8)
                 plot.histoAxis.append(plot.histo[i].GetXaxis())
 
             # add labels
@@ -219,13 +219,15 @@ def plot(MillePedeUser, alignables, config):
             for i in range(3):
                 # skip empty
                 if (plot.histo[i].GetEntries() > 0):
-                    plot.text.AddText("max. shift {0}: {1:.2}".format(
-                        plot.xyz[i], plot.maxShift[i]))
+                    if (plot.unit!=""):
+                        plot.text.AddText("max. shift {0}: {1:.2} {2}".format(plot.xyz[i], plot.maxShift[i], plot.unit))
+                    else:
+                        plot.text.AddText("max. shift {0}: {1:.2}".format(plot.xyz[i], plot.maxShift[i]))
                     if (abs(plot.maxShift[i]) > limit):
                         plot.text.AddText(
                             "! {0} shift bigger than {1} !".format(plot.xyz[i], limit))
                     if (plot.hiddenEntries[i] != 0):
-                        plot.text.AddText("! {0} {1} outlier !".format(
+                        plot.text.AddText("! {0}: {1} outlier !".format(
                             plot.xyz[i], int(plot.hiddenEntries[i])))
 
             # save copy
